@@ -24,7 +24,9 @@
           ["/mute"
             {:post {:handler todo}}]
           ["/unmute"
-            {:post {:handler todo}}]]
+            {:post {:handler todo}}]
+          ["/lists"
+            {:get {:handler todo}}]]
         ["/relationships"
           {:get {:handler todo}}]
         ["/search"
@@ -56,5 +58,16 @@
       ["/instance"
         {:get {:handler todo}}]
       ["/custom_emojis"
-        {:get {:handler todo}}]]
+        {:get {:handler todo}}]
+      ["/lists"
+        {:get {:handler todo}
+         :post {:handler todo}}
+        ["/:id"
+          {:get {:handler todo}
+           :put {:handler todo}
+           :delete {:handler todo}}
+          ["/accounts"
+            {:get {:handler todo}
+             :post {:handler todo}
+             :delete {:handler todo}}]]]]
     ["/v2"]])
