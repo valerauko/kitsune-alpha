@@ -1,5 +1,7 @@
 (ns konkon.routes.mastodon)
 
+(defn todo [] nil)
+
 (def routes
   ["/api"
     {:data {:summary "Mastodon compatible API"}}
