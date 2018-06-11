@@ -1,4 +1,4 @@
-(ns konkon.specs.user)
+(ns kitsune.specs.user)
 
 (def username-rex #"?i[a-z0-9-_]{2,15}")
 

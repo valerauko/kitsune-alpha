@@ -1,4 +1,4 @@
-(ns konkon.routes.webfinger)
+(ns kitsune.routes.webfinger)
 
 (def routes
   ["/.well-known"

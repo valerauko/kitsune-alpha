@@ -1,4 +1,4 @@
-(ns konkon.controllers.users)
+(ns kitsune.controllers.users)
 
 (defn register
   []

@@ -1,4 +1,4 @@
-(ns konkon.routes.mastodon)
+(ns kitsune.routes.mastodon)
 
 (defn todo [] nil)
 

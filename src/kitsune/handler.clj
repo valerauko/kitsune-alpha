@@ -1,4 +1,4 @@
-(ns konkon.handler
+(ns kitsune.handler
   (:require [reitit.ring :as ring]
             [reitit.coercion.spec :as spec]
             [reitit.swagger :refer [swagger-feature create-swagger-handler]]
@@ -28,7 +28,7 @@
                    :handler (constantly :todo)}}]]
        ["/swagger.json"
         {:get {:no-doc true
-               :swagger {:info {:title "Konkon API"}}
+               :swagger {:info {:title "kitsune API"}}
                :handler (create-swagger-handler)}}]]
       {:data {:coercion spec/coercion
               :swagger {:id ::api}
