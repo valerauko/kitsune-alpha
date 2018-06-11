@@ -1,6 +1,6 @@
-(ns konkon.core-test
+(ns kitsune.core-test
   (:require [clojure.test :refer :all]
-            [konkon.core :refer :all]))
+            [kitsune.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."

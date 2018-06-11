@@ -1,4 +1,4 @@
-(ns konkon.core
+(ns kitsune.core
   (:gen-class))
 
 (defn -main
