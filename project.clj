@@ -1,4 +1,4 @@
-(defproject konkon "0.1.0-SNAPSHOT"
+(defproject kitsune "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -11,6 +11,6 @@
                  [migratus "1.0.0"]]
   :plugins [[lein-ring "0.9.7"]
             [migratus-lein "0.5.4"]]
-  :ring {:handler konkon.handler/app}
+  :ring {:handler kitsune.handler/app}
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
