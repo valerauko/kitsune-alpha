@@ -1,6 +1,6 @@
-# konkon
+# Kitsune
 
-FIXME: description
+Very fox microblogging.
 
 ## Installation
 
@@ -10,7 +10,7 @@ Download from http://example.com/FIXME.
 
 FIXME: explanation
 
-    $ java -jar konkon-0.1.0-standalone.jar [args]
+    $ java -jar kitsune-0.1.0-standalone.jar [args]
 
 ## Options
 
