@@ -4,13 +4,21 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [ring-logger "0.7.7"]
+                 [ch.qos.logback/logback-classic "1.2.3"]
+                 [aleph "0.4.6"]
+                 [ring-logger "1.0.1"]
+                 [camel-snake-kebab "0.4.0"]
+                 [buddy/buddy-core "1.4.0"]
                  [metosin/reitit "0.1.2"]
                  [metosin/muuntaja "0.5.0"]
+                 [metosin/ring-http-response "0.9.0"]
                  [ring/ring-defaults "0.3.2"]
-                 [migratus "1.0.0"]]
-  :plugins [[lein-ring "0.9.7"]
-            [migratus-lein "0.5.4"]]
-  :ring {:handler kitsune.handler/app}
+                 [org.postgresql/postgresql "42.2.2"]
+                 [com.layerware/hugsql "0.4.9"]
+                 [hikari-cp "2.5.0"]
+                 [ragtime "0.7.2"]]
+  :aliases {"migrate"  ["run" "-m" "kitsune.db.migrations/migrate"]
+            "rollback" ["run" "-m" "kitsune.db.migrations/rollback"]}
+  :main ^:skip-aot kitsune.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

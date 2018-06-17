@@ -1,0 +1,14 @@
+;;
+{
+  :up ["create table if not exists users (
+          name         varchar   primary key,
+          email        varchar   not null unique,
+          pass_hash    varchar   not null,
+          display_name varchar,
+          created_at   timestamp not null default now(),
+          last_login   timestamp not null default now()
+        );
+        create unique index on users (lower(name));
+        create unique index on users (lower(email));"]
+  :down ["drop table users;"]
+}
