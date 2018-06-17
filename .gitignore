@@ -13,3 +13,4 @@ pom.xml.asc
 .m2/
 psql/
 *.mm
+.ash_history
