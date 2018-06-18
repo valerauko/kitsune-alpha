@@ -1,8 +1,8 @@
 (defproject kitsune "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :license {:name "GNU AFFERO GENERAL PUBLIC LICENSE"
+            :url "https://www.gnu.org/licenses/agpl-3.0.en.html"}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [aleph "0.4.6"]
