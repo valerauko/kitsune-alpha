@@ -16,7 +16,8 @@
                  [org.postgresql/postgresql "42.2.2"]
                  [com.layerware/hugsql "0.4.9"]
                  [hikari-cp "2.5.0"]
-                 [ragtime "0.7.2"]]
+                 [ragtime "0.7.2"]
+                 [vuk "0.0.1"]]
   :aliases {"migrate"  ["run" "-m" "kitsune.db.migrations/migrate"]
             "rollback" ["run" "-m" "kitsune.db.migrations/rollback"]}
   :main ^:skip-aot kitsune.core

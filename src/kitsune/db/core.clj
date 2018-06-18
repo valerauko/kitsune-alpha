@@ -1,5 +1,6 @@
 (ns kitsune.db.core
   (:require [hikari-cp.core :refer [make-datasource]]
+            [hugsql.core]
             [camel-snake-kebab.extras :refer [transform-keys]]
             [camel-snake-kebab.core :refer [->kebab-case-keyword]]))
 
