@@ -22,4 +22,5 @@
             "rollback" ["run" "-m" "kitsune.db.migrations/rollback"]}
   :main ^:skip-aot kitsune.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}
+             :dev {:dependencies [[ring/ring-devel "1.7.0-RC1"]]}})
