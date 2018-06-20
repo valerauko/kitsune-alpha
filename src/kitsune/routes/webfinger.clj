@@ -4,7 +4,7 @@
 
 ; TODO: response types don't show up in the swagger spec correctly,
 ; it doesn't show the dropdown menu to pick and i've got no idea why
-; probably needs individual :responses defined but how the hell do i spec xml
+; maybe needs individual :responses defined?
 (def routes
   ["/.well-known"
     {:summary "WebFinger endpoints"
@@ -17,5 +17,6 @@
       {:get {:summary "WebFinger endpoint for users"
              :swagger {:produces #{"application/xrd+xml" "application/xml"
                                    "application/jrd+json" "application/json"}}
+             :responses {200 {:body ::spec/json}}
              :parameters {:query {:resource ::spec/resource}}
              :handler resource}}]])
