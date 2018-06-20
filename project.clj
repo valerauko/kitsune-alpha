@@ -1,5 +1,5 @@
 (defproject kitsune "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
+  :description "Very fox microblogging service"
   :url "http://example.com/FIXME"
   :license {:name "GNU AFFERO GENERAL PUBLIC LICENSE"
             :url "https://www.gnu.org/licenses/agpl-3.0.en.html"}
