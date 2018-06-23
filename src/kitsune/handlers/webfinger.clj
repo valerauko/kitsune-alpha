@@ -9,7 +9,7 @@
 
 (defn host-meta
   [& _]
-  (ok (vuk/host-meta "http://localhost:3000/.well-known/webfinger?resource={uri}")))
+  (ok (vuk/host-meta (str env-host "/.well-known/webfinger?resource={uri}"))))
 
 (defn extract-type
   [content-type]

@@ -39,7 +39,6 @@
 
 (def handler
   (-> routes
-      wrap-reload
       (wrap-defaults api-defaults)
       (wrap-log-response {:transform-fn log-transformer})))
 

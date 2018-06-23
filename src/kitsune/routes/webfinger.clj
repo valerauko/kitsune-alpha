@@ -17,6 +17,5 @@
       {:get {:summary "WebFinger endpoint for users"
              :swagger {:produces #{"application/xrd+xml" "application/xml"
                                    "application/jrd+json" "application/json"}}
-             :responses {200 {:body ::spec/json}}
              :parameters {:query {:resource ::spec/resource}}
              :handler resource}}]])
