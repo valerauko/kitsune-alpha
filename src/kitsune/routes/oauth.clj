@@ -1,5 +1,6 @@
 (ns kitsune.routes.oauth
   (:require [kitsune.handlers.oauth :refer [auth-form authorize exchange-token]]
+            [kitsune.wrappers.oauth :as oauth-wrapper]
             [kitsune.spec.oauth :as oauth-spec]
             [kitsune.spec.user :as user-spec]))
 
