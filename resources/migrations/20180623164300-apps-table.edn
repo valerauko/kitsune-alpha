@@ -1,0 +1,15 @@
+;;
+{
+  :up ["create table if not exists apps (
+          id            serial     primary key,
+          client_id     varchar    not null    default encode(gen_random_bytes(32), 'base64'),
+          secret        varchar    not null    default encode(gen_random_bytes(32), 'base64') unique,
+          name          varchar    not null,
+          website       varchar,
+          redirect_uris varchar[]  not null    default array['urn:ietf:wg:oauth:2.0:oob'],
+          scopes        varchar[3] not null,
+          created_at    timestamp  not null    default now()
+        );
+        create unique index authorize on apps (client_id, redirect_uris);"]
+  :down ["drop table apps;"]
+}
