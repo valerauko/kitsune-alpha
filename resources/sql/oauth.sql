@@ -32,6 +32,10 @@ insert into oauth_tokens (user_id, app_id, scopes)
   values (:user-id, :app-id, array[:v*:scopes])
   returning token, refresh, scopes
 
+-- :name find-bearer :? :1
+select user_id, app_id from oauth_tokens
+  where token = :token and expires_at > now()
+
 -- :name find-by-refresh-token :? :1
 select id from oauth_tokens
   where refresh = :refresh-token and app_id = :app-id
