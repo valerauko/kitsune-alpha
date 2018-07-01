@@ -34,7 +34,7 @@ insert into oauth_tokens (user_id, app_id, scopes)
 
 -- :name find-by-refresh-token :? :1
 select id from oauth_tokens
-  where refresh_token = :refresh-token and app_id = :app-id
+  where refresh = :refresh-token and app_id = :app-id
 
 -- :name refresh-token! :<! :1
 update oauth_tokens
