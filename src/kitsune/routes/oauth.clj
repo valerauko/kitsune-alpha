@@ -29,7 +29,7 @@
                     :body any?}}
             :handler authorize}}]
    ["/token"
-    {:post {:summary "OAuth token exchange"
+    {:post {:summary "OAuth token exchange / refresh"
             :swagger {:produces #{"application/json"}}
             :parameters {:body ::oauth-spec/exchange-request
                          :header {:authorization string?}}
