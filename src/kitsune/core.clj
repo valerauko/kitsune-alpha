@@ -1,6 +1,8 @@
 (ns kitsune.core
   (:require [aleph.http :as http]
             [reitit.ring :as ring]
+            [reitit.spec :as router-spec]
+            [reitit.ring.spec :as ring-spec]
             [reitit.ring.coercion :as coerce]
             [reitit.coercion.spec :as spec]
             [reitit.swagger :refer [swagger-feature create-swagger-handler]]
@@ -21,7 +23,8 @@
         {:get {:no-doc true
                :swagger {:info {:title "kitsune API"}}
                :handler (create-swagger-handler)}}]]
-      {:data {:coercion spec/coercion
+      {:validate ring-spec/validate-spec!
+       :data {:coercion spec/coercion
               :swagger {:id ::api}
               :middleware [wrap-format
                            swagger-feature
