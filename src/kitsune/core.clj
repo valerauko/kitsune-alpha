@@ -12,6 +12,7 @@
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [kitsune.routes.user :as user]
+            [kitsune.routes.oauth :as oauth]
             [kitsune.routes.webfinger :as webfinger]
             [kitsune.routes.mastodon :as mastodon]))
 
@@ -20,6 +21,7 @@
     (ring/router
       [user/routes
        webfinger/routes
+       oauth/routes
        mastodon/routes
        ["/swagger.json"
         {:get {:no-doc true
