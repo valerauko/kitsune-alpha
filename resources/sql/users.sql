@@ -1,11 +1,11 @@
--- :name create! :<! :n
+-- :name create! :<! :1
 -- :doc Creates a new user record and returns its ID
 insert into users
   (name, email, pass_hash)
   values (:name, :email, :pass-hash)
   returning name
 
--- :name find! :? :1
+-- :name lookup :? :1
 select name, display_name, created_at from users where name = :name
 
 -- :name update! :<! :1
@@ -18,3 +18,6 @@ update users
 delete from users
   where name = :name
   returning true as result
+
+-- :name find-for-auth :? :1
+select id from users where name = :name and pass_hash = :pass-hash

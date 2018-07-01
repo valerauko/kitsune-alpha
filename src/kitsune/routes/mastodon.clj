@@ -1,75 +1,16 @@
-(ns kitsune.routes.mastodon)
-
-(defn todo [] nil)
+(ns kitsune.routes.mastodon
+  (:require [kitsune.handlers.oauth :as oauth]
+            [kitsune.spec.oauth :as oauth-spec]))
 
 (def routes
   ["/api"
-    {:data {:summary "Mastodon compatible API"}}
-    ["/v1"
-      ["/accounts"
-        ["/:id"
-          {:get {:handler todo}}
-          ["/followers"
-            {:get {:handler todo}}]
-          ["/following"
-            {:get {:handler todo}}]
-          ["/statuses"
-            {:get {:handler todo}}]
-          ["/follow"
-            {:post {:handler todo}}]
-          ["/unfollow"
-            {:post {:handler todo}}]
-          ["/block"
-            {:post {:handler todo}}]
-          ["/unblock"
-            {:post {:handler todo}}]
-          ["/mute"
-            {:post {:handler todo}}]
-          ["/unmute"
-            {:post {:handler todo}}]
-          ["/lists"
-            {:get {:handler todo}}]]
-        ["/relationships"
-          {:get {:handler todo}}]
-        ["/search"
-          {:get {:handler todo}}]
-        ["/verify_credentials"
-          {:get {:handler todo}}]
-        ["/update_credentials"
-          {:patch {:handler todo}}]]
-      ["/apps"
-        {:post {:handler todo}}]
-      ["/blocks"
-        {:get {:handler todo}}]
-      ["/domain_blocks"
-        {:get {:handler todo}}
-        {:post {:handler todo}}
-        {:delete {:handler todo}}]
-      ["/favourites"
-        {:get {:handler todo}}]
-      ["/follow_requests"
-        {:get {:handler todo}}
-        ["/:id"
-          ["/authorize"
-            {:post {:handler todo}}]
-          ["/reject"
-            {:post {:handler todo}}]]]
-      ["/follow"
-        {:post {:handler todo
-                :summary "Follow a remote user"}}]
-      ["/instance"
-        {:get {:handler todo}}]
-      ["/custom_emojis"
-        {:get {:handler todo}}]
-      ["/lists"
-        {:get {:handler todo}
-         :post {:handler todo}}
-        ["/:id"
-          {:get {:handler todo}
-           :put {:handler todo}
-           :delete {:handler todo}}
-          ["/accounts"
-            {:get {:handler todo}
-             :post {:handler todo}
-             :delete {:handler todo}}]]]]
-    ["/v2"]])
+   {:swagger {:tags ["Mastodon"]
+              :produces #{"application/json" "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""}}}
+   ["/v1"
+    ["/apps"
+     {:swagger {:tags ["OAuth"]}
+      :post {:summary "OAuth app registration"
+             :parameters {:body ::oauth-spec/create-app}
+             :produces #{"application/json"}
+             :responses {200 {:body ::oauth-spec/register-response}}
+             :handler oauth/register-app}}]]])

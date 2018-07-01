@@ -15,7 +15,7 @@ services:
     container_name: kitsune_db
     image: postgres:alpine
     volumes:
-      - ./psql:/usr/local/pgsql/data
+      - ./psql:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: kitsune
       POSTGRES_db: kitsune

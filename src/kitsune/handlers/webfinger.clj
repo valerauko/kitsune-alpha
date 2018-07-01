@@ -23,11 +23,11 @@
              (str env-host "/people/" name)]})
 
 (defhandler resource
-  [{{resource "resource"} :query-params
+  [{{resource :resource} :query-params
     {content-type :accept} :headers :as req}]
   (let [[user host] (->> resource (re-matches #"(?i)acct:(\w+)@(.+)") rest)]
     (if (= env-host host)
-      (if-let [data (db/find! conn {:name user})]
+      (if-let [data (db/lookup conn {:name user})]
         (ok (vuk/represent (user-map data) :as (extract-type content-type)))
         (not-found ""))
       (not-found ""))))

@@ -1,6 +1,8 @@
 (ns kitsune.core
   (:require [aleph.http :as http]
             [reitit.ring :as ring]
+            [reitit.spec :as router-spec]
+            [reitit.ring.spec :as ring-spec]
             [reitit.ring.coercion :as coerce]
             [reitit.coercion.spec :as spec]
             [reitit.swagger :refer [swagger-feature create-swagger-handler]]
@@ -10,24 +12,29 @@
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [kitsune.routes.user :as user]
-            [kitsune.routes.webfinger :as wf]))
+            [kitsune.routes.oauth :as oauth]
+            [kitsune.routes.webfinger :as webfinger]
+            [kitsune.routes.mastodon :as mastodon]))
 
 (def routes
   (ring/ring-handler
     (ring/router
       [user/routes
-       wf/routes
+       webfinger/routes
+       oauth/routes
+       mastodon/routes
        ["/swagger.json"
         {:get {:no-doc true
                :swagger {:info {:title "kitsune API"}}
                :handler (create-swagger-handler)}}]]
-      {:data {:coercion spec/coercion
+      {:validate ring-spec/validate-spec!
+       :data {:coercion spec/coercion
               :swagger {:id ::api}
               :middleware [wrap-format
-                           swagger-feature
-                           coerce/coerce-exceptions-middleware
-                           coerce/coerce-request-middleware
-                           coerce/coerce-response-middleware]}})
+                           swagger-feature]}})
+                           ; coerce/coerce-exceptions-middleware
+                           ; coerce/coerce-request-middleware
+                           ; coerce/coerce-response-middleware]}})
     (ring/routes
       (create-swagger-ui-handler {:path "/swagger"})
       (fn [& req] {:status 404 :body {:error "Not found"} :headers {}}))))
