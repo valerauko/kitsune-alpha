@@ -31,10 +31,10 @@
        :data {:coercion spec/coercion
               :swagger {:id ::api}
               :middleware [wrap-format
-                           swagger-feature
-                           coerce/coerce-exceptions-middleware
-                           coerce/coerce-request-middleware
-                           coerce/coerce-response-middleware]}})
+                           swagger-feature]}})
+                           ; coerce/coerce-exceptions-middleware
+                           ; coerce/coerce-request-middleware
+                           ; coerce/coerce-response-middleware]}})
     (ring/routes
       (create-swagger-ui-handler {:path "/swagger"})
       (fn [& req] {:status 404 :body {:error "Not found"} :headers {}}))))
