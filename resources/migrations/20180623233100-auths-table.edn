@@ -1,0 +1,15 @@
+;;
+{
+  :up ["create table if not exists oauth_auths (
+          id         serial     primary key,
+          auth_code  varchar    not null    default encode(gen_random_bytes(32), 'base64') unique,
+          user_id    integer    not null    references users(id),
+          app_id     integer    not null    references apps(id),
+          scopes     varchar[3] not null,
+          used       boolean    not null    default false,
+          expires_at timestamp  not null    default now() + interval '10 minute',
+          created_at timestamp  not null    default now(),
+          updated_at timestamp  not null    default now()
+        );"]
+  :down ["drop table oauth_auths;"]
+}
