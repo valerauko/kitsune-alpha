@@ -2,12 +2,14 @@
   (:require [ring.util.http-response :refer :all]
             [org.bovinegenius [exploding-fish :as uri]]
             [clojure.string :refer [split join]]
-            [kitsune.handlers.core :refer [defhandler]]
+            [kitsune.handlers.core :refer [defhandler url-decode]]
             [kitsune.db.oauth :as db]
             [kitsune.db.user :as user-db]
             [kitsune.db.core :refer [conn]]
             [kitsune.spec.oauth :as spec])
-  (:import java.util.Base64 java.net.URLDecoder))
+  (:import java.util.Base64))
+
+; TODO: return spec errors https://tools.ietf.org/html/rfc6749#section-5.2
 
 (defhandler register-app
   [{{:keys [scopes redirect-uris] :as params} :body-params :as req}]
@@ -67,15 +69,14 @@
     (.decode (Base64/getDecoder))
     (.encodeToString (Base64/getEncoder))))
 
-(defn url-decode [str] (URLDecoder/decode str "UTF-8"))
-
 (defn app-from-request
   "According to the OAuth spec, passing client credentials in Basic HTTP header
   is preferable to passing them in the request body."
   [req]
   (db/find-for-session conn
     (let [[id secret] (some-> req :headers :authorization
-                                  (#(rest (re-matches #"Basic ([^:]+):(.+)" %)))
+                                  (#(rest
+                                      (re-matches #"^Basic ([^:]+):(.+)" %)))
                                   (#(map url-decode %)))]
       (if (and id secret)
         {:client-id id :client-secret secret}
