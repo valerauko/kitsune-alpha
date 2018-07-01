@@ -5,15 +5,16 @@
             [camel-snake-kebab.core :refer [->kebab-case-keyword]]))
 
 (def options
-  {:server-name "kitsune_db"
-   :adapter "postgresql"
+  {:server-name   "kitsune_db"
+   :adapter       "postgresql"
    :database-name "kitsune"
-   :username "kitsune"
-   :password "whatever"})
+   :username      "kitsune"
+   :password      "whatever"})
 
 (def conn
   {:datasource (make-datasource options)})
 
+; these are from luminus too
 (defn result-one-snake->kebab
   [this result options]
   (->> (hugsql.adapter/result-one this result options)
