@@ -16,7 +16,7 @@
 
 (s/def ::pass
   (s/and string?
-         #(re-matches #"\w.+\w" %) ; must start and end with word chars
+         #(re-matches #"\S.+\S" %) ; must start and end with nonspace chars
          #(re-find #"[a-z]" %) ; must contain at least one small letter
          #(re-find #"[A-Z]" %) ; must contain at least one capital letter
          #(re-find #"[0-9]" %) ; must contain at least one number
