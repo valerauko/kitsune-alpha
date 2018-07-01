@@ -1,27 +1,18 @@
 (ns kitsune.handlers.user
-  (:require [clojure.spec.alpha :as s]
-            [buddy.core.hash :as hash]
-            [buddy.core.codecs :refer [bytes->hex]]
-            [ring.util.http-response :refer :all]
+  (:require [ring.util.http-response :refer :all]
             [kitsune.handlers.core :refer [defhandler]]
             [kitsune.spec.user :as u]
             [kitsune.db.user :as db]
             [kitsune.db.core :refer [conn]]))
 
-(defn hash-pass
-  [user]
-  (-> user
-    (assoc :pass-hash (-> user :pass hash/sha3-512 bytes->hex))
-    (dissoc :pass :pass-confirm)))
-
 (defhandler create
   [{{user :user} :body-params :as req}]
-  (let [result (db/create! conn (hash-pass user))]
+  (let [result (db/create! conn (db/process-for-create user))]
     (ok result)))
 
 (defhandler show
   [{{name :name} :path-params :as req}]
-  (if-let [result (db/find! conn {:name name})]
+  (if-let [result (db/lookup conn {:name name})]
     (ok result)
     (not-found {:error name})))
 
