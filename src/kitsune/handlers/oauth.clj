@@ -77,7 +77,8 @@
     (let [[id secret] (some-> req :headers :authorization
                                   (#(rest
                                       (re-matches #"^Basic ([^:]+):(.+)" %)))
-                                  (#(map url-decode %)))]
+                                  (#(map url-decode %))
+                                  (#(map base64-padfix %)))]
       (if (and id secret)
         {:client-id id :client-secret secret}
         ; not sure if merge + select-keys would be better?
