@@ -22,6 +22,6 @@
   (fn [{{:keys [scopes]} :auth :as req}]
     (let [required (some-> req (reitit/get-match) :data :scopes)]
       (if (and (seq required)
-               (not (set/subset? requried (set scopes))))
+               (not (set/subset? required (set scopes))))
         (forbidden {:error "Insufficient application scopes"})
         (handler req)))))
