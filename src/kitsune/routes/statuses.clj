@@ -15,22 +15,23 @@
              :parameters {:body ::spec/create-status-request}
              :responses {201 {:body any?}}
              :handler create-status}}
-     ["/:id"
-      {:get {:summary "Show one status"}
-       :delete {:summary "Delete status"}}
-      ["/reblog"
-       {:post {}}]
-      ["/unreblog"
-       {:post {}}]
-      ["/favourite"
-       {:post {}}]
-      ["/unfavourite"
-       {:post {}}]
-      ["/context"
-       {:get {}}]
-      ["/card"
-       {:get {}}]
-      ["/favourited_by"
-       {:get {}}]
-      ["/reblogged_by"
-       {:get {}}]]]]])
+     ; ["/:id"
+     ;  {:get {:summary "Show one status"}
+     ;   :delete {:summary "Delete status"}}
+     ;  ["/reblog"
+     ;   {:post {}}]
+     ;  ["/unreblog"
+     ;   {:post {}}]
+     ;  ["/favourite"
+     ;   {:post {}}]
+     ;  ["/unfavourite"
+     ;   {:post {}}]
+     ;  ["/context"
+     ;   {:get {}}]
+     ;  ["/card"
+     ;   {:get {}}]
+     ;  ["/favourited_by"
+     ;   {:get {}}]
+     ;  ["/reblogged_by"
+     ;   {:get {}}]]
+       ]]])
