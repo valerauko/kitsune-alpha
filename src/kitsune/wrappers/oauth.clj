@@ -20,7 +20,9 @@
   "Denies requests based on the scopes as defined in the routes"
   [handler]
   (fn [{{:keys [scopes]} :auth :as req}]
-    (let [required (some-> req (reitit/get-match) :data :scopes)]
+    (let [method (:request-method req)
+          required (some-> req (reitit/get-match) :data
+                               method :scopes)]
       (if (and (seq required)
                (not (set/subset? required (set scopes))))
         (forbidden {:error "Insufficient application scopes"})
