@@ -13,7 +13,7 @@
              :middleware [oauth/bearer-auth
                           oauth/enforce-scopes]
              :parameters {:body ::spec/create-status-request}
-             :responses {200 ::spec/create-status-response}
+             :responses {201 {:body any?}}
              :handler create-status}}
      ["/:id"
       {:get {:summary "Show one status"}
