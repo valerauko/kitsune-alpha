@@ -1,0 +1,20 @@
+;;
+{
+  :up ["create table if not exists objects (
+          id             serial     primary key,
+          uri            varchar    not null,
+          type           varchar    not null,
+          user_id        integer    not null    references users(id),
+          ap_to          varchar[],
+          cc             varchar[],
+          bcc            varchar[],
+          in_reply_to_id varchar,
+          summary        text,
+          content        text       not null,
+          attachments    varchar[],
+          hashtags       varchar[],
+          mentions       varchar[],
+          created_at     timestamp  not null    default now()
+        );"]
+  :down ["drop table activities;"]
+}

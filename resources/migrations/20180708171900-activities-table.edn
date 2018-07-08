@@ -1,0 +1,15 @@
+;;
+{
+  :up ["create table if not exists activities (
+          id         serial     primary key,
+          object_id  varchar    not null    unique,
+          type       varchar    not null,
+          user_id    integer    not null    references users(id),
+          ap_to      varchar[],
+          cc         varchar[],
+          bcc        varchar[],
+          created_at timestamp  not null    default now(),
+          updated_at timestamp  not null    default now()
+        );"]
+  :down ["drop table activities;"]
+}

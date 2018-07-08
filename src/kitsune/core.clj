@@ -1,7 +1,6 @@
 (ns kitsune.core
   (:require [aleph.http :as http]
             [reitit.ring :as ring]
-            [reitit.spec :as router-spec]
             [reitit.ring.spec :as ring-spec]
             [reitit.ring.coercion :as coerce]
             [reitit.coercion.spec :as spec]
