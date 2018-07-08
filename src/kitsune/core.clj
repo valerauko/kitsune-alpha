@@ -13,7 +13,8 @@
             [kitsune.routes.user :as user]
             [kitsune.routes.oauth :as oauth]
             [kitsune.routes.webfinger :as webfinger]
-            [kitsune.routes.mastodon :as mastodon]))
+            [kitsune.routes.mastodon :as mastodon]
+            [kitsune.routes.statuses :as statuses]))
 
 (def routes
   (ring/ring-handler
@@ -22,6 +23,7 @@
        webfinger/routes
        oauth/routes
        mastodon/routes
+       statuses/routes
        ["/swagger.json"
         {:get {:no-doc true
                :swagger {:info {:title "kitsune API"}}
