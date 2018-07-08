@@ -7,7 +7,8 @@
   ["/api"
    ["/v1"
     ["/statuses"
-     {:post {:summary "Post new status"
+     {:swagger {:tags ["Statuses"]}
+      :post {:summary "Post new status"
              :scopes #{"write"}
              :middleware [oauth/bearer-auth
                           oauth/enforce-scopes]
