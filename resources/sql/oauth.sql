@@ -33,7 +33,7 @@ insert into oauth_tokens (user_id, app_id, scopes)
   returning token, refresh, scopes
 
 -- :name find-bearer :? :1
-select user_id, app_id from oauth_tokens
+select user_id, app_id, scopes from oauth_tokens
   where token = :token and expires_at > now()
 
 -- :name find-by-refresh-token :? :1
