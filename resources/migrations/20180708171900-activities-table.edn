@@ -2,9 +2,10 @@
 {
   :up ["create table if not exists activities (
           id         serial     primary key,
-          object_id  varchar    not null    unique,
+          uri        varchar    not null    unique,
+          object_id  integer    not null    references objects(id) on delete cascade,
           type       varchar    not null,
-          user_id    integer    not null    references users(id),
+          user_id    integer    not null    references users(id) on delete cascade,
           ap_to      varchar[],
           cc         varchar[],
           bcc        varchar[],

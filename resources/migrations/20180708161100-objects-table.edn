@@ -2,9 +2,9 @@
 {
   :up ["create table if not exists objects (
           id             serial     primary key,
-          uri            varchar    not null,
+          uri            varchar    not null    unique,
           type           varchar    not null,
-          user_id        integer    not null    references users(id),
+          user_id        integer    not null    references users(id) on delete cascade,
           ap_to          varchar[],
           cc             varchar[],
           bcc            varchar[],
@@ -16,5 +16,5 @@
           mentions       varchar[],
           created_at     timestamp  not null    default now()
         );"]
-  :down ["drop table activities;"]
+  :down ["drop table objects;"]
 }
