@@ -26,7 +26,7 @@
        statuses/routes
        ["/swagger.json"
         {:get {:no-doc true
-               :swagger {:info {:title "kitsune API"}}
+               :swagger {:info {:title "Kitsune API"}}
                :handler (create-swagger-handler)}}]]
       {:validate ring-spec/validate-spec!
        :data {:coercion spec/coercion
