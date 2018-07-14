@@ -7,7 +7,7 @@
 
 ; TODO: use proper check
 (s/def ::in-reply-to
-  string?)
+  int?)
 (s/def ::attachments
   coll?)
 (s/def ::to

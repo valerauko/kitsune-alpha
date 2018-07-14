@@ -13,16 +13,15 @@
   []
   (str "http://" "localhost:3000" "/activities/" "uuid"))
 
-(defn create-status
+(defn create-status!
   [people data]
   (jdbc/with-db-transaction [tx conn]
     (if-let [object (create-object! tx (merge {:type "Note"
                                                :uri (new-status-uri)}
                                               people
                                               data))]
-      (when-let [activity (create-activity! tx (merge {:type "Create"
+      (if-let [activity (create-activity! tx (merge {:type "Create"
                                                      :uri (new-activity-uri)}
                                                     people
                                                     {:object-id (:id object)}))]
-        (println object activity)
         {:object object :activity activity}))))

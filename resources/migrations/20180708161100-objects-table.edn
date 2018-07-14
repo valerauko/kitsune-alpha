@@ -12,7 +12,7 @@
           summary        text,
           content        text       not null,
           attachments    varchar[],
-          hashtags       varchar[],
+          tags           varchar[],
           mentions       varchar[],
           created_at     timestamp  not null    default now()
         );"]

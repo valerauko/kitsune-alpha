@@ -11,3 +11,7 @@ insert into activities
 values
   (:uri, :object-id, :type, :user-id, array[:v*:to]::varchar[], array[:v*:cc]::varchar[])
 returning *
+
+-- :name delete-object! :! :n
+delete from objects
+  where id = :id and user_id = :user-id
