@@ -14,6 +14,11 @@ update users
   where name = :name
   returning name, display_name, created_at
 
+-- :name touch-last-login! :<! :n
+update users
+  set last_login = now()
+  where id = :id
+
 -- :name destroy! :<! :1
 delete from users
   where name = :name

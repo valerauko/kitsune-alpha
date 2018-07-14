@@ -2,6 +2,7 @@
   (:require [ring.util.http-response :refer :all]
             [org.bovinegenius [exploding-fish :as uri]]
             [clojure.string :refer [split join]]
+            [clojure.core.async :refer [go]]
             [kitsune.handlers.core :refer [defhandler url-decode]]
             [kitsune.db.oauth :as db]
             [kitsune.db.user :as user-db]
@@ -125,11 +126,14 @@
                      "password" (exc-pass app (assoc params :username
                                                      (or username name)))
                      nil)]
-      ; if ok
-      (ok {:token-type "Bearer"
-           :access-token (:token token)
-           :refresh-token (:refresh token)
-           :expires-in 600
-           :scope (join " " (:scopes token))})
+      (do
+        ; update user's last seen timestamp async
+        ; this includes token refreshes too so it's accurate to 10 minutes
+        (go (user-db/touch-last-login! conn))
+        (ok {:token-type "Bearer"
+             :access-token (:token token)
+             :refresh-token (:refresh token)
+             :expires-in 600
+             :scope (join " " (:scopes token))}))
       (forbidden {:error "Invalid credentials"}))
     (forbidden {:error "Invalid client credentials"})))
