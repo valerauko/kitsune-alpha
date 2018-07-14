@@ -14,12 +14,7 @@
                             :body any?}}
            :handler auth-form}
      :post {:swagger {:produces #{"text/html"}}
-            :parameters {:body {:name ::user-spec/name
-                                :password string?
-                                :client-id ::oauth-spec/client-id
-                                :scopes ::oauth-spec/scopes
-                                :redirect-uri string?
-                                :state string?}}
+            :parameters {:body ::oauth-spec/authorize-params}
             :responses
               {200 {:description "When no redirect URI is specified for the app
                                   in question, a HTML page is rendered with the
@@ -32,8 +27,8 @@
    ["/token"
     {:post {:summary "OAuth token exchange / refresh"
             :swagger {:produces #{"application/json"}}
-            :parameters {:body ::oauth-spec/exchange-request
-                         :header {:authorization string?}}
+            :parameters (merge {:body ::oauth-spec/exchange-request}
+                               oauth-spec/header-params)
             :responses {403 {:description "Authn/authz failed."
                              :body {:error string?}}
                         200 {:description "On success returns new token"

@@ -10,6 +10,7 @@
              :min-count 1 :max-count 3))
 ; TODO: proper url validation
 (s/def ::website string?)
+(s/def ::redirect-uri string?)
 (s/def ::redirect-uris string?)
 
 (s/def ::create-app
@@ -28,6 +29,13 @@
 (s/def ::register-response
   (s/keys :req-un [::id ::client-id ::secret]))
 
+(s/def ::authorization
+  (s/and string?
+         #(re-matches #"(?:Bearer|Basic) \S+")))
+
+(def header-params
+  {:header (s/keys :opt-un [::authorization])})
+
 (defn valid-scope
   [input]
   (let [scopes (split input #"\s+")]
@@ -38,6 +46,11 @@
 (s/def ::username ::user/name)
 (s/def ::password ::user/pass)
 (s/def ::grant-type #{"authorization_code" "password" "refresh_token"})
+
+(s/def ::state string?)
+(s/def ::authorize-params
+  (s/keys :req-un [::user/name ::password ::client-id]
+          :opt-un [::redirect-uri ::scopes ::state]))
 
 (s/def ::exchange-by-auth
   (s/keys :req-un [::username ::password]))

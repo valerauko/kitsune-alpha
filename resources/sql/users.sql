@@ -21,3 +21,6 @@ delete from users
 
 -- :name find-for-auth :? :1
 select id from users where name = :name and pass_hash = :pass-hash
+
+-- :name find-by-id :? :1
+select * from users where id = :id
