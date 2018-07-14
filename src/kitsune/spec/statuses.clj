@@ -9,11 +9,11 @@
 (s/def ::in-reply-to
   int?)
 (s/def ::attachments
-  coll?)
+  vector?)
 (s/def ::to
-  coll?)
+  vector?)
 (s/def ::cc
-  coll?)
+  vector?)
 
 (s/def ::create-status-request
   (s/keys :req-un [::text]
