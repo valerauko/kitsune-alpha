@@ -42,3 +42,7 @@
          :urls {:streaming-api (str (uri/scheme (url) "wss"))}
          :languages #{"en"}
          :contact-account (present/account admin)})))
+
+(defhandler emoji
+  [_]
+  (ok [])) ; TODO

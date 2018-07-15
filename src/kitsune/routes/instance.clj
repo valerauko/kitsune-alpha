@@ -1,6 +1,6 @@
 (ns kitsune.routes.instance
   (:require [kitsune.handlers.instance :refer [node-schema node-info
-                                               instance-info]]))
+                                               instance-info emoji]]))
 
 (def routes
   [["/api"
@@ -11,7 +11,7 @@
                          :handler instance-info}}]
      ["/custom_emojis" {:summary "List of custom emoji on this instance"
                         :get {:responses {200 {:body vector?}}
-                              :handler #([])}}]]] ; TODO
+                              :handler emoji}}]]]
    ["/.well-known"
     ["/nodeinfo"
      {:swagger {:tags ["Instance info"]}}
