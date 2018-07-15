@@ -2,6 +2,7 @@
   (:require [hugsql.core :refer [def-db-fns]]
             [buddy.core.hash :as hash]
             [kitsune.db.core :refer [conn]]
+            [kitsune.instance :refer [url]]
             [buddy.core.codecs :refer [bytes->hex]]))
 
 (def-db-fns "sql/users.sql")
@@ -14,6 +15,7 @@
   [user]
   (-> user
     (assoc :pass-hash (-> user :pass hash-pass))
+    (assoc :uri (-> user :name (#(str "/people/" %)) url str))
     (dissoc :pass :pass-confirm)))
 
 (defn for-login
