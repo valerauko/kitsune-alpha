@@ -3,7 +3,7 @@
             [org.bovinegenius [exploding-fish :as uri]]
             [kitsune.handlers.core :refer [defhandler]]
             [kitsune.db.core :refer [conn]]
-            [kitsune.db.stats :as db]
+            [kitsune.db.instance :as db]
             [kitsune.db.user :as user-db]
             [kitsune.presenters.mastodon :as present]
             [kitsune.config :refer [url version]]))
