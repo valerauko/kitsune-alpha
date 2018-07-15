@@ -1,13 +1,17 @@
-(ns kitsune.presenters.mastodon)
+(ns kitsune.presenters.mastodon
+  (:require [kitsune.instance :refer [url]]
+            [org.bovinegenius [exploding-fish :refer [host]]]))
 
 (defn account
   [record]
   {:id (:id record)
    :username (:name record)
-   :acct ""
+   :acct (if (:local record)
+           (:name record)
+           (str (:name record) "@" (host (:uri record))))
    :display-name (:display-name record)
    :locked false
-   :created-at (:create-at record)
+   :created-at (:created-at record)
    :followers-count 0
    :following-count 0
    :statuses-count 0
