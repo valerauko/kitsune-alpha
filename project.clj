@@ -1,4 +1,4 @@
-(defproject kitsune "0.1.0-SNAPSHOT"
+(defproject social.kitsune/kitsune "0.1.0"
   :description "Very fox microblogging service"
   :url "http://example.com/FIXME"
   :license {:name "GNU AFFERO GENERAL PUBLIC LICENSE"
@@ -9,21 +9,22 @@
                  [aleph "0.4.6"]
                  [ring-logger "1.0.1"]
                  [camel-snake-kebab "0.4.0"]
-                 [buddy/buddy-core "1.4.0"]
-                 [metosin/reitit "0.1.2"]
+                 [buddy/buddy-core "1.5.0"]
+                 [metosin/reitit "0.1.3"]
                  [metosin/muuntaja "0.5.0"]
                  [metosin/ring-http-response "0.9.0"]
                  [ring/ring-defaults "0.3.2"]
                  [org.bovinegenius/exploding-fish "0.3.5"]
-                 [org.postgresql/postgresql "42.2.2"]
+                 [org.postgresql/postgresql "42.2.4"]
                  [com.layerware/hugsql "0.4.9"]
-                 [hikari-cp "2.5.0"]
+                 [hikari-cp "2.6.0"]
                  [ragtime "0.7.2"]
-                 [kitsune/vuk "0.0.2"]]
+                 [social.kitsune/vuk "0.0.2"]]
   :aliases {"migrate"  ["run" "-m" "kitsune.db.migrations/migrate"]
             "rollback" ["run" "-m" "kitsune.db.migrations/rollback"]}
   :main ^:skip-aot kitsune.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}
              :dev {:dependencies [[ring/ring-devel "1.7.0-RC1"]]
-                   :plugins [[jonase/eastwood "0.2.6"]]}})
+                   :plugins [[jonase/eastwood "0.2.6"]
+                             [lein-ancient "0.6.15"]]}})
