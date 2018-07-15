@@ -1,4 +1,9 @@
 {:env "dev"
+ :instance
+  {:name "Kitsune"
+   :description "Very fox microblogging"
+   :admin-email "admin@kitsune.social"
+   :admin-account 1}
  :server
   {:host "localhost"
    :port 3000

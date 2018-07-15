@@ -7,6 +7,9 @@
 (def config
   (load-config))
 
+(def instance
+  (cursor config :instance))
+
 (def db-config
   (cursor config :db))
 
