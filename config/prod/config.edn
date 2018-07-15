@@ -1,0 +1,6 @@
+{:server
+  {:host "kitsune.social"
+   :protocol "https"}
+ :db
+  {:host "localhost"
+   :db   "kitsune"}}

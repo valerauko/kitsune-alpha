@@ -31,7 +31,7 @@
 
 (s/def ::authorization
   (s/and string?
-         #(re-matches #"(?:Bearer|Basic) \S+")))
+         #(re-matches #"(?:Bearer|Basic) \S+" %)))
 
 (def header-params
   {:header (s/keys :opt-un [::authorization])})

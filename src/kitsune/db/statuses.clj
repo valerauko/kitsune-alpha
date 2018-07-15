@@ -1,17 +1,23 @@
 (ns kitsune.db.statuses
   (:require [kitsune.db.core :refer [conn]]
+            [kitsune.config :refer [url]]
             [hugsql.core :refer [def-db-fns]]
-            [clojure.java.jdbc :as jdbc]))
+            [clojure.java.jdbc :as jdbc])
+  (:import java.util.UUID))
 
 (def-db-fns "sql/activitypub.sql")
 
+(defn uuid
+  []
+  (.toString (UUID/randomUUID)))
+
 (defn new-status-uri
   []
-  (str "http://" "localhost:3000" "/objects/" "uuid"))
+  (str (url (str "/objects/" (uuid)))))
 
 (defn new-activity-uri
   []
-  (str "http://" "localhost:3000" "/activities/" "uuid"))
+  (str (url (str "/activities/" (uuid)))))
 
 (defn create-status!
   [people data]

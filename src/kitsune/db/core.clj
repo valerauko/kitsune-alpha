@@ -3,15 +3,16 @@
             [hugsql.core]
             [clojure.java.jdbc :as jdbc]
             [camel-snake-kebab.extras :refer [transform-keys]]
-            [camel-snake-kebab.core :refer [->kebab-case-keyword]])
+            [camel-snake-kebab.core :refer [->kebab-case-keyword]]
+            [kitsune.config :refer [db-config]])
   (:import org.postgresql.jdbc.PgArray))
 
 (def options
-  {:server-name   "kitsune_db"
+  {:server-name   (db-config :host)
    :adapter       "postgresql"
-   :database-name "kitsune"
-   :username      "kitsune"
-   :password      "whatever"})
+   :database-name (db-config :db)
+   :username      (db-config :user)
+   :password      (db-config :pass)})
 
 (def conn
   {:datasource (make-datasource options)})

@@ -6,6 +6,7 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/core.async "0.4.474"]
                  [ch.qos.logback/logback-classic "1.2.3"]
+                 [cprop "0.1.11"]
                  [aleph "0.4.6"]
                  [ring-logger "1.0.1"]
                  [camel-snake-kebab "0.4.0"]
@@ -24,7 +25,9 @@
             "rollback" ["run" "-m" "kitsune.db.migrations/rollback"]}
   :main ^:skip-aot kitsune.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}
+  :profiles {:uberjar {:aot :all
+                       :source-paths ["config/prod"]}
              :dev {:dependencies [[ring/ring-devel "1.7.0-RC1"]]
+                   :source-paths ["config/dev"]
                    :plugins [[jonase/eastwood "0.2.6"]
                              [lein-ancient "0.6.15"]]}})
