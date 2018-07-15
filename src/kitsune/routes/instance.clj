@@ -5,6 +5,7 @@
 (def routes
   [["/api"
     ["/v1"
+     {:swagger {:tags ["Instance info"]}}
      ["/instance" {:summary "Basic information about the instance"
                    :get {:responses {200 {:body map?}}
                          :handler instance-info}}]
@@ -13,7 +14,7 @@
                               :handler #([])}}]]] ; TODO
    ["/.well-known"
     ["/nodeinfo"
-     {:swagger {:tags ["NodeInfo"]}}
+     {:swagger {:tags ["Instance info"]}}
      ["" {:summary "Nodeinfo schema"
           :get {:responses {200 {:body {:links vector?}}}
                 :handler node-schema}}]
