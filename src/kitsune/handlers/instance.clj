@@ -6,9 +6,7 @@
             [kitsune.db.instance :as db]
             [kitsune.db.user :as user-db]
             [kitsune.presenters.mastodon :as present]
-            [kitsune.instance :refer [url version]]))
-
-(defn get-instance-settings [] {})
+            [kitsune.instance :refer [url version instance]]))
 
 (defhandler node-schema
   [_]
@@ -35,13 +33,12 @@
 
 (defhandler instance-info
   [_]
-  (let [settings (get-instance-settings)
-        admin (user-db/find-by-id conn {:id (:admin settings)})]
+  (let [admin (user-db/find-by-id conn {:id (instance :admin-account)})]
     (ok {:uri (str (url))
-         :title (:title settings)
-         :description (:description settings)
-         :email (:admin-email settings)
+         :title (instance :name)
+         :description (instance :description)
+         :email (instance :admin-email)
          :version (str "2.3.3 (compatible; Kitsune " version ")")
          :urls {:streaming-api (str (uri/scheme (url) "wss"))}
-         :languages (:languages settings)
+         :languages #{"en"}
          :contact-account (present/account admin)})))
