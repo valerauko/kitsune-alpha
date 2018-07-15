@@ -13,8 +13,8 @@
             [kitsune.routes.user :as user]
             [kitsune.routes.oauth :as oauth]
             [kitsune.routes.webfinger :as webfinger]
-            [kitsune.routes.mastodon :as mastodon]
-            [kitsune.routes.statuses :as statuses]))
+            [kitsune.routes.statuses :as statuses]
+            [kitsune.routes.instance :as instance]))
 
 (def routes
   (ring/ring-handler
@@ -22,7 +22,7 @@
       [user/routes
        webfinger/routes
        oauth/routes
-       mastodon/routes
+       instance/routes
        statuses/routes
        ["/swagger.json"
         {:get {:no-doc true
@@ -47,6 +47,7 @@
 
 (def handler
   (-> routes
+      wrap-reload
       (wrap-defaults api-defaults)
       (wrap-log-response {:transform-fn log-transformer})))
 

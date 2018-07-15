@@ -1,0 +1,12 @@
+{:env "prod"
+ :instance
+  {:name "Kitsune"
+   :description "Very fox microblogging"
+   :admin-email "admin@kitsune.social"
+   :admin-account 1}
+ :server
+  {:host "kitsune.social"
+   :protocol "https"}
+ :db
+  {:host "localhost"
+   :db   "kitsune"}}

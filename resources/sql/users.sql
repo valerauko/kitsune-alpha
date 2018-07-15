@@ -1,8 +1,8 @@
 -- :name create! :<! :1
 -- :doc Creates a new user record and returns its ID
 insert into users
-  (name, email, pass_hash)
-  values (:name, :email, :pass-hash)
+  (name, email, uri, pass_hash)
+  values (:name, :email, :uri, :pass-hash)
   returning name
 
 -- :name lookup :? :1
@@ -13,6 +13,11 @@ update users
   set display_name = :display-name
   where name = :name
   returning name, display_name, created_at
+
+-- :name touch-last-login! :<! :n
+update users
+  set last_login = now()
+  where id = :id
 
 -- :name destroy! :<! :1
 delete from users
