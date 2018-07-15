@@ -4,7 +4,7 @@
             [clojure.java.jdbc :as jdbc]
             [camel-snake-kebab.extras :refer [transform-keys]]
             [camel-snake-kebab.core :refer [->kebab-case-keyword]]
-            [kitsune.config :refer [db-config]])
+            [kitsune.instance :refer [db-config]])
   (:import org.postgresql.jdbc.PgArray))
 
 (def options

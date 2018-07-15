@@ -1,4 +1,4 @@
-(ns kitsune.config
+(ns kitsune.instance
   (:require [cprop.core :refer [load-config cursor]]
             [org.bovinegenius [exploding-fish :refer [uri path]]]))
 

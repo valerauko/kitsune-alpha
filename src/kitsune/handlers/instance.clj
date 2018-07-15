@@ -6,7 +6,7 @@
             [kitsune.db.instance :as db]
             [kitsune.db.user :as user-db]
             [kitsune.presenters.mastodon :as present]
-            [kitsune.config :refer [url version]]))
+            [kitsune.instance :refer [url version]]))
 
 (defn get-instance-settings [] {})
 
