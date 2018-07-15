@@ -13,6 +13,9 @@
 (def server-config
   (cursor config :server))
 
+(def env
+  (config :env))
+
 (defn url
   ([]
     (uri {:scheme (server-config :protocol)
