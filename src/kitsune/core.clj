@@ -1,44 +1,11 @@
 (ns kitsune.core
   (:require [aleph.http :as http]
-            [reitit.ring :as ring]
-            [reitit.ring.spec :as ring-spec]
-            [reitit.ring.coercion :as coerce]
-            [reitit.coercion.spec :as spec]
-            [reitit.swagger :refer [swagger-feature create-swagger-handler]]
-            [reitit.swagger-ui :refer [create-swagger-ui-handler]]
             [muuntaja.middleware :refer [wrap-format]]
             [ring.logger :refer [wrap-log-response]]
-            [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
-            [kitsune.routes.user :as user]
-            [kitsune.routes.oauth :as oauth]
-            [kitsune.routes.webfinger :as webfinger]
-            [kitsune.routes.statuses :as statuses]
-            [kitsune.routes.instance :as instance]))
-
-(def routes
-  (ring/ring-handler
-    (ring/router
-      [user/routes
-       webfinger/routes
-       oauth/routes
-       instance/routes
-       statuses/routes
-       ["/swagger.json"
-        {:get {:no-doc true
-               :swagger {:info {:title "Kitsune API"}}
-               :handler (create-swagger-handler)}}]]
-      {:validate ring-spec/validate-spec!
-       :data {:coercion spec/coercion
-              :swagger {:id ::api}
-              :middleware [wrap-format
-                           swagger-feature]}})
-                           ; coerce/coerce-exceptions-middleware
-                           ; coerce/coerce-request-middleware
-                           ; coerce/coerce-response-middleware]}})
-    (ring/routes
-      (create-swagger-ui-handler {:path "/swagger"})
-      (fn [& req] {:status 404 :body {:error "Not found"} :headers {}}))))
+            [kitsune.instance :refer [server-config]]
+            [kitsune.routes.core :as routes])
+  (:gen-class))
 
 (defn log-transformer
   [{{:keys [request-method uri status ring.logger/ms]} :message :as opt}]
@@ -46,12 +13,12 @@
     (str request-method " " status " in " (format "%3d" ms) "ms: " uri)))
 
 (def handler
-  (-> routes
-      wrap-reload
+  (-> routes/handler
+      wrap-format
       (wrap-defaults api-defaults)
       (wrap-log-response {:transform-fn log-transformer})))
 
 (defn -main []
   (http/start-server
     handler
-    {:port 3000 :compression true}))
+    {:port (server-config :port) :compression true}))
