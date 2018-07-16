@@ -5,10 +5,9 @@
             [clojure.tools.logging :as log]
             [ring.logger :refer [wrap-log-response]]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
-            [kitsune.instance :refer [server-config env]]
+            [kitsune.instance :refer [config]]
             [kitsune.env :as env]
             [kitsune.routes.core :as routes]
-        ;    [kitsune.db.core :refer [datasource]]
             [kitsune.db.migrations :as migrations])
   (:gen-class))
 
@@ -25,7 +24,7 @@
           wrap-format
           (wrap-defaults api-defaults)
           (wrap-log-response {:transform-fn log-transformer}))
-      {:port (:port server-config)
+      {:port (get-in config [:server :port])
        :compression true}))
 
 (defn stop-kitsune
@@ -42,10 +41,12 @@
 
 (defn -main [& args]
   (cond
-    (some #{"db:migrate"} args) (do (start #'kitsune.db.core/datasource)
-                                    (migrations/migrate)
-                                    (System/exit 0))
-    (some #{"db:rollback"} args) (do (start #'kitsune.db.core/datasource)
-                                     (migrations/rollback)
-                                     (System/exit 0))
+    (some #{"migrate"} args) (do (start #'kitsune.instance/config
+                                        #'kitsune.db.core/conn)
+                                 (migrations/migrate)
+                                 (System/exit 0))
+    (some #{"rollback"} args) (do (start #'kitsune.instance/config
+                                         #'kitsune.db.core/conn)
+                                  (migrations/rollback)
+                                  (System/exit 0))
     :else (start-kitsune)))

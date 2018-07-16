@@ -6,12 +6,12 @@
             [kitsune.db.instance :as db]
             [kitsune.db.user :as user-db]
             [kitsune.presenters.mastodon :as present]
-            [kitsune.instance :refer [url version instance]]))
+            [kitsune.instance :refer [url version config]]))
 
 (defhandler node-schema
   [_]
   (ok {:links [{:rel "http://nodeinfo.diaspora.software/ns/schema/2.0"
-                :href (url "/nodeinfo/2.0")}]}))
+                :href (str (url "/nodeinfo/2.0"))}]}))
 
 (defhandler node-info
   [_]
@@ -33,11 +33,12 @@
 
 (defhandler instance-info
   [_]
-  (let [admin (user-db/find-by-id conn {:id (instance :admin-account)})]
+  (let [admin (user-db/find-by-id conn
+                {:id (get-in config [:instance :admin-account])})]
     (ok {:uri (str (url))
-         :title (instance :name)
-         :description (instance :description)
-         :email (instance :admin-email)
+         :title (get-in config [:instance :name])
+         :description (get-in config [:instance :description])
+         :email (get-in config [:instance :admin-email])
          :version (str "2.3.3 (compatible; Kitsune " version ")")
          :urls {:streaming-api (str (uri/scheme (url) "wss"))}
          :languages #{"en"}

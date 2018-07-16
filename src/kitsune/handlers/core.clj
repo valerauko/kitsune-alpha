@@ -1,6 +1,6 @@
 (ns kitsune.handlers.core
   (:require [ring.util.http-response :refer [internal-server-error]]
-            [kitsune.instance :refer [env]]
+            [kitsune.instance :refer [config]]
             [clojure.tools.logging :as log])
   (:import java.net.URLDecoder))
 
@@ -13,7 +13,7 @@
        (catch Throwable e#
          (log/error e#)
          (internal-server-error {:error ; don't respond with error details unless in dev
-                                        (if (= env "dev")
+                                        (if (= (config :env) "dev")
                                           (str e#)
                                           "Unexpected error. Sorry.")})))))
 

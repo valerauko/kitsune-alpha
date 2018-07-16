@@ -7,7 +7,7 @@
  :server
   {:host nil
    :port 80
-   :protocol "http"}
+   :scheme "http"}
  :db
   {:host "kitsune_db"
    :db   "kitsune"

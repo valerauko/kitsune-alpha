@@ -5,19 +5,16 @@
             [clojure.java.jdbc :as jdbc]
             [camel-snake-kebab.extras :refer [transform-keys]]
             [camel-snake-kebab.core :refer [->kebab-case-keyword]]
-            [kitsune.instance :refer [db-config]])
+            [kitsune.instance :refer [config]])
   (:import org.postgresql.jdbc.PgArray))
 
-(defstate datasource
-  :start (make-datasource {:server-name   (db-config :host)
-                           :adapter       "postgresql"
-                           :database-name (db-config :db)
-                           :username      (db-config :user)
-                           :password      (db-config :pass)})
-  :stop (close-datasource datasource))
-
-(def conn
-  {:datasource datasource})
+(defstate conn
+  :start
+  {:datasource (make-datasource {:server-name   (get-in config [:db :host])
+                                 :adapter       "postgresql"
+                                 :database-name (get-in config [:db :db])
+                                 :username      (get-in config [:db :user])
+                                 :password      (get-in config [:db :pass])})})
 
 (extend-protocol jdbc/IResultSetReadColumn
   org.postgresql.jdbc.PgArray
