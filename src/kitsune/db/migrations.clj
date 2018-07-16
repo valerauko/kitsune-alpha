@@ -4,10 +4,10 @@
             [kitsune.db.core :as db]))
 
 (def config
-  { :datastore  (jdbc/sql-database db/conn)
-    :migrations (jdbc/load-resources "migrations") })
+  {:datastore  (jdbc/sql-database db/conn)
+   :migrations (jdbc/load-resources "migrations")})
 
-(defn migrate[]
+(defn migrate []
   (repl/migrate config))
 
 (defn rollback []

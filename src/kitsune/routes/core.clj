@@ -35,5 +35,5 @@
                           ; coerce/coerce-request-middleware
                            coerce/coerce-response-middleware]}})
     (ring/routes
-      (create-swagger-ui-handler {:path "/swagger"})
+      (create-swagger-ui-handler {:path "/swagger" :jsonEditor true})
       (fn [& req] {:status 404 :body {:error "Not found"} :headers {}}))))
