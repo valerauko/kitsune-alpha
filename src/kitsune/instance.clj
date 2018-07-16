@@ -25,5 +25,4 @@
           :host (server-config :host)
           :port (server-config :port)}))
   ([new-path]
-    ; HACK: exploding fish won't update path unless string
-    (path (str (url)) new-path)))
+    (path (url) new-path)))

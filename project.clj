@@ -15,7 +15,7 @@
                  [metosin/muuntaja "0.5.0"]
                  [metosin/ring-http-response "0.9.0"]
                  [ring/ring-defaults "0.3.2"]
-                 [org.bovinegenius/exploding-fish "0.3.5"]
+                 [org.bovinegenius/exploding-fish "0.3.6"]
                  [org.postgresql/postgresql "42.2.4"]
                  [com.layerware/hugsql "0.4.9"]
                  [hikari-cp "2.6.0"]
