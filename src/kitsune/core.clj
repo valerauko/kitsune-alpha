@@ -1,57 +1,52 @@
 (ns kitsune.core
   (:require [aleph.http :as http]
-            [reitit.ring :as ring]
-            [reitit.ring.spec :as ring-spec]
-            [reitit.ring.coercion :as coerce]
-            [reitit.coercion.spec :as spec]
-            [reitit.swagger :refer [swagger-feature create-swagger-handler]]
-            [reitit.swagger-ui :refer [create-swagger-ui-handler]]
+            [mount.core :refer [defstate start stop]]
             [muuntaja.middleware :refer [wrap-format]]
+            [clojure.tools.logging :as log]
             [ring.logger :refer [wrap-log-response]]
-            [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
-            [kitsune.routes.user :as user]
-            [kitsune.routes.oauth :as oauth]
-            [kitsune.routes.webfinger :as webfinger]
-            [kitsune.routes.statuses :as statuses]
-            [kitsune.routes.instance :as instance]))
-
-(def routes
-  (ring/ring-handler
-    (ring/router
-      [user/routes
-       webfinger/routes
-       oauth/routes
-       instance/routes
-       statuses/routes
-       ["/swagger.json"
-        {:get {:no-doc true
-               :swagger {:info {:title "Kitsune API"}}
-               :handler (create-swagger-handler)}}]]
-      {:validate ring-spec/validate-spec!
-       :data {:coercion spec/coercion
-              :swagger {:id ::api}
-              :middleware [wrap-format
-                           swagger-feature]}})
-                           ; coerce/coerce-exceptions-middleware
-                           ; coerce/coerce-request-middleware
-                           ; coerce/coerce-response-middleware]}})
-    (ring/routes
-      (create-swagger-ui-handler {:path "/swagger"})
-      (fn [& req] {:status 404 :body {:error "Not found"} :headers {}}))))
+            [kitsune.instance :refer [config]]
+            [kitsune.env :as env]
+            [kitsune.routes.core :as routes]
+            [kitsune.db.migrations :as migrations])
+  (:gen-class))
 
 (defn log-transformer
   [{{:keys [request-method uri status ring.logger/ms]} :message :as opt}]
   (assoc opt :message
     (str request-method " " status " in " (format "%3d" ms) "ms: " uri)))
 
-(def handler
-  (-> routes
-      wrap-reload
-      (wrap-defaults api-defaults)
-      (wrap-log-response {:transform-fn log-transformer})))
+(defstate http-server
+  :start
+    (http/start-server
+      (-> routes/handler
+          env/wrap
+          wrap-format
+          (wrap-defaults api-defaults)
+          (wrap-log-response {:transform-fn log-transformer}))
+      {:port (get-in config [:server :port])
+       :compression true}))
 
-(defn -main []
-  (http/start-server
-    handler
-    {:port 3000 :compression true}))
+(defn stop-kitsune
+  []
+  (doseq [component (:stopped (stop))]
+    (log/info component "stopped"))
+  (shutdown-agents))
+
+(defn start-kitsune
+  []
+  (doseq [component (:started (start))]
+    (log/info component "started"))
+  (.addShutdownHook (Runtime/getRuntime) (Thread. ^Runnable stop-kitsune)))
+
+(defn -main [& args]
+  (cond
+    (some #{"migrate"} args) (do (start #'kitsune.instance/config
+                                        #'kitsune.db.core/conn)
+                                 (migrations/migrate)
+                                 (System/exit 0))
+    (some #{"rollback"} args) (do (start #'kitsune.instance/config
+                                         #'kitsune.db.core/conn)
+                                  (migrations/rollback)
+                                  (System/exit 0))
+    :else (start-kitsune)))
