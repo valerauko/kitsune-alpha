@@ -23,8 +23,8 @@
              (str env-host "/people/" name)]})
 
 (defhandler resource
-  [{{resource :resource} :query-params
-    {content-type :accept} :headers :as req}]
+  [{{resource :resource :or {resource ""}} :query-params
+    {content-type :accept :or {content-type "application/json"}} :headers}]
   (let [[user host] (->> resource (re-matches #"(?i)acct:(\w+)@(.+)") rest)]
     (if (= env-host host)
       (if-let [data (db/lookup conn {:name user})]
