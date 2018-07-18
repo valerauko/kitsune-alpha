@@ -30,14 +30,15 @@
      :responses {400 {:body {:error string?}}
                  403 {:body {:error string?}}
                  404 {:body {:error string?}}}}
-    ["/:id"
-     {:parameters {:path {:id int?}}
-      :get {:summary "User profile"
-            :responses {200 {:body any?}}
-            :handler user/show}
-      :patch {:summary "Update user profile"
+    ["/update_credentials"
+     {:patch {:summary "Update user profile"
               :middleware [oauth/bearer-auth
                           oauth/enforce-scopes]
               :parameters {:body ::spec/mastodon-update}
               :responses {200 {:body any?}}
-              :handler user/mastodon-update}}]]])
+              :handler user/mastodon-update}}]
+    ["/:id"
+     {:parameters {:path {:id int?}}
+      :get {:summary "User profile"
+            :responses {200 {:body any?}}
+            :handler user/show}}]]])

@@ -19,15 +19,11 @@
 
 (defhandler mastodon-update
   [{{:keys [display-name note locked]} :body-params
-     {id :id} :path-params
-     {:keys [user-id]} :auth :as req}]
-  (if (= (int! id) user-id)
-    ; TODO: consider all-empty request? should spec
-    (if-let [result (db/update! conn {:id user-id :display-name display-name})]
-      (ok (account result))
-      ; this can't really happen unless db fails
-      (bad-request {:error "Couldn't update your profile. Sorry."}))
-    (forbidden {:error "You can't update someone else's profile"})))
+    {:keys [user-id]} :auth :as req}]
+  ; TODO: consider all-empty request? should spec
+  (if-let [result (db/update! conn {:id user-id :display-name display-name})]
+    (ok (account result))
+    (bad-request {:error "Couldn't update your profile. Sorry."})))
 
 (defhandler destroy
   [{{name :name} :path-params :as req}]
