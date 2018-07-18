@@ -11,8 +11,8 @@ select name, display_name, created_at from users where name = :name
 -- :name update! :<! :1
 update users
   set display_name = :display-name
-  where name = :name
-  returning name, display_name, created_at
+  where id = :id
+  returning *
 
 -- :name touch-last-login! :<! :n
 update users
