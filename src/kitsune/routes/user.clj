@@ -40,6 +40,13 @@
                                  {:body ::spec/mastodon-update})
               :responses {200 {:body any?}}
               :handler user/mastodon-update}}]
+    ["/verify_credentials"
+     {:get {:summary "Account details of the current account"
+            :middleware [oauth/bearer-auth
+                         oauth/enforce-scopes]
+            :parameters auth-header-req
+            :responses {200 {:body any?}}
+            :handler user/self}}]
     ["/:id"
      {:parameters {:path {:id int?}}
       :get {:summary "User profile"

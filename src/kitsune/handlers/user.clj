@@ -4,7 +4,7 @@
             [kitsune.spec.user :as u]
             [kitsune.db.user :as db]
             [kitsune.db.core :refer [conn int!]]
-            [kitsune.presenters.mastodon :refer [account]]))
+            [kitsune.presenters.mastodon :refer [account self-account]]))
 
 (defhandler create
   [{{user :user} :body-params :as req}]
@@ -16,6 +16,12 @@
   (if-let [result (db/find-by-id conn {:id (int! id)})]
     (ok (account result))
     (not-found {:error "User not found"})))
+
+(defhandler self
+  [{{:keys [user-id]} :auth :as req}]
+  (if-let [result (db/find-by-id conn {:id user-id})]
+    (ok (self-account result))
+    (bad-request {:error "Couldn't fetch your profile. Sorry."})))
 
 (defhandler mastodon-update
   [{{:keys [display-name note locked]} :body-params
