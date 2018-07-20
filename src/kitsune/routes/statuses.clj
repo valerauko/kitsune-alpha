@@ -1,7 +1,7 @@
 (ns kitsune.routes.statuses
   (:require [clojure.spec.alpha :as s]
             [kitsune.wrappers.oauth :as oauth]
-            [kitsune.spec.oauth :refer [header-params]]
+            [kitsune.spec.oauth :refer [auth-header-opt]]
             [kitsune.spec.statuses :as spec]
             [kitsune.handlers.statuses :refer [create delete]]))
 
@@ -10,7 +10,7 @@
    ["/v1"
     ["/statuses"
      {:swagger {:tags ["Statuses"]}
-      :parameters header-params
+      :parameters auth-header-opt
       :responses {400 {:body {:error string?}}
                   403 {:body {:error string?}}
                   404 {:body {:error string?}}}}
