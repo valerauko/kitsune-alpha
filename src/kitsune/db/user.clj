@@ -1,5 +1,6 @@
 (ns kitsune.db.user
-  (:require [hugsql.core :refer [def-db-fns]]
+  (:require [clojure.string :refer [trim]]
+            [hugsql.core :refer [def-db-fns]]
             [buddy.core.hash :as hash]
             [kitsune.db.core :refer [conn]]
             [kitsune.instance :refer [url]]
@@ -55,11 +56,11 @@
       (uri/absolute? query)
         (search-by-uri query)
       ; admin@kitsune.social
-      (re-matches? #"^([^/]+)@([^@]+)$" query)
+      (re-matches #"^([^/]+)@([^@]+)$" query)
         (find-by-acct conn {:acct query})
       ; @admin
-      (re-matches? #"(?i)^@?[a-z0-9][a-z0-9-_]+$" query)
-        (find-by-name conn {:name (last (re-find #"(?i)@?(.+)"))})
+      (re-matches #"(?i)^@?[a-z0-9][a-z0-9-_]+$" query)
+        (find-by-name conn {:name (last (re-find #"(?i)@?(.+)" query))})
       ; kitsune.social/people/admin yes sadly that // is important
       :else
         (search-by-uri (str "//" query)))))
