@@ -39,7 +39,7 @@
                           - username@domain
                           - URL (both human-readable and AP)
                           It attempts lookups in that order."
-            :parameters {:body {:query string?}}
+            :parameters {:query {:query string?}}
             :responses {200 {:body any?}}
             :handler user/search}}]
     ["/update_credentials"
