@@ -32,6 +32,16 @@
      :responses {400 {:body {:error string?}}
                  403 {:body {:error string?}}
                  404 {:body {:error string?}}}}
+    ["/search"
+     {:get {:summary "Account search"
+            :description "Tries to find local or remote user. Can find any of:
+                          - username only
+                          - username@domain
+                          - URL (both human-readable and AP)
+                          It attempts lookups in that order."
+            :parameters {:body {:query string?}}
+            :responses {200 {:body any?}}
+            :handler user/search}}]
     ["/update_credentials"
      {:patch {:summary "Update user profile"
               :scopes #{"write"}

@@ -36,3 +36,9 @@
   (if-let [result (db/destroy! conn {:name name})]
     (ok result)
     (not-found {:error name})))
+
+(defhandler search
+  [{{raw-query :query} :body-params}]
+  (if-let [result (db/search raw-query)]
+    (ok result)
+    (not-found {:error "No known accounts match your search"})))
