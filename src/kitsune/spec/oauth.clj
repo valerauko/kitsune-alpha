@@ -33,8 +33,11 @@
   (s/and string?
          #(re-matches #"(?:Bearer|Basic) \S+" %)))
 
-(def header-params
+(def auth-header-opt
   {:header (s/keys :opt-un [::authorization])})
+
+(def auth-header-req
+  {:header (s/keys :req-un [::authorization])})
 
 (defn valid-scope
   [input]

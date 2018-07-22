@@ -22,6 +22,16 @@
    :header ""
    :header-static ""})
 
+(defn self-account
+  [record]
+  (merge
+    (account record)
+    {:source
+     {:privacy "public"
+      :sensitive false
+      :note ""
+      :fields {}}}))
+
 (defn status-hash
   [{:keys [object actor]}]
   {:id (:id object)

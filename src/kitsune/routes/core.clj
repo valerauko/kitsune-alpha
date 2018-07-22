@@ -27,7 +27,8 @@
                                 :version version}
                          :basePath "/"}
                :handler (create-swagger-handler)}}]]
-      {:validate ring-spec/validate-spec!
+      {:conflicts identity ; mastodon routes conflict all over the place so don't even log
+       :validate ring-spec/validate-spec!
        :data {:coercion spec/coercion
               :swagger {:id ::api}
               :middleware [swagger-feature

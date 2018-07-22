@@ -5,14 +5,11 @@ insert into users
   values (:name, :email, :uri, :pass-hash)
   returning name
 
--- :name lookup :? :1
-select name, display_name, created_at from users where name = :name
-
 -- :name update! :<! :1
 update users
   set display_name = :display-name
-  where name = :name
-  returning name, display_name, created_at
+  where id = :id
+  returning *
 
 -- :name touch-last-login! :<! :n
 update users
@@ -27,5 +24,14 @@ delete from users
 -- :name find-for-auth :? :1
 select id from users where name = :name and pass_hash = :pass-hash
 
+-- :name find-by-name :? :1
+select * from users where name = :name limit 1
+
 -- :name find-by-id :? :1
-select * from users where id = :id
+select * from users where id = :id limit 1
+
+-- :name find-by-uri :? :1
+select * from users where uri = :uri limit 1
+
+-- :name find-by-acct :? :1
+select * from users where acct = :acct limit 1

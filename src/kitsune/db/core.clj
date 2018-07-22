@@ -16,6 +16,15 @@
                                  :username      (get-in config [:db :user])
                                  :password      (get-in config [:db :pass])})})
 
+(defn int!
+  [input]
+  (if (number? input)
+    input
+    (try
+      (Integer/parseInt input)
+      (catch Exception _
+        0))))
+
 (extend-protocol jdbc/IResultSetReadColumn
   org.postgresql.jdbc.PgArray
   (result-set-read-column [value metadata index]

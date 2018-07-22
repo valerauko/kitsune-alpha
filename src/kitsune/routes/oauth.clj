@@ -38,7 +38,7 @@
      {:post {:summary "OAuth token exchange / refresh"
              :swagger {:produces #{"application/json"}}
              :parameters (merge {:body ::oauth-spec/exchange-request}
-                                oauth-spec/header-params)
+                                oauth-spec/auth-header-opt)
              :responses {403 {:description "Authn/authz failed."
                               :body {:error string?}}
                          200 {:description "On success returns new token"

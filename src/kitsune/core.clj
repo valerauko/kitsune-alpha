@@ -16,7 +16,7 @@
   (assoc opt :message
     (str request-method " " status " in " (format "%3d" ms) "ms: " uri)))
 
-(defstate http-server
+(defstate ^{:on-reload :noop} http-server
   :start
     (http/start-server
       (-> routes/handler
