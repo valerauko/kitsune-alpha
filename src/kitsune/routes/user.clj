@@ -34,6 +34,7 @@
                  404 {:body {:error string?}}}}
     ["/update_credentials"
      {:patch {:summary "Update user profile"
+              :scopes #{"write"}
               :middleware [oauth/bearer-auth
                            oauth/enforce-scopes]
               :parameters (merge auth-header-req
@@ -42,6 +43,7 @@
               :handler user/mastodon-update}}]
     ["/verify_credentials"
      {:get {:summary "Account details of the current account"
+            :scopes #{"read"}
             :middleware [oauth/bearer-auth
                          oauth/enforce-scopes]
             :parameters auth-header-req
