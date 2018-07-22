@@ -27,7 +27,7 @@
     {content-type :accept :or {content-type "application/json"}} :headers}]
   (let [[user host] (->> resource (re-matches #"(?i)acct:(\w+)@(.+)") rest)]
     (if (= env-host host)
-      (if-let [data (db/lookup conn {:name user})]
+      (if-let [data (db/find-by-name conn {:name user})]
         (ok (vuk/represent (user-map data) :as (extract-type content-type)))
         (not-found ""))
       (not-found ""))))
