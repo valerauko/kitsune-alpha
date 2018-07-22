@@ -2,7 +2,9 @@
 {
   :up ["create table if not exists users (
           id           serial    primary key,
-          name         varchar   not null unique,
+          name         varchar   not null,
+          acct         varchar   not null unique,
+          uri          varchar   not null unique,
           email        varchar   not null unique,
           pass_hash    varchar   not null,
           display_name varchar,

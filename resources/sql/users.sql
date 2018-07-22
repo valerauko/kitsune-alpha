@@ -29,3 +29,9 @@ select * from users where name = :name limit 1
 
 -- :name find-by-id :? :1
 select * from users where id = :id limit 1
+
+-- :name find-by-uri :? :1
+select * from users where uri = :uri limit 1
+
+-- :name find-by-acct :? :1
+select * from users where acct = :acct limit 1

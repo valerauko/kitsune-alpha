@@ -1,5 +1,0 @@
-;;
-{
-  :up ["alter table users add column acct string not null"]
-  :down ["alter table users drop column acct"]
-}
