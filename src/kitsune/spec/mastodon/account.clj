@@ -1,30 +1,20 @@
 (ns kitsune.spec.mastodon.account
   (:require [clojure.spec.alpha :as s]
-            [org.bovinegenius [exploding-fish :as uri]]))
+            [kitsune.spec.common :as common]))
 
-(s/def ::id pos-int?)
 (s/def ::username string?)
 (s/def ::acct string?)
 (s/def ::display-name string?)
 
-(s/def ::url
-  (s/with-gen
-    uri/absolute?
-    #(s/gen uri?)))
+(s/def ::url ::common/url)
 
 (s/def ::avatar ::url)
 (s/def ::avatar-static ::url)
 (s/def ::header ::url)
 (s/def ::header-static ::url)
 
-(s/def ::bool
-  (s/or :bool boolean?
-        :str #{"true" "false"}))
-
-(s/def ::locked ::bool)
-(s/def ::bot ::bool)
-
-(s/def ::created-at inst?)
+(s/def ::locked ::common/bool)
+(s/def ::bot ::common/bool)
 
 (s/def ::followers-count nat-int?)
 (s/def ::following-count nat-int?)
@@ -37,13 +27,14 @@
 (s/def ::name string?)
 (s/def ::value string?)
 (s/def ::field
-  (s/and (s/keys :req-un [::name ::value])
+  (s/keys :req-un [::name ::value]))
+(s/def ::fields
+  (s/and (s/coll-of ::field)
          #(< (count %) 5)))
-(s/def ::fields (s/coll-of ::field))
 
 (s/def ::account
-  (s/keys :req-un [::id ::username ::acct ::display-name ::url ::locked
+  (s/keys :req-un [::common/id ::username ::acct ::display-name ::url ::locked
                    ::avatar ::avatar-static ::header ::header-static
-                   ::created-at ::followers-count ::following-count
+                   ::common/created-at ::followers-count ::following-count
                    ::statuses-count ::note]
           :opt-un [::moved ::fields ::bot]))
