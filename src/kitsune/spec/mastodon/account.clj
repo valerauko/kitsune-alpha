@@ -32,6 +32,9 @@
   (s/and (s/coll-of ::field)
          #(< (count %) 5)))
 
+(s/def ::mention
+  (s/keys :req-un [::common/id ::url ::username ::acct]))
+
 (s/def ::account
   (s/keys :req-un [::common/id ::username ::acct ::display-name ::url ::locked
                    ::avatar ::avatar-static ::header ::header-static
