@@ -28,7 +28,8 @@
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
                        :source-paths ["config/prod"]}
-             :dev {:dependencies [[ring/ring-devel "1.7.0-RC1"]]
+             :dev {:dependencies [[ring/ring-devel "1.7.0-RC1"]
+                                  [org.clojure/test.check "0.9.0"]]
                    :source-paths ["config/dev"]
                    :plugins [[jonase/eastwood "0.2.6"]
                              [lein-ancient "0.6.15"]]}})
