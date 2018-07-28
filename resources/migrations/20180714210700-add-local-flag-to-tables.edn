@@ -1,9 +1,0 @@
-;;
-{
-  :up ["alter table users      add column local boolean not null default false;
-        alter table objects    add column local boolean not null default false;
-        alter table activities add column local boolean not null default false"]
-  :down ["alter table users      drop column local;
-          alter table objects    drop column local;
-          alter table activities drop column local"]
-}

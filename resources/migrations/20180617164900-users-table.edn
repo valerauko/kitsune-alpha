@@ -6,6 +6,7 @@
           acct         varchar   not null unique,
           uri          varchar   not null unique,
           email        varchar   not null unique,
+          local        boolean   not null default false,
           pass_hash    varchar   not null,
           display_name varchar,
           created_at   timestamp not null default now(),

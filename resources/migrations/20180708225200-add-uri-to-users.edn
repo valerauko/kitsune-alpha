@@ -1,6 +1,0 @@
-;;
-{
-  :up ["alter table users
-          add column uri varchar unique;"]
-  :down ["alter table users drop column uri;"]
-}
