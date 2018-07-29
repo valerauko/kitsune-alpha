@@ -53,3 +53,5 @@
           :opt-un [::url ::in-reply-to-id ::in-reply-to-account-id
                    ::reblog ::reblogged ::favourited ::muted
                    ::application/application ::language ::pinned]))
+
+(s/def ::statuses (s/coll-of ::status))
