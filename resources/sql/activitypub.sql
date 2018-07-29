@@ -21,6 +21,14 @@ from activities join objects on activities.object_id = objects.id
   where activities.id = :id::int
   limit 1
 
+-- :name user-activities :? :*
+select
+  activities.*, objects.uri as object_uri, objects.user_id as object_user_id,
+  objects.in_reply_to_id, objects.summary, objects.content,
+  objects.created_at as object_created_at
+from activities join objects on activities.object_id = objects.id
+  where activities.user_id = :user-id::int
+
 -- :name delete-object! :! :n
 delete from objects
   where id = :id and user_id = :user-id

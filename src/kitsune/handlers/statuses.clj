@@ -35,7 +35,7 @@
 (defhandler load-status
   ; The ID in the path is that of the Activity on the timeline.
   ; Loads a single status with all its accessories.
-  [{{id :id} :path-params :as req}]
+  [{{id :id} :path-params}]
   (if-let [result (db/activity-with-object conn {:id id})]
     ; TODO: load attachments, tags, mentions
     ; TODO: handle boosts (different user)
@@ -44,3 +44,14 @@
     (let [user (user-db/find-by-id conn {:id (:user-id result)})]
       (ok (status-hash {:object result :actor user})))
     (not-found {:error "Status not found"})))
+
+; TODO: this needs authentication but i don't have visibility yet
+(defhandler account-statuses
+  [{{id :id} :path-params}]
+  (if-let [result (db/user-activities conn {:user-id id})]
+    (ok (map
+          (fn [row]
+            (let [user (user-db/find-by-id conn {:id (:user-id row)})]
+              (status-hash {:object row :actor user})))
+          result))
+    (not-found {:error "User not found"})))
