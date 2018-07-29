@@ -3,7 +3,9 @@
             [kitsune.wrappers.oauth :as oauth]
             [kitsune.spec.oauth :refer [auth-header-opt]]
             [kitsune.spec.statuses :as spec]
-            [kitsune.handlers.statuses :refer [create delete]]))
+            [kitsune.spec.mastodon.status :as models]
+            [kitsune.handlers.statuses :refer
+              [load-status create delete]]))
 
 (def routes
   ["/api"
@@ -24,7 +26,9 @@
               :handler create}}]
      ["/:id"
       {:parameters {:path {:id int?}}
-       ;:get {:summary "Show one status"}
+       :get {:summary "Show one status"
+             :responses {200 {:body ::models/status}}
+             :handler load-status}
        :delete {:summary "Delete status"
                 :scopes #{"write"}
                 :middleware [oauth/bearer-auth
