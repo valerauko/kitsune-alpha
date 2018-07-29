@@ -6,6 +6,8 @@
             [kitsune.db.user :as user-db]
             [kitsune.presenters.mastodon :refer [status-hash]]))
 
+; a status is an Announce or Create activity wrapping a Note
+
 (defn process-status-text
   [text]
   text)
@@ -28,4 +30,28 @@
                                       :user-id (-> req :auth :user-id)})]
     (if (> rows 0)
       (ok {})
-      (not-found {:error "You don't seem to have a status like that"}))))
+      (not-found {:error "Status not found"}))))
+
+(defhandler load-status
+  ; The ID in the path is that of the Activity on the timeline.
+  ; Loads a single status with all its accessories.
+  [{{id :id} :path-params}]
+  (if-let [result (db/activity-with-object conn {:id id})]
+    ; TODO: load attachments, tags, mentions
+    ; TODO: handle boosts (different user)
+    ; TODO: calculate visibility
+    ; TODO: do urls correctly
+    (let [user (user-db/find-by-id conn {:id (:user-id result)})]
+      (ok (status-hash {:object result :actor user})))
+    (not-found {:error "Status not found"})))
+
+; TODO: this needs authentication but i don't have visibility yet
+(defhandler account-statuses
+  [{{id :id} :path-params}]
+  (if-let [result (db/user-activities conn {:user-id id})]
+    (ok (map
+          (fn [row]
+            (let [user (user-db/find-by-id conn {:id (:user-id row)})]
+              (status-hash {:object row :actor user})))
+          result))
+    (not-found {:error "User not found"})))

@@ -17,10 +17,10 @@
    :statuses-count 0
    :note ""
    :url (:uri record)
-   :avatar ""
-   :avatar-static ""
-   :header ""
-   :header-static ""})
+   :avatar "http://kitsune.social/dummy"
+   :avatar-static "http://kitsune.social/dummy"
+   :header "http://kitsune.social/dummy"
+   :header-static "http://kitsune.social/dummy"})
 
 (defn self-account
   [record]
@@ -42,7 +42,9 @@
    :emojis []
    :reblogs-count 0
    :favourites-count 0
+   :spoiler-text (str (:summary object))
+   :sensitive false
    :visibility "public"
-   :media-attachments (:attachments object)
-   :mentions (:mentions object)
-   :tags (:tags object)})
+   :media-attachments []
+   :mentions []
+   :tags []})

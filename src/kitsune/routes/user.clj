@@ -1,8 +1,10 @@
 (ns kitsune.routes.user
   (:require [kitsune.handlers.user :as user]
+            [kitsune.handlers.statuses :refer [account-statuses]]
             [kitsune.wrappers.oauth :as oauth]
             [kitsune.spec.oauth :refer [auth-header-opt auth-header-req]]
-            [kitsune.spec.user :as spec]))
+            [kitsune.spec.user :as spec]
+            [kitsune.spec.mastodon.status :as status-spec]))
 
 (def routes
   [["/people"
@@ -63,4 +65,11 @@
      {:parameters {:path {:id int?}}
       :get {:summary "User profile"
             :responses {200 {:body any?}}
-            :handler user/show}}]]])
+            :handler user/show}}
+     ["/statuses"
+      {:get {:summary "Statueses by user"
+             :scopes #{"read"}
+             :middleware [oauth/bearer-auth
+                          oauth/enforce-scopes]
+             :responses {200 {:body ::status-spec/statuses}}
+             :handler account-statuses}}]]]])
