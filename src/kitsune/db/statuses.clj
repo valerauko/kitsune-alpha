@@ -19,6 +19,17 @@
   []
   (str (url (str "/activities/" (uuid)))))
 
+; TODO: split into AP library
+(def public-id "https://www.w3.org/ns/activitystreams#Public")
+
+(defn visibility
+  [status]
+  (cond
+    (some #{public-id} (:to status)) :public
+    (some #{public-id} (:cc status)) :unlisted
+    (some #{(-> status :actor :followers)} (:to status)) :private
+    :else :direct))
+
 (defn create-status!
   [people data]
   (jdbc/with-db-transaction [tx conn]
