@@ -33,7 +33,7 @@
 (defhandler auth-result
   [auth]
   ; TODO: return an actual html page
-  ({:auth-code (:auth-code auth)}))
+  {:auth-code (:auth-code auth)})
 
 (defn uri-for-redirect
   [input {code :auth-code} state]
@@ -107,7 +107,7 @@
     (if-let [authz (db/use-authz! conn {:app-id (:id app)
                                         :auth-code auth-code})]
       (db/exchange-token! conn
-        (select-keys authz [:user-id :auth-id :scopes])))))
+        (select-keys authz [:user-id :app-id :scopes])))))
 
 (defn exc-refresh
   [app refresh-token]
@@ -129,7 +129,7 @@
       (do
         ; update user's last seen timestamp async
         ; this includes token refreshes too so it's accurate to 10 minutes
-        (go (user-db/touch-last-login! conn))
+        (go (user-db/touch-last-login! conn {:id (:user-id token)}))
         (ok {:token-type "Bearer"
              :access-token (:token token)
              :refresh-token (:refresh token)

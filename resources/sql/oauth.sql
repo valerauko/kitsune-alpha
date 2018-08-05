@@ -24,7 +24,7 @@ update oauth_auths
   set used = true
   where
     (not used) and
-    client_id = :client-id and
+    app_id = :app-id and
     auth_code = :auth-code and
     expires_at > now()
   returning user_id, app_id, scopes
@@ -32,7 +32,7 @@ update oauth_auths
 -- :name exchange-token! :<! :1
 insert into oauth_tokens (user_id, app_id, scopes)
   values (:user-id, :app-id, array[:v*:scopes])
-  returning token, refresh, scopes
+  returning user_id, token, refresh, scopes
 
 -- :name find-bearer :? :1
 select user_id, app_id, scopes from oauth_tokens

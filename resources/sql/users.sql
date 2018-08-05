@@ -1,8 +1,8 @@
 -- :name create! :<! :1
 -- :doc Creates a new user record and returns its ID
 insert into users
-  (name, email, uri, pass_hash)
-  values (:name, :email, :uri, :pass-hash)
+  (name, email, uri, acct, pass_hash)
+  values (:name, :email, :uri, :acct, :pass-hash)
   returning name
 
 -- :name update! :<! :1
