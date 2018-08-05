@@ -95,12 +95,12 @@ workflows:
   core_flow:
     jobs:
       - test
-      - lint
+      # - lint
       - hold:
           type: approval
           requires:
             - test
-            - lint
+          #  - lint
           filters:
             branches:
               only: master
