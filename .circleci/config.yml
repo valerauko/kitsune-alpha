@@ -40,6 +40,7 @@ jobs:
       - image: clojure:alpine
     environment:
       DEPLOY_HOST: kitsune.social
+      PROD_CONFIG: config.edn
     working_directory: ~/kitsune
     steps:
       - checkout
@@ -64,7 +65,7 @@ jobs:
           command: scp target/kitsune.jar circleci@$DEPLOY_HOST:.
       - run:
           name: "Finally start the server"
-          command: ssh circleci@$DEPLOY_HOST "pkill java; java -jar kitsune.jar"
+          command: ssh circleci@$DEPLOY_HOST "pkill java; java -Dconf=$PROD_CONFIG -jar kitsune.jar"
           background: true
       - run:
           name: "Keep connection open long enough to start the server"
