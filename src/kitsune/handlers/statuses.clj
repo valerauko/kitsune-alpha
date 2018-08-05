@@ -49,9 +49,9 @@
 (defhandler account-statuses
   [{{id :id} :path-params}]
   (if-let [result (db/user-activities conn {:user-id id})]
-    (ok (map
-          (fn [row]
-            (let [user (user-db/find-by-id conn {:id (:user-id row)})]
-              (status-hash {:object row :actor user})))
-          result))
+    (let [preloaded (db/preload-stuff result)
+          formatted (map #(status-hash {:object (dissoc % :actor)
+                                        :actor (:actor %)})
+                         preloaded)]
+      (ok formatted))
     (not-found {:error "User not found"})))
