@@ -2,6 +2,7 @@
   (:require [kitsune.db.core :refer [conn]]
             [kitsune.instance :refer [url]]
             [hugsql.core :refer [def-db-fns]]
+            [kitsune.db.user :as user-db]
             [clojure.java.jdbc :as jdbc])
   (:import java.util.UUID))
 
@@ -42,3 +43,30 @@
                                                     people
                                                     {:object-id (:id object)}))]
         {:object object :activity activity}))))
+
+(defn preload-stuff
+  "Preload:
+   * users (actor and object user)"
+  [activities]
+  (let [ids-list (reduce
+                   (fn [store activity]
+                     {:users (into
+                               (:users store)
+                               [(:user-id activity)
+                                (:object-user-id activity)])})
+                   {:users #{}}
+                   activities)
+        raw-vec (user-db/load-by-id conn {:ids (:users ids-list)})
+        preloaded {:users (reduce
+                            (fn [aggr row]
+                              (assoc aggr (:id row) row))
+                            {}
+                            raw-vec)}]
+    (println preloaded)
+    (reduce
+      (fn [aggr activity]
+        (conj aggr
+          (assoc activity :actor
+            (get-in preloaded [:users (:user-id activity)]))))
+      []
+      activities)))
