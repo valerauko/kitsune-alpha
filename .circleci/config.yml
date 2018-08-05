@@ -16,11 +16,9 @@ jobs:
       JVM_OPTS: -Xmx3200m
     steps:
       - checkout
-      # Download and cache dependencies
       - restore_cache:
           keys:
           - dependencies-{{ checksum "project.clj" }}
-          # fallback to using the latest cache if no exact match is found
           - dependencies-
       - run: lein deps
       - save_cache:
@@ -39,28 +37,38 @@ jobs:
       - run: lein test
   deploy:
     docker:
-      - image: clojure
-    working_directory: ~/books
+      - image: clojure:alpine
+    environment:
+      DEPLOY_HOST: kitsune.social
+    working_directory: ~/kitsune
     steps:
       - checkout
-      - run: touch .salt
+      - restore_cache:
+          keys:
+          - dependencies-{{ checksum "project.clj" }}
+          - dependencies-
+      - run: lein deps
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: dependencies-{{ checksum "project.clj" }}
       - run:
           name: "Compile jar"
           command: lein ring uberjar
       - run:
           name: Fix host authenticity for Linode
           command: |
-            ssh-keyscan 172.104.85.8 >> ~/.ssh/known_hosts
+            ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
       - run:
           name: "Copy jar to server"
-          command: scp target/books-0.1.0-standalone.jar circleci@172.104.85.8:.
+          command: scp target/kitsune.jar circleci@$DEPLOY_HOST:.
       - run:
           name: "Finally start the server"
-          command: ssh circleci@172.104.85.8 "pkill java; java -jar books-0.1.0-standalone.jar"
+          command: ssh circleci@$DEPLOY_HOST "pkill java; java -jar kitsune.jar"
           background: true
       - run:
           name: "Keep connection open long enough to start the server"
-          command: sleep 60
+          command: sleep 30
 
 workflows:
   version: 2
