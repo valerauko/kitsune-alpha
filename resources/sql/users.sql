@@ -35,3 +35,6 @@ select * from users where uri = :uri limit 1
 
 -- :name find-by-acct :? :1
 select * from users where acct = :acct limit 1
+
+-- :name load-by-id :? :*
+select * from users where id in (:v*:ids)
