@@ -29,7 +29,7 @@ jobs:
           key: dependencies-{{ checksum "project.clj" }}
       - run:
           name: Install Postgres client
-          command: apk update && apk install postgresql
+          command: apk update && apk add postgresql
       - run:
           name: Install required Postgres extensions
           command: echo "create extension hstore; create extension pgcrypto" | psql -U kitsune -h 127.0.0.1
