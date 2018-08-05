@@ -8,7 +8,6 @@
           user_id        integer    not null    references users(id) on delete cascade,
           ap_to          varchar[],
           cc             varchar[],
-          bcc            varchar[],
           in_reply_to_id varchar,
           summary        text,
           content        text       not null,
