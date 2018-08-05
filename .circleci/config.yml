@@ -3,6 +3,8 @@ jobs:
   test:
     docker:
       - image: clojure:alpine
+        environment:
+          DB__HOST: 127.0.0.1
       - image: postgres:alpine
         environment:
           POSTGRES_USER: kitsune
@@ -14,7 +16,6 @@ jobs:
       JVM_OPTS: -Xmx3200m
     steps:
       - checkout
-      - run: apk update && apk upgrade
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -26,6 +27,15 @@ jobs:
           paths:
             - ~/.m2
           key: dependencies-{{ checksum "project.clj" }}
+      - run:
+          name: Install Postgres client
+          command: apk update && apk install postgresql
+      - run:
+          name: Install required Postgres extensions
+          command: echo "create extension hstore; create extension pgcrypto" | psql -U kitsune -h 127.0.0.1
+      - run:
+          name: Migrate DB
+          command: lein run migrate
       - run: lein test
   deploy:
     docker:
