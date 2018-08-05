@@ -13,13 +13,6 @@
   [str]
   (-> str hash/sha3-512 bytes->hex))
 
-(defn process-for-create
-  [user]
-  (-> user
-    (assoc :pass-hash (-> user :pass hash-pass))
-    (assoc :uri (-> user :name (#(str "/people/" %)) url str))
-    (dissoc :pass :pass-confirm)))
-
 (defn for-login
   [name pass]
   (find-for-auth
@@ -33,6 +26,16 @@
         path (uri/path uri)
         name (last (re-find #"([^@/]+)$" (or path "")))]
     (str name "@" host)))
+
+(defn process-for-create
+  [user]
+  (let [uri (-> user :name (#(str "/people/" %)) url str)
+        acct (uri-to-acct uri)]
+    (-> user
+      (assoc :pass-hash (-> user :pass hash-pass))
+      (assoc :uri uri)
+      (assoc :acct acct)
+      (dissoc :pass :pass-confirm))))
 
 (defn search-by-uri
   [uri]

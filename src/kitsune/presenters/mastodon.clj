@@ -6,10 +6,8 @@
   [record]
   {:id (:id record)
    :username (:name record)
-   :acct (if (:local record)
-           (:name record)
-           (str (:name record) "@" (host (:uri record))))
-   :display-name (:display-name record)
+   :acct (:acct record)
+   :display-name (or (:display-name record) (:name record))
    :locked false
    :created-at (:created-at record)
    :followers-count 0

@@ -16,7 +16,7 @@
                  404 {:body {:error string?}}}}
     [""
      {:post {:summary "Create new user"
-             :parameters (merge auth-header-req ; should be a known app
+             :parameters (merge auth-header-opt ; TODO: should be the local UI
                                 {:body {:user ::spec/registration}})
              :responses {200 {:body {:name ::spec/name}}}
              :handler user/create}}]
