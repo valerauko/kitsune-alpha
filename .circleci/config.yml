@@ -9,7 +9,7 @@ jobs:
           POSTGRES_PASSWORD: whatever
     working_directory: ~/kitsune
     environment:
-      LEIN_ROOT: "true"
+      LEIN_ROOT: true
       # Customize the JVM maximum heap limit
       JVM_OPTS: -Xmx3200m
     steps:
