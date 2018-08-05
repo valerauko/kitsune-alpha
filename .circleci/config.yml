@@ -1,0 +1,73 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: clojure:alpine
+    working_directory: ~/books
+    environment:
+      LEIN_ROOT: "true"
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - run: apk update && apk upgrade && apk add mongodb
+      - run:
+          command: |
+            mkdir -p /data/db
+            mongod
+          background: true
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "project.clj" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      - run: lein deps
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "project.clj" }}
+      - run: lein test
+  deploy:
+    docker:
+      - image: clojure
+    working_directory: ~/books
+    steps:
+      - checkout
+      - run: touch .salt
+      - run:
+          name: "Compile jar"
+          command: lein ring uberjar
+      - run:
+          name: Fix host authenticity for Linode
+          command: |
+            ssh-keyscan 172.104.85.8 >> ~/.ssh/known_hosts
+      - run:
+          name: "Copy jar to server"
+          command: scp target/books-0.1.0-standalone.jar circleci@172.104.85.8:.
+      - run:
+          name: "Finally start the server"
+          command: ssh circleci@172.104.85.8 "pkill java; java -jar books-0.1.0-standalone.jar"
+          background: true
+      - run:
+          name: "Keep connection open long enough to start the server"
+          command: sleep 60
+
+workflows:
+  version: 2
+  core_flow:
+    jobs:
+      - test
+      - hold:
+          type: approval
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
+      - deploy:
+          requires:
+            - hold
+          filters:
+            branches:
+              only: master
