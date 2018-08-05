@@ -3,30 +3,29 @@ jobs:
   test:
     docker:
       - image: clojure:alpine
-    working_directory: ~/books
+      - image: postgres:alpine
+        environment:
+          POSTGRES_USER: kitsune
+          POSTGRES_PASSWORD: whatever
+    working_directory: ~/kitsune
     environment:
       LEIN_ROOT: "true"
       # Customize the JVM maximum heap limit
       JVM_OPTS: -Xmx3200m
     steps:
       - checkout
-      - run: apk update && apk upgrade && apk add mongodb
-      - run:
-          command: |
-            mkdir -p /data/db
-            mongod
-          background: true
+      - run: apk update && apk upgrade
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "project.clj" }}
+          - dependencies-{{ checksum "project.clj" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - dependencies-
       - run: lein deps
       - save_cache:
           paths:
             - ~/.m2
-          key: v1-dependencies-{{ checksum "project.clj" }}
+          key: dependencies-{{ checksum "project.clj" }}
       - run: lein test
   deploy:
     docker:
