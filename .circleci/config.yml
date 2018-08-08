@@ -32,6 +32,9 @@ jobs:
           name: Install required Postgres extensions
           command: echo "create extension hstore; create extension pgcrypto" | psql -U kitsune -h 127.0.0.1
       - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
           name: Migrate DB
           command: lein run migrate
       - run: lein test
