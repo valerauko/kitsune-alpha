@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: clojure:alpine
+      - image: circleci/clojure:lein
         environment:
           DB__HOST: 127.0.0.1
       - image: postgres:alpine
