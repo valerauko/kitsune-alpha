@@ -18,13 +18,13 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - dependencies-{{ checksum "project.clj" }}
-          - dependencies-
+          - lein-dependencies-{{ checksum "project.clj" }}
+          - lein-dependencies-
       - run: lein deps
       - save_cache:
           paths:
-            - ~/.m2
-          key: dependencies-{{ checksum "project.clj" }}
+            - .m2
+          key: lein-dependencies-{{ checksum "project.clj" }}
       - run:
           name: Install Postgres client
           command: apk update && apk add postgresql
