@@ -1,20 +1,20 @@
 version: '3'
 services:
-  kitsune_server:
-    container_name: kitsune_server
-    build: .
+  server:
+    image: clojure:lein-alpine
+    container_name: server
+    working_dir: /root
+    command: lein run
     ports:
       - 3000:3000
       - 38001:38001
     volumes:
       - .:/root
     depends_on:
-      - kitsune_db
-    links:
-      - kitsune_db
-  kitsune_db:
-    container_name: kitsune_db
+      - docker_db
+  docker_db:
     image: postgres:alpine
+    container_name: docker_db
     volumes:
       - ./psql:/var/lib/postgresql/data
     environment:

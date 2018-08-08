@@ -9,7 +9,7 @@
    :port 3000
    :scheme "http"}
  :db
-  {:host "kitsune_db"
+  {:host "docker_db"
    :db   "kitsune"
    :user "kitsune"
    :pass "whatever"}}
