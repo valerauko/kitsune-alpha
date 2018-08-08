@@ -7,7 +7,7 @@
                  [org.clojure/core.async "0.4.474"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [cprop "0.1.11"]
-                 [mount "0.1.12"]
+                 [mount "0.1.13"]
                  [aleph "0.4.6"]
                  [ring-logger "1.0.1"]
                  [camel-snake-kebab "0.4.0"]
