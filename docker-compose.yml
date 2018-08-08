@@ -5,6 +5,7 @@ services:
     build: .
     ports:
       - 3000:3000
+      - 38001:38001
     volumes:
       - .:/root
     depends_on:
