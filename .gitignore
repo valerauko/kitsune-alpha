@@ -17,3 +17,5 @@ pom.xml.asc
 psql/
 *.mm
 .ash_history
+
+kitsune\.uxf

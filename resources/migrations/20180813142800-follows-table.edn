@@ -1,0 +1,11 @@
+;;
+{
+  :up ["create table if not exists follows (
+          id         serial     primary key,
+          followed   integer    not null    references users(id) on delete cascade,
+          follower   integer    not null    references users(id) on delete cascade,
+          created_at timestamp  not null    default now(),
+          unique (followed, follower)
+        );"]
+  :down ["drop table follows;"]
+}

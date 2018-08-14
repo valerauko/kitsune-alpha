@@ -7,7 +7,7 @@
             [ring.util.http-response :refer [forbidden]]))
 
 (defn bearer-auth
-  "Inserts :app into request with client info from Bearer token."
+  "Inserts :auth into request with client info from Bearer token."
   [handler]
   (fn [req]
     (let [raw (some-> req :headers :authorization

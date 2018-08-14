@@ -11,10 +11,11 @@ update users
   where id = :id
   returning *
 
--- :name touch-last-login! :<! :n
+-- :name touch-last-login! :<! :1
 update users
   set last_login = now()
   where id = :id
+  returning true as result
 
 -- :name destroy! :<! :1
 delete from users
