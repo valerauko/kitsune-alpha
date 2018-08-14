@@ -10,7 +10,8 @@
             [kitsune.routes.oauth :as oauth]
             [kitsune.routes.webfinger :as webfinger]
             [kitsune.routes.statuses :as statuses]
-            [kitsune.routes.instance :as instance]))
+            [kitsune.routes.instance :as instance]
+            [kitsune.routes.relationships :as relationships]))
 
 (def handler
   (ring/ring-handler
@@ -20,6 +21,7 @@
        oauth/routes
        instance/routes
        statuses/routes
+       relationships/routes
        ["/swagger.json"
         {:get {:no-doc true
                :swagger {:info {:title "Kitsune API"
