@@ -17,7 +17,10 @@
      :or {to ["https://www.w3.org/ns/activitystreams#Public"]}} :body-params
     :as req}]
   (let [people {:user-id (-> req :auth :user-id) :to to :cc cc}
-        fields {:content (process-status-text text)}]
+        replied (db/status-exists? conn {:id in-reply-to})
+        fields {:content (process-status-text text)
+                :in-reply-to-id (:id replied)
+                :in-reply-to-user-id (:user-id replied)}]
     (if-let [new (db/create-status! people fields)]
       (ok (status-hash {:object (:object new)
                         :actor (user-db/find-by-id conn

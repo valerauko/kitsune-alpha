@@ -38,6 +38,8 @@
    :content (:content object)
    :created-at (:created-at object)
    :emojis []
+   :in-reply-to-id (:in-reply-to-id object)
+   :in-reply-to-account-id (:in-reply-to-user-id object)
    :reblogs-count 0
    :favourites-count 0
    :spoiler-text (str (:summary object))

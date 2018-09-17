@@ -1,8 +1,13 @@
 -- :name create-object! :<! :1
 insert into objects
-  (uri, type, user_id, ap_to, cc, content)
+  (uri, type, user_id, ap_to, cc, content, in_reply_to_id, in_reply_to_user_id)
 values
-  (:uri, :type, :user-id, array[:v*:to]::varchar[], array[:v*:cc]::varchar[], :content)
+  (:uri, :type, :user-id,
+   array[:v*:to]::varchar[],
+   array[:v*:cc]::varchar[],
+   :content,
+   :in-reply-to-id,
+   :in-reply-to-user-id)
 returning *
 
 -- :name create-activity! :<! :1
@@ -12,11 +17,14 @@ values
   (:uri, :object-id, :type, :user-id, array[:v*:to]::varchar[], array[:v*:cc]::varchar[])
 returning *
 
+-- :name status-exists? :? :1
+select id, user_id from objects where id = :id
+
 -- :name activity-with-object :? :1
 select
   activities.*, objects.uri as object_uri, objects.user_id as object_user_id,
-  objects.in_reply_to_id, objects.summary, objects.content,
-  objects.created_at as object_created_at
+  objects.in_reply_to_id, objects.in_reply_to_user_id, objects.summary,
+  objects.content, objects.created_at as object_created_at
 from activities join objects on activities.object_id = objects.id
   where activities.id = :id::int
   limit 1
