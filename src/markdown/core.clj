@@ -24,16 +24,19 @@
 (defn process
   [input]
   (reduce
-    (fn [{:keys [length text mentions hashtags]} [type match name host]]
-      {:length (case type
+    (fn [{:keys [length text links mentions hashtags]} [type match name host]]
+      {:text (str text match)
+       :length (case type
                  (:raw :text) (+ length (count match))
                  length)
-       :text (str text match)
+       :links (case type
+                :link (conj links name)
+                links)
        :mentions (case type
                    :mention (conj mentions {:name name :host host})
                    mentions)
        :hashtags (case type
                    :hashtag (conj hashtags name)
                    hashtags)})
-    {:length 0 :mentions [] :hashtags [] :text ""}
+    {:text "" :length 0 :links [] :mentions [] :hashtags []}
     (to-tagged-vec input)))
