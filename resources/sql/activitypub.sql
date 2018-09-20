@@ -2,7 +2,8 @@
 insert into objects
   (uri, type, user_id, ap_to, cc, content, in_reply_to_id, in_reply_to_user_id)
 values
-  (:uri, :type, :user-id,
+  (concat(:uri, currval(pg_get_serial_sequence('objects', 'id'))),
+   :type, :user-id,
    array[:v*:to]::varchar[],
    array[:v*:cc]::varchar[],
    :content,
@@ -14,7 +15,10 @@ returning *
 insert into activities
   (uri, object_id, type, user_id, ap_to, cc)
 values
-  (:uri, :object-id, :type, :user-id, array[:v*:to]::varchar[], array[:v*:cc]::varchar[])
+  (concat(:uri, currval(pg_get_serial_sequence('activities', 'id'))),
+   :object-id, :type, :user-id,
+   array[:v*:to]::varchar[],
+   array[:v*:cc]::varchar[])
 returning *
 
 -- :name status-exists? :? :1

@@ -32,16 +32,22 @@
     :else :direct))
 
 (defn create-status!
-  [people data]
+  [& {:keys [content actor to cc in-reply-to-id in-reply-to-user-id]}]
   (jdbc/with-db-transaction [tx conn]
-    (if-let [object (create-object! tx (merge {:type "Note"
-                                               :uri (new-status-uri)}
-                                              people
-                                              data))]
-      (if-let [activity (create-activity! tx (merge {:type "Create"
-                                                     :uri (new-activity-uri)}
-                                                    people
-                                                    {:object-id (:id object)}))]
+    (if-let [object (create-object! tx {:type "Note"
+                                        :uri (-> "/objects/" url str)
+                                        :user-id actor
+                                        :to to
+                                        :cc cc
+                                        :content content
+                                        :in-reply-to-id in-reply-to-id
+                                        :in-reply-to-user-id in-reply-to-user-id})]
+      (if-let [activity (create-activity! tx {:type "Create"
+                                              :uri (-> "/activities/" url str)
+                                              :object-id (:id object)
+                                              :user-id actor
+                                              :to to
+                                              :cc cc})]
         {:object object :activity activity}))))
 
 (defn preload-stuff

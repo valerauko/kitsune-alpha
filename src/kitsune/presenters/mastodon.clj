@@ -30,8 +30,8 @@
       :note ""
       :fields {}}}))
 
-(defn status-hash
-  [{:keys [object actor]}]
+(defn status
+  [& {:keys [object actor]}]
   {:id (:id object)
    :uri (:uri object)
    :account (account actor)
