@@ -38,5 +38,5 @@
        :hashtags (case type
                    :hashtag (conj hashtags meta)
                    hashtags)})
-    {:text "" :length 0 :links [] :mentions [] :hashtags []}
+    {:text "" :length 0 :links #{} :mentions #{} :hashtags #{}}
     (to-tagged-vec input)))
