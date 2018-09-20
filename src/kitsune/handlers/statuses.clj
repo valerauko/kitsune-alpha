@@ -13,7 +13,7 @@
   (let [max-length 420 ; TODO: move max-length to some config
         {:keys [length text mentions]} (markdown/process raw-text)
         to ["https://www.w3.org/ns/activitystreams#Public"]
-        cc (if (empty? mentions) nil (into [] mentions))]
+        cc mentions]
     (if (> length max-length)
       (request-entity-too-large
         {:error (str "Your post is longer than the allowed "
