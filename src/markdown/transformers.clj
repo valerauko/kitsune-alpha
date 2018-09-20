@@ -81,7 +81,7 @@
                 [[:mention (str "<a href=\"" (:uri user) "\" "
                                 "rel=\"noopener\" target=\"_blank\" "
                                 "class=\"status-link mention\">")
-                           (:acct user)]
+                           (:uri user)]
                  ; FIXME: the @ is underlined
                  [:raw (str "<span>" acct "</span")]
                  [:meta "</a>"]]
