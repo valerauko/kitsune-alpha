@@ -50,7 +50,9 @@
   [text]
   (let [matches (re-seq #"(.*?)(?:\[([^\]]+)\]\(((?:https?|ftp)://[^\pZ)\"]+)\))?(.*?(?=\[|$))" text)]
     (wrap (fn [[title url]]
-            [[:link (str "<a href=\"" url "\">") url]
+            [[:link (str "<a href=\"" url "\" "
+                         "class=\"status-link\" rel=\"noopener\" target=\"_blank\">")
+                    url]
              ; doing this to prevent nested links
              [:text (string/replace title #"://" "&colon;//")]
              [:meta "</a>"]])
@@ -60,7 +62,9 @@
   [text]
   (let [matches (re-seq #"(.*?\pZ?)((?<=^|\pZ)(?:(?:https?|ftp)://)([^\pZ\"]+)(?=[\pZ\"]|$))?(.*?(?=\pZ(?:https?|ftp)|$))" text)]
     (wrap (fn [[full no-scheme]]
-            [[:link (str "<a href=\"" full "\">") full]
+            [[:link (str "<a href=\"" full "\" "
+                         "class=\"status-link\" rel=\"noopener\" target=\"_blank\">")
+                    full]
              [:raw (if (> (count no-scheme) 20)
                      (str (subs no-scheme 0 18) "…")
                      no-scheme)]
@@ -71,16 +75,26 @@
   [text]
   (let [matches (re-seq #"(.*?\pZ?)(?:(?<=^|\pZ)@(?:([a-z0-9][a-z0-9_.-]+)(?:@((?:[a-z0-9-_]+\.)*[a-z0-9]+))?))?(.*?(?=\pZ@|$))" text)]
     (wrap (fn [[name host]]
-            [[:mention (str "<a href=\"" host "/" name "\">") name host]
-             [:raw (str "@" name (if host (str "@" host)))]
-             [:meta "</a>"]])
+            (let [acct (str "@" name (if host (str "@" host)))]
+              ; FIXME: this n+1s
+              (if-let [user (user-lookup acct)]
+                [[:mention (str "<a href=\"" (:uri user) "\" "
+                                "rel=\"noopener\" target=\"_blank\" "
+                                "class=\"status-link mention\">")
+                           (:acct user)]
+                 ; FIXME: the @ is underlined
+                 [:raw (str "<span>" acct "</span")]
+                 [:meta "</a>"]]
+                [[:raw acct]])))
           matches)))
 
 (defn hashtag
   [text]
   (let [matches (re-seq #"(.*?\pZ?)(?:(?<=^|\pZ)#([\pL\pN_]+))?(.*?(?=\pZ#|$))" text)]
     (wrap (fn [[tag]]
-            [[:hashtag (str "<a href=\"" tag "\">") tag]
+            [[:hashtag (str "<a href=\"" tag "\" "
+                            "class=\"status-link\" rel=\"noopener\" target=\"_blank\" "
+                            ">") tag]
              [:raw (str "#" tag)]
              [:meta (str "</a>")]])
           matches)))
