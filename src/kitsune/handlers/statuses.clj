@@ -8,11 +8,11 @@
             [markdown.core :as markdown]))
 
 (defhandler create
-  [{{raw-text :status :keys [in-reply-to]} :body-params
+  [{{:keys [status in-reply-to-id spoiler-text visibility]} :body-params
     {actor-id :user-id} :auth}]
   (let [max-length 420 ; TODO: move max-length to some config
-        {:keys [length text mentions]} (markdown/process raw-text)
-        replied (db/status-exists? conn {:id in-reply-to})
+        {:keys [length text mentions]} (markdown/process status)
+        replied (db/status-exists? conn {:id in-reply-to-id})
         to ["https://www.w3.org/ns/activitystreams#Public"]
         cc mentions]
     (if (> length max-length)
@@ -24,7 +24,8 @@
                                              :to to
                                              :cc cc
                                              :in-reply-to-id (:id replied)
-                                             :in-reply-to-user-id (:user-id replied))]
+                                             :in-reply-to-user-id
+                                               (:user-id replied))]
         (ok (mastodon/status :object (:object new-status)
                              :actor (user-db/find-by-id conn {:id actor-id})))
         (bad-request {:error "Unable to save status"})))))

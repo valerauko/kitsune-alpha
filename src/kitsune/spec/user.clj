@@ -3,7 +3,7 @@
 
 (s/def ::name
   (s/and string?
-         #(re-matches #"(?i)[a-z0-9][a-z0-9-_]{2,25}" %)))
+         #(re-matches #"(?i)[a-z0-9][a-z0-9_]{2,25}" %)))
 
 (s/def ::display-name
   (s/or :empty nil?
