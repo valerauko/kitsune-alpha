@@ -4,7 +4,7 @@
             [kitsune.db.core :refer [conn]]
             [kitsune.db.statuses :as db]
             [kitsune.db.user :as user-db]
-            [kitsune.presenters.mastodon :refer [status-hash]]))
+            [kitsune.presenters.mastodon :as mastodon]
 
 ; a status is an Announce or Create activity wrapping a Note
 
@@ -42,7 +42,7 @@
     ; TODO: calculate visibility
     ; TODO: do urls correctly
     (let [user (user-db/find-by-id conn {:id (:user-id result)})]
-      (ok (status-hash {:object result :actor user})))
+      (ok (mastodon/status :object result :actor user)))
     (not-found {:error "Status not found"})))
 
 ; TODO: this needs authentication but i don't have visibility yet
@@ -50,8 +50,8 @@
   [{{id :id} :path-params}]
   (if-let [result (db/user-activities conn {:user-id id})]
     (let [preloaded (db/preload-stuff result)
-          formatted (map #(status-hash {:object (dissoc % :actor)
-                                        :actor (:actor %)})
+          formatted (map #(mastodon/status :object (dissoc % :actor)
+                                           :actor (:actor %))
                          preloaded)]
       (ok formatted))
     (not-found {:error "User not found"})))
