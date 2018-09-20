@@ -22,7 +22,7 @@
                                              :actor actor-id
                                              :to to
                                              :cc cc)]
-        (ok (mastodon/status :object (:object new)
+        (ok (mastodon/status :object (:object new-status)
                              :actor (user-db/find-by-id conn {:id actor-id})))
         (bad-request {:error "Unable to save status"})))))
 
