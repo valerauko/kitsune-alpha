@@ -1,20 +1,15 @@
 (ns kitsune.spec.statuses
-  (:require [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as s]
+            [kitsune.spec.mastodon.status :as mastodon]))
 
-(s/def ::text
+(s/def ::status
   (s/and string?
          #(< (count %) 500)))
-
-; TODO: use proper check
-(s/def ::in-reply-to
-  int?)
-(s/def ::attachments
-  vector?)
-(s/def ::to
-  vector?)
-(s/def ::cc
-  vector?)
+(s/def ::media-ids
+  (s/coll-of nat-int?))
 
 (s/def ::create-status-request
-  (s/keys :req-un [::text]
-          :opt-un [::in-reply-to ::attachments ::to ::cc]))
+  (s/keys :req-un [::status]
+          :opt-un [::mastodon/in-reply-to-id ::media-ids
+                   ::mastodon/sensitive ::mastodon/spoiler-text
+                   ::mastodon/visibility ::mastodon/language]))
