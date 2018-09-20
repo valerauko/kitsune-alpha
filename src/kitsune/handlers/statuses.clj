@@ -5,24 +5,26 @@
             [kitsune.db.statuses :as db]
             [kitsune.db.user :as user-db]
             [kitsune.presenters.mastodon :as mastodon]
-
-; a status is an Announce or Create activity wrapping a Note
-
-(defn process-status-text
-  [text]
-  text)
+            [markdown.core :as markdown]))
 
 (defhandler create
-  [{{:keys [text in-reply-to attachments to cc]
-     :or {to ["https://www.w3.org/ns/activitystreams#Public"]}} :body-params
-    :as req}]
-  (let [people {:user-id (-> req :auth :user-id) :to to :cc cc}
-        fields {:content (process-status-text text)}]
-    (if-let [new (db/create-status! people fields)]
-      (ok (status-hash {:object (:object new)
-                        :actor (user-db/find-by-id conn
-                                                   {:id (:user-id people)})}))
-      (bad-request {:error "Unable to save status"}))))
+  [{{raw-text :status} :body-params
+    {actor-id :user-id} :auth}]
+  (let [max-length 420 ; TODO: move max-length to some config
+        {:keys [length text mentions]} (markdown/process raw-text)
+        to ["https://www.w3.org/ns/activitystreams#Public"]
+        cc (if (empty? mentions) nil (into [] mentions))]
+    (if (> length max-length)
+      (request-entity-too-large
+        {:error (str "Your post is longer than the allowed "
+                     max-length " characters.")})
+      (if-let [new-status (db/create-status! :content text
+                                             :actor actor-id
+                                             :to to
+                                             :cc cc)]
+        (ok (mastodon/status :object (:object new)
+                             :actor (user-db/find-by-id conn {:id actor-id})))
+        (bad-request {:error "Unable to save status"})))))
 
 (defhandler delete
   [{{id :id} :path-params :as req}]
