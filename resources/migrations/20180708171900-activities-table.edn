@@ -9,8 +9,7 @@
           user_id    integer    not null    references users(id) on delete cascade,
           ap_to      varchar[],
           cc         varchar[],
-          created_at timestamp  not null    default now(),
-          updated_at timestamp  not null    default now()
+          created_at timestamp  not null    default now()
         );"]
   :down ["drop table activities;"]
 }
