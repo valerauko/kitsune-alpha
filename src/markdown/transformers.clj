@@ -1,5 +1,7 @@
 (ns markdown.transformers
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            ; TODO: allow passing in the lookup fn and remove this dep
+            [kitsune.db.user :as user-db]))
 
 (defn wrap
   [formatter matches]
@@ -77,7 +79,7 @@
     (wrap (fn [[name host]]
             (let [acct (str "@" name (if host (str "@" host)))]
               ; FIXME: this n+1s
-              (if-let [user (user-lookup acct)]
+              (if-let [user (user-db/search acct)]
                 [[:mention (str "<a href=\"" (:uri user) "\" "
                                 "rel=\"noopener\" target=\"_blank\" "
                                 "class=\"status-link mention\">")
