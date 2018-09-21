@@ -12,6 +12,11 @@ services:
       - .:/root
     depends_on:
       - docker_db
+    networks:
+      default:
+        aliases:
+          - kitsune.devel
+
   docker_db:
     image: postgres:alpine
     container_name: docker_db

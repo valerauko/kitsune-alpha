@@ -2,6 +2,7 @@
   (:require [kitsune.handlers.core :refer [defhandler]]
             [kitsune.db.user :as db]
             [kitsune.db.core :refer [conn]]
+            [kitsune.instance :refer [url]]
             [ring.util.http-response :refer :all]
             [vuk.core :as vuk]))
 
@@ -9,7 +10,7 @@
 
 (defn host-meta
   [& _]
-  (ok (vuk/host-meta (str env-host "/.well-known/webfinger?resource={uri}"))))
+  (ok (vuk/host-meta (url "/.well-known/webfinger?resource={uri}"))))
 
 (defn extract-type
   [content-type]
@@ -19,8 +20,8 @@
 (defn user-map
   [{:keys [name] :as data}]
   {:subject (str "acct:" name "@" env-host)
-   :aliases [(str env-host "/@" name)
-             (str env-host "/people/" name)]})
+   :aliases [(url "/@" name)
+             (url "/people/" name)]})
 
 (defhandler resource
   [{{resource :resource :or {resource ""}} :query-params

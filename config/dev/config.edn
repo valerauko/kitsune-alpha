@@ -5,7 +5,7 @@
    :admin-email "admin@kitsune.social"
    :admin-account 1}
  :server
-  {:host "localhost"
+  {:host "kitsune.devel"
    :port 3000
    :scheme "http"}
  :db
