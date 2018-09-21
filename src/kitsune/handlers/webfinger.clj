@@ -38,7 +38,7 @@
               :type "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""}]}))
 
 (defhandler resource
-  [{{resource :resource :or {resource ""}} :query-params
+  [{{resource "resource" :or {resource ""}} :query-params
     {content-type :accept :or {content-type "application/json"}} :headers}]
   (let [[user host] (->> resource (re-matches #"(?i)acct:(\w+)@(.+)") rest)]
     (if (= env-host host)
