@@ -11,6 +11,12 @@ update users
   where id = :id
   returning *
 
+-- :name update-keys! :<! :1
+update users
+  set public_key = :public-key, private_key = :private-key
+  where id = :id
+  returning id, public_key, private_key
+
 -- :name touch-last-login! :<! :1
 update users
   set last_login = now()
