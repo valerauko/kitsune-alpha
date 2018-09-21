@@ -32,14 +32,16 @@
     :else :direct))
 
 (defn create-status!
-  [& {:keys [content actor to cc]}]
+  [& {:keys [content actor to cc in-reply-to-id in-reply-to-user-id]}]
   (jdbc/with-db-transaction [tx conn]
     (if-let [object (create-object! tx {:type "Note"
                                         :uri (-> "/objects/" url str)
                                         :user-id actor
                                         :to to
                                         :cc cc
-                                        :content content})]
+                                        :content content
+                                        :in-reply-to-id in-reply-to-id
+                                        :in-reply-to-user-id in-reply-to-user-id})]
       (if-let [activity (create-activity! tx {:type "Create"
                                               :uri (-> "/activities/" url str)
                                               :object-id (:id object)

@@ -1,19 +1,20 @@
 ;;
 {
   :up ["create table if not exists objects (
-          id             serial     primary key,
-          uri            varchar    not null    unique,
-          local          boolean    not null    default false,
-          type           varchar    not null,
-          user_id        integer    not null    references users(id) on delete cascade,
-          ap_to          varchar[],
-          cc             varchar[],
-          in_reply_to_id varchar,
-          summary        text,
-          content        text       not null,
-          tags           varchar[],
-          mentions       varchar[],
-          created_at     timestamp  not null    default now()
+          id                  serial              primary key,
+          uri                 varchar    not null unique,
+          local               boolean    not null default false,
+          type                varchar    not null,
+          user_id             integer    not null references users(id) on delete cascade,
+          ap_to               varchar[],
+          cc                  varchar[],
+          in_reply_to_id      integer             references objects(id) on delete set null,
+          in_reply_to_user_id integer             references users(id) on delete set null,
+          summary             text,
+          content             text       not null,
+          tags                varchar[],
+          mentions            varchar[],
+          created_at          timestamp  not null default now()
         );"]
   :down ["drop table objects;"]
 }
