@@ -1,23 +1,18 @@
 (ns kitsune.db.user
   (:require [clojure.string :refer [trim]]
+            [csele.hash :refer [hash-string]]
             [hugsql.core :refer [def-db-fns]]
-            [buddy.core.hash :as hash]
             [kitsune.db.core :refer [conn]]
             [kitsune.instance :refer [url]]
-            [buddy.core.codecs :refer [bytes->hex]]
             [org.bovinegenius [exploding-fish :as uri]]))
 
 (def-db-fns "sql/users.sql")
-
-(defn hash-pass
-  [str]
-  (-> str hash/sha3-512 bytes->hex))
 
 (defn for-login
   [name pass]
   (find-for-auth
     conn
-    {:name name :pass-hash (hash-pass pass)}))
+    {:name name :pass-hash (hash-string pass)}))
 
 ; TODO: move this all to webfinger federator
 (defn uri-to-acct
