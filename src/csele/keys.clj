@@ -1,7 +1,8 @@
 (ns csele.keys
   (:import [java.security KeyPairGenerator KeyPair]
            [java.io StringReader StringWriter]
-           [org.bouncycastle.openssl PEMParser PEMWriter]))
+           [org.bouncycastle.openssl PEMParser PEMWriter]
+           [java.util Base64]))
 
 (defn raw-keys
   "Generates raw keys. It's a Java object so don't touch it unless you know
@@ -36,3 +37,15 @@
     (let [^KeyPair keys (raw-keys strength)]
       { :public (-> keys .getPublic key-to-string)
         :private (-> keys .getPrivate key-to-string)})))
+
+(defn salmon-public-key
+  [input]
+  (let [key (-> input string-to-key .getPublicKey)
+        ; can't get a proper RSAPublicKey object out of this trash
+        modulus (-> key (.getObjectAt 0) .getValue .toByteArray)
+        exponent (-> key (.getObjectAt 1) .getValue .toByteArray)
+        encoder (Base64/getUrlEncoder)]
+    (str "RSA."
+         (.encodeToString encoder modulus)
+         "."
+         (.encodeToString encoder exponent))))
