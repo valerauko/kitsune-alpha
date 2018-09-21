@@ -19,9 +19,18 @@
 ; TODO: these are dummies, need to do this properly
 (defn user-map
   [{:keys [name] :as data}]
-  {:subject (str "acct:" name "@" env-host)
-   :aliases [(url "/@" name)
-             (url "/people/" name)]})
+  (let [profile (url "/people/" name)]
+    {:subject (str "acct:" name "@" (:host (url)))
+     :aliases [(url "/@" name) profile]
+     :links [{:href profile
+              :rel "http://webfinger.net/rel/profile-page"
+              :type "text/html"}
+             {:href profile
+              :rel "self"
+              :type "application/activity+json"}
+             {:href profile
+              :rel "self"
+              :type "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""}]}))
 
 (defhandler resource
   [{{resource :resource :or {resource ""}} :query-params
