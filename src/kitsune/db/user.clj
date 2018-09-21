@@ -1,12 +1,18 @@
 (ns kitsune.db.user
   (:require [clojure.string :refer [trim]]
             [csele.hash :refer [hash-string]]
+            [csele.keys :refer [generate-keypair]]
             [hugsql.core :refer [def-db-fns]]
             [kitsune.db.core :refer [conn]]
             [kitsune.instance :refer [url]]
             [org.bovinegenius [exploding-fish :as uri]]))
 
 (def-db-fns "sql/users.sql")
+
+(defn make-user-keypair
+  [user-id]
+  (let [{:keys [public private]} (generate-keypair)]
+    (update-keys! conn {:id user-id :public-key public :private-key private})))
 
 (defn for-login
   [name pass]
@@ -27,7 +33,7 @@
   (let [uri (-> user :name (#(str "/people/" %)) url str)
         acct (uri-to-acct uri)]
     (-> user
-      (assoc :pass-hash (-> user :pass hash-pass))
+      (assoc :pass-hash (-> user :pass hash-string))
       (assoc :uri uri)
       (assoc :acct acct)
       (dissoc :pass :pass-confirm))))
