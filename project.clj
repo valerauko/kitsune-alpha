@@ -21,7 +21,7 @@
                  [com.layerware/hugsql "0.4.9"]
                  [hikari-cp "2.6.0"]
                  [ragtime "0.7.2"]
-                 [social.kitsune/vuk "0.0.2"]]
+                 [social.kitsune/vuk "0.1.0"]]
   :main ^:skip-aot kitsune.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
