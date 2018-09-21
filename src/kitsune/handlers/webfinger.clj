@@ -43,6 +43,8 @@
   (let [[user host] (->> resource (re-matches #"(?i)acct:(\w+)@(.+)") rest)]
     (if (= env-host host)
       (if-let [data (db/find-by-name conn {:name user})]
-        (ok (vuk/represent (user-map data) :as (extract-type content-type)))
+        {:status 200
+         :body (vuk/represent (user-map data) :as (extract-type content-type))
+         :headers {"Content-Type" content-type}}
         (not-found ""))
       (not-found ""))))
