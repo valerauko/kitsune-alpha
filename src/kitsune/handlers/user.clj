@@ -39,7 +39,6 @@
 
 (defhandler search
   [{{raw-query "query"} :query-params :as req}]
-  (println (:query-params req))
   (if-let [result (db/search raw-query)]
     (ok result)
     (not-found {:error "No known accounts match your search"})))

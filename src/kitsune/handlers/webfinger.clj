@@ -9,8 +9,13 @@
 (def env-host "localhost")
 
 (defn host-meta
-  [& _]
-  (ok (vuk/host-meta (url "/.well-known/webfinger?resource={uri}"))))
+  [{{:keys [accept]} :headers}]
+  (case accept
+    ("application/xrd+xml" "application/xml")
+      {:status 200
+       :body (vuk/host-meta (str (url "/.well-known/webfinger?resource={uri}")))
+       :headers {"Content-Type" "application"}}
+    (not-acceptable)))
 
 (defn extract-type
   [content-type]
