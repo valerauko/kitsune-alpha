@@ -11,8 +11,8 @@
           private_key  text,
           pass_hash    varchar   not null,
           display_name varchar,
-          created_at   timestamp not null default now(),
-          last_login   timestamp not null default now()
+          updated_at   timestamp not null default now(),
+          created_at   timestamp not null default now()
         );
         create unique index on users (lower(name));
         create unique index on users (lower(acct));
