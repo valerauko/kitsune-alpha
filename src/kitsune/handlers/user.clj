@@ -26,6 +26,25 @@
     (ok (activitypub/account result))
     (not-found)))
 
+(defhandler ap-followers
+  [{{{name :name} :path
+     {page :page} :query} :parameters}]
+  (if-let [user (db/count-followers conn {:name name})]
+    (if (pos-int? page)
+      (let [per-page 10 ; config?
+            result (db/followers-of conn {:id (:id user)
+                                          :limit (inc per-page)
+                                          :offset (* per-page (dec page))})
+            next? (> (count result) per-page)]
+        (ok (activitypub/followers :items (if next? (butlast result) result)
+                                   :next? next?
+                                   :page page
+                                   :profile (:uri user)
+                                   :total (:followers user))))
+      (ok (activitypub/followers-top :profile (:uri user)
+                                     :total (:followers user))))
+    (not-found {:error "Unknown user"})))
+
 (defhandler self
   [{{:keys [user-id]} :auth :as req}]
   (if-let [result (db/find-by-id conn {:id user-id})]
