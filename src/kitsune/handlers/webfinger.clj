@@ -8,7 +8,7 @@
             [csele.keys :refer [salmon-public-key]]))
 
 (defn host-meta
-  [{{:keys [accept]} :headers}]
+  [{{:keys [accept] :or {accept "application/xrd+xml"}} :headers}]
   (case accept
     ("application/xrd+xml" "application/xml")
       {:status 200
