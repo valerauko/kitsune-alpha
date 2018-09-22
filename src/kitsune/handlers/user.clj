@@ -36,13 +36,37 @@
                                           :limit (inc per-page)
                                           :offset (* per-page (dec page))})
             next? (> (count result) per-page)]
-        (ok (activitypub/followers :items (if next? (butlast result) result)
-                                   :next? next?
-                                   :page page
+        (ok (activitypub/follows :followers
+                                 :items (if next? (butlast result) result)
+                                 :next? next?
+                                 :page page
+                                 :profile (:uri user)
+                                 :total (:followers user))))
+      (ok (activitypub/follows-top :followers
                                    :profile (:uri user)
                                    :total (:followers user))))
-      (ok (activitypub/followers-top :profile (:uri user)
-                                     :total (:followers user))))
+    (not-found {:error "Unknown user"})))
+
+; TODO: fix pasta code
+(defhandler ap-following
+  [{{{name :name} :path
+     {page :page} :query} :parameters}]
+  (if-let [user (db/count-following conn {:name name})]
+    (if (pos-int? page)
+      (let [per-page 10 ; config?
+            result (db/followed-by conn {:id (:id user)
+                                         :limit (inc per-page)
+                                         :offset (* per-page (dec page))})
+            next? (> (count result) per-page)]
+        (ok (activitypub/follows :following
+                                 :items (if next? (butlast result) result)
+                                 :next? next?
+                                 :page page
+                                 :profile (:uri user)
+                                 :total (:following user))))
+      (ok (activitypub/follows-top :following
+                                   :profile (:uri user)
+                                   :total (:following user))))
     (not-found {:error "Unknown user"})))
 
 (defhandler self

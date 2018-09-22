@@ -35,7 +35,11 @@
      ["/followers"
       {:get {:summary "List of accounts following the user"
              :parameters {:query (ds/spec ::opt-page {(ds/opt :page) pos-int?})}
-             :handler user/ap-followers}}]]]
+             :handler user/ap-followers}}]
+     ["/following"
+      {:get {:summary "List of accounts followed by the user"
+             :parameters {:query (ds/spec ::opt-page {(ds/opt :page) pos-int?})}
+             :handler user/ap-following}}]]]
    ["/api/v1/accounts"
     {:summary "Mastodon compatible user endpoints"
      :swagger {:tags ["Users"]}

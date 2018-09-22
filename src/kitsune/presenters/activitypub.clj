@@ -23,19 +23,21 @@
                  :owner uri
                  :publicKeyPem (:public-key record)}}))
 
-(defn followers-top
-  [& {:keys [profile total]}]
-  (merge
-    common-context
-    {:type "OrderedCollection"
-     :id (str profile "/followers")
-     :totalItems total
-     }
-    (if (pos-int? total) {:first (str profile "/followers?page=1")})))
+(defn follows-top
+  [mode & {:keys [profile total]}]
+  (let [path (if (= mode :followers) "followers" "following")]
+    (merge
+      common-context
+      {:type "OrderedCollection"
+       :id (str profile "/" path)
+       :totalItems total
+       }
+      (if (pos-int? total) {:first (str profile "/" path "?page=1")}))))
 
-(defn followers
-  [& {:keys [items page next? profile total]}]
-  (let [link (str profile "/followers")]
+(defn follows
+  [mode & {:keys [items page next? profile total]}]
+  (let [path (if (= mode :followers) "followers" "following")
+        link (str profile "/" path)]
     (merge
       common-context
       {:type "OrderedCollectionPage"

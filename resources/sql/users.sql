@@ -43,6 +43,21 @@ select uri from users
   offset :offset
   limit :limit
 
+-- :name count-following :? :1
+select users.id as id, uri, count(follows.id) as following
+  from users left join follows on users.id = follows.follower
+  where users.name = :name and users.local = true
+  group by users.id
+  limit 1
+
+-- :name followed-by :? :*
+select uri from users
+  right join follows on users.id = follows.followed
+  where follows.follower = :id
+  order by follows.created_at desc
+  offset :offset
+  limit :limit
+
 -- :name find-for-auth :? :1
 select id from users where name = :name and pass_hash = :pass-hash
 
