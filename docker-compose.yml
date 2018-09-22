@@ -24,7 +24,7 @@ services:
       - ./psql:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: kitsune
-      POSTGRES_db: kitsune
+      POSTGRES_DB: kitsune
       POSTGRES_PASSWORD: whatever
     ports:
       - 5432
