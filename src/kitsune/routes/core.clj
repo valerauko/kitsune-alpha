@@ -35,7 +35,7 @@
               :swagger {:id ::api}
               :middleware [swagger-feature
                            coerce/coerce-exceptions-middleware
-                          ; coerce/coerce-request-middleware
+                           coerce/coerce-request-middleware
                            coerce/coerce-response-middleware]}})
     (ring/routes
       (create-swagger-ui-handler {:path "/swagger" :jsonEditor true})
