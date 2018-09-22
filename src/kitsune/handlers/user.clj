@@ -51,7 +51,7 @@
     (ok (mastodon/self-account result))
     (bad-request {:error "Couldn't fetch your profile. Sorry."})))
 
-(defhandler mastodon-update
+(defhandler update-stuff
   [{{:keys [display-name note locked]} :body-params
     {:keys [user-id]} :auth :as req}]
   ; TODO: consider all-empty request? should spec
