@@ -4,7 +4,8 @@
             [kitsune.spec.user :as u]
             [kitsune.db.user :as db]
             [kitsune.db.core :refer [conn int!]]
-            [kitsune.presenters.mastodon :refer [account self-account]]))
+            [kitsune.presenters.mastodon :as mastodon]
+            [kitsune.presenters.activitypub :as activitypub]))
 
 (defhandler create
   [{{user :user} :body-params :as req}]
@@ -14,13 +15,21 @@
 (defhandler show
   [{{id :id} :path-params :as req}]
   (if-let [result (db/find-by-id conn {:id (int! id)})]
-    (ok (account result))
+    (ok (mastodon/account result))
     (not-found {:error "User not found"})))
+
+; TODO: figure out how to deal with the mastodon / activitypub duality
+;   also how to deal with the activitypub endpoints doubling as profile page etc
+(defhandler ap-show
+  [{{{name :name} :path} :parameters}]
+  (if-let [result (db/find-by-name conn {:name name})]
+    (ok (activitypub/account result))
+    (not-found)))
 
 (defhandler self
   [{{:keys [user-id]} :auth :as req}]
   (if-let [result (db/find-by-id conn {:id user-id})]
-    (ok (self-account result))
+    (ok (mastodon/self-account result))
     (bad-request {:error "Couldn't fetch your profile. Sorry."})))
 
 (defhandler mastodon-update
@@ -28,7 +37,7 @@
     {:keys [user-id]} :auth :as req}]
   ; TODO: consider all-empty request? should spec
   (if-let [result (db/update! conn {:id user-id :display-name display-name})]
-    (ok (account result))
+    (ok (mastodon/account result))
     (bad-request {:error "Couldn't update your profile. Sorry."})))
 
 (defhandler destroy
