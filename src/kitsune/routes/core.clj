@@ -13,30 +13,33 @@
             [kitsune.routes.instance :as instance]
             [kitsune.routes.relationships :as relationships]))
 
+(def router
+  (ring/router
+    [user/routes
+     webfinger/routes
+     oauth/routes
+     instance/routes
+     statuses/routes
+     relationships/routes
+     ["/swagger.json"
+      {:get {:no-doc true
+             :swagger {:info {:title "Kitsune API"
+                              :description "Very fox microblogging"
+                              :version version}
+                       :basePath "/"}
+             :handler (create-swagger-handler)}}]]
+    {:conflicts identity ; mastodon routes conflict all over the place so don't even log
+     :validate ring-spec/validate-spec!
+     :data {:coercion spec/coercion
+            :swagger {:id ::api}
+            :middleware [swagger-feature
+                         coerce/coerce-exceptions-middleware
+                         coerce/coerce-request-middleware
+                         coerce/coerce-response-middleware]}}))
+
 (def handler
   (ring/ring-handler
-    (ring/router
-      [user/routes
-       webfinger/routes
-       oauth/routes
-       instance/routes
-       statuses/routes
-       relationships/routes
-       ["/swagger.json"
-        {:get {:no-doc true
-               :swagger {:info {:title "Kitsune API"
-                                :description "Very fox microblogging"
-                                :version version}
-                         :basePath "/"}
-               :handler (create-swagger-handler)}}]]
-      {:conflicts identity ; mastodon routes conflict all over the place so don't even log
-       :validate ring-spec/validate-spec!
-       :data {:coercion spec/coercion
-              :swagger {:id ::api}
-              :middleware [swagger-feature
-                           coerce/coerce-exceptions-middleware
-                           coerce/coerce-request-middleware
-                           coerce/coerce-response-middleware]}})
+    router
     (ring/routes
       (create-swagger-ui-handler {:path "/swagger" :jsonEditor true})
       (fn [& req] {:status 404 :body {:error "Not found"} :headers {}}))))
