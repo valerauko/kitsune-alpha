@@ -26,7 +26,7 @@
     {:subject (str "acct:" acct)
      :aliases [(str (url "/@" name)) profile]
      :links
-       [{:href profile
+       [{:href profile ; TODO: maybe this should be separate for ease of UI?
          :rel "http://webfinger.net/rel/profile-page"
          :type "text/html"}
         {:href profile

@@ -15,6 +15,7 @@
                  [ring-logger "1.0.1"]
                  [camel-snake-kebab "0.4.0"]
                  [metosin/reitit "0.2.2"]
+                 [metosin/spec-tools "0.7.1"]
                  [metosin/muuntaja "0.6.0"]
                  [metosin/ring-http-response "0.9.0"]
                  [ring/ring-defaults "0.3.2"]
