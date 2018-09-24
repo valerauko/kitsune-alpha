@@ -3,7 +3,8 @@
 
 (s/def ::resource
   (s/and string?
-         #(re-matches #"(?i)acct:(\w+@(.+))" %)))
+         ; pleroma doesn't prepend acct:
+         #(re-matches #"(?i)(acct:)?(\w+@(.+))" %)))
 
 (s/def ::subject ::resource)
 
