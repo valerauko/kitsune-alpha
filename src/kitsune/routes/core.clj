@@ -5,6 +5,9 @@
             [reitit.coercion.spec :as spec]
             [reitit.swagger :refer [swagger-feature create-swagger-handler]]
             [reitit.swagger-ui :refer [create-swagger-ui-handler]]
+            [muuntaja.core :as muuntaja]
+            [muuntaja.format.plain-text :as text-format]
+            [reitit.ring.middleware.muuntaja :as m-middleware]
             [kitsune.instance :refer [version]]
             [kitsune.routes.user :as user]
             [kitsune.routes.oauth :as oauth]
@@ -12,6 +15,14 @@
             [kitsune.routes.statuses :as statuses]
             [kitsune.routes.instance :as instance]
             [kitsune.routes.relationships :as relationships]))
+
+(def negotiator
+  (muuntaja/create
+    (-> muuntaja/default-options
+        (assoc-in [:formats "application/json" :matches]
+                  #"^application/(.+\+)?json$")
+        (assoc-in [:formats "application/xml"] (text-format/format))
+        (assoc-in [:formats "text/html"] (text-format/format "text/html")))))
 
 (def router
   (ring/router
@@ -30,9 +41,11 @@
              :handler (create-swagger-handler)}}]]
     {:conflicts identity ; mastodon routes conflict all over the place so don't even log
      :validate ring-spec/validate-spec!
-     :data {:coercion spec/coercion
+     :data {:muuntaja negotiator
+            :coercion spec/coercion
             :swagger {:id ::api}
             :middleware [swagger-feature
+                         m-middleware/format-middleware
                          coerce/coerce-exceptions-middleware
                          coerce/coerce-request-middleware
                          coerce/coerce-response-middleware]}}))
