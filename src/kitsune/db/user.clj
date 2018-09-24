@@ -1,6 +1,6 @@
 (ns kitsune.db.user
   (:require [clojure.string :refer [trim]]
-            [csele.hash :refer [hash-string]]
+            [csele.hash :refer [hash-hex]]
             [csele.keys :refer [generate-keypair]]
             [hugsql.core :refer [def-db-fns]]
             [kitsune.db.core :refer [conn]]
@@ -18,7 +18,7 @@
   [name pass]
   (find-for-auth
     conn
-    {:name name :pass-hash (hash-string pass)}))
+    {:name name :pass-hash (hash-hex pass)}))
 
 ; TODO: move this all to webfinger federator
 (defn uri-to-acct
@@ -33,7 +33,7 @@
   (let [uri (-> user :name (#(str "/people/" %)) url str)
         acct (uri-to-acct uri)]
     (-> user
-      (assoc :pass-hash (-> user :pass hash-string))
+      (assoc :pass-hash (-> user :pass hash-hex))
       (assoc :uri uri)
       (assoc :acct acct)
       (dissoc :pass :pass-confirm))))
