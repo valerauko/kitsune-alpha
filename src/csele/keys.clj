@@ -1,13 +1,15 @@
 (ns csele.keys
-  (:import [java.security KeyPairGenerator KeyPair]
+  (:import [java.security KeyFactory KeyPairGenerator KeyPair]
+           [java.security.spec X509EncodedKeySpec]
            [java.io StringReader StringWriter]
            [org.bouncycastle.openssl PEMParser PEMWriter]
+           [org.bouncycastle.asn1.x509 SubjectPublicKeyInfo]
            [java.util Base64]))
 
 (defn raw-keys
   "Generates raw keys. It's a Java object so don't touch it unless you know
   what you're doing."
-  [strength]
+  [^Integer strength]
   (let [generator (doto (KeyPairGenerator/getInstance "RSA")
                     (.initialize strength))]
     (.generateKeyPair generator)))
@@ -15,10 +17,14 @@
 (defn string-to-key
   [input]
   (let [key (-> input StringReader. PEMParser. .readObject)]
-    ; a private key is read as a keypair
+    ; private key: PEMKeyPair
+    ; public key: SubjectPublicKeyInfo
     (if (instance? KeyPair key)
       (.getPrivate ^KeyPair key)
-      key)))
+      (let [bytes (.getEncoded ^SubjectPublicKeyInfo key)
+            key-spec (X509EncodedKeySpec. bytes)
+            key-factory (KeyFactory/getInstance "RSA")]
+        (.generatePublic key-factory key-spec)))))
 
 (defn key-to-string
   "Turns a key (private or public) into a string."
@@ -39,11 +45,10 @@
         :private (-> keys .getPrivate key-to-string)})))
 
 (defn salmon-public-key
-  [input]
-  (let [key (-> input string-to-key .getPublicKey)
-        ; can't get a proper RSAPublicKey object out of this trash
-        modulus (-> key (.getObjectAt 0) .getValue .toByteArray)
-        exponent (-> key (.getObjectAt 1) .getValue .toByteArray)
+  [^String input]
+  (let [^sun.security.rsa.RSAPublicKeyImpl key (string-to-key input)
+        modulus (.getModulus key)
+        exponent (.getPublicExponent key)
         encoder (Base64/getUrlEncoder)]
     (str "RSA."
          (.encodeToString encoder modulus)
