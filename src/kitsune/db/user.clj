@@ -14,6 +14,11 @@
   (let [{:keys [public private]} (generate-keypair)]
     (update-keys! conn {:id user-id :public-key public :private-key private})))
 
+(defn public-key
+  [uri]
+  (if-let [result (find-by-uri conn {:uri uri})]
+    (:public-key result)))
+
 (defn for-login
   [name pass]
   (find-for-auth
