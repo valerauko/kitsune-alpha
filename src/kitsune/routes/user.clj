@@ -1,14 +1,29 @@
 (ns kitsune.routes.user
   (:require [spec-tools.data-spec :as ds]
+            [kitsune.handlers.activitypub :as ap]
             [kitsune.handlers.user :as user]
             [kitsune.handlers.statuses :refer [account-statuses]]
             [kitsune.wrappers.oauth :as oauth]
+            [kitsune.wrappers.http-sig :refer [verify-signature]]
             [kitsune.spec.oauth :refer [auth-header-opt auth-header-req]]
             [kitsune.spec.user :as spec]
             [kitsune.spec.mastodon.status :as status-spec]))
 
 (def routes
-  [["/people"
+  [["/inbox" ; maybe this should go to its own file?
+    {:summary "ActivityPub shared inbox"
+     :swagger {:tags ["ActivityPub"]}
+     :responses {200 {:body any?}
+                 400 {:body {:error string?}}
+                 403 {:body {:error string?}}
+                 404 {:body {:error string?}}}
+     :middleware [verify-signature]
+     :parameters {:body {:id any?
+                         :type any?
+                         :actor any?
+                         :object any?}}
+     :handler ap/inbox}]
+   ["/people"
     {:summary "Kitsune-unique user endpoints"
      :swagger {:tags ["Users"]}
      :parameters auth-header-opt
@@ -39,7 +54,15 @@
      ["/following"
       {:get {:summary "List of accounts followed by the user"
              :parameters {:query (ds/spec ::opt-page {(ds/opt :page) pos-int?})}
-             :handler user/ap-following}}]]]
+             :handler user/ap-following}}]
+     ["/inbox"
+      {:post {:summary "User-specific ActivityPub inbox"
+              :middleware [verify-signature]
+              :parameters {:body {:id any?
+                                  :type any?
+                                  :actor any?
+                                  :object any?}}
+              :handler ap/inbox}}]]]
    ["/api/v1/accounts"
     {:summary "Mastodon compatible user endpoints"
      :swagger {:tags ["Users"]}
