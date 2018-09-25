@@ -47,8 +47,8 @@
 (defn salmon-public-key
   [^String input]
   (let [^sun.security.rsa.RSAPublicKeyImpl key (string-to-key input)
-        modulus (.getModulus key)
-        exponent (.getPublicExponent key)
+        modulus (-> key .getModulus .toByteArray)
+        exponent (-> key .getPublicExponent .toByteArray)
         encoder (Base64/getUrlEncoder)]
     (str "RSA."
          (.encodeToString encoder modulus)
