@@ -11,6 +11,7 @@
                  [aleph "0.4.6"]
                  [ring-logger "1.0.1"]
                  [camel-snake-kebab "0.4.0"]
+                 [buddy/buddy-core "1.5.0"]
                  [metosin/reitit "0.2.4"]
                  [metosin/spec-tools "0.8.0"]
                  [metosin/muuntaja "0.6.1"]
@@ -22,7 +23,7 @@
                  [com.layerware/hugsql "0.4.9"]
                  [hikari-cp "2.6.0"]
                  [ragtime "0.7.2"]
-                 [social.kitsune/vuk "0.0.2"]]
+                 [social.kitsune/vuk "0.1.0"]]
   :main ^:skip-aot kitsune.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
