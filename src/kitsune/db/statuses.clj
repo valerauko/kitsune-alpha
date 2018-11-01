@@ -20,6 +20,10 @@
   []
   (str (url (str "/activities/" (uuid)))))
 
+(defn known-activity?
+  [uri]
+  (activity-exists? conn {:uri uri}))
+
 ; TODO: split into AP library
 (def public-id "https://www.w3.org/ns/activitystreams#Public")
 

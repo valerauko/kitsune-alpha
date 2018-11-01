@@ -24,6 +24,9 @@ returning *
 -- :name status-exists? :? :1
 select id, user_id from objects where id = :id
 
+-- :name activity-exists? :? :1
+select id, user_id from activities where uri = :uri
+
 -- :name activity-with-object :? :1
 select
   activities.*, objects.uri as object_uri, objects.user_id as object_user_id,
