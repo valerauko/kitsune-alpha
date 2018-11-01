@@ -3,6 +3,7 @@
             [csele.hash :refer [hash-base64]]
             [clojure.string :refer [split join]]
             [org.bovinegenius [exploding-fish :as uri]]
+            [ring.util.http-response :refer [unauthorized]]
             [kitsune.db.user :as db]
             [kitsune.federators.user :as fed]))
 
@@ -51,8 +52,9 @@
 ; fetches the key of the actor of the activity in the
 ; payload
 (defn verify-signature
-  "Inserts :http-signed? in request map."
+  "Inserts :http-signed? in request map or fails request."
   [handler]
   (fn [request]
-    (let [result (if (-> request :headers :signature) (check-headers request))]
-      (handler (assoc request :http-signed? result)))))
+    (if (and (-> request :headers :signature) (check-headers request))
+      (handler (assoc request :http-signed? true))
+      (unauthorized {:error "HTTP header signature validation failed"}))))
