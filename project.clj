@@ -1,6 +1,6 @@
 (defproject social.kitsune/kitsune "0.1.0"
   :description "Very fox microblogging service"
-  :url "http://example.com/FIXME"
+  :url "https://kitsune.social"
   :license {:name "GNU AFFERO GENERAL PUBLIC LICENSE"
             :url "https://www.gnu.org/licenses/agpl-3.0.en.html"}
   :dependencies [[org.clojure/clojure "1.9.0"]
@@ -29,6 +29,7 @@
                  [social.kitsune/vuk "0.1.0"]]
   :main ^:skip-aot kitsune.core
   :target-path "target/%s"
+  :jvm-opts ["-Xmx600m" "-server"]
   :profiles {:uberjar {:aot :all
                        :source-paths ["config/prod"]
                        :uberjar-name "kitsune.jar"}
