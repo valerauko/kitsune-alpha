@@ -41,9 +41,9 @@
         computed-string (sig-string request target-headers)]
     (if (and key (sig/verify signature computed-string key))
       true
-      (let [refetched-key (-> (fed/refetch-profile actor)
-                              (get "publicKey")
-                              (get "publicKeyPem"))]
+      (if-let [refetched-key (-> (fed/refetch-profile actor)
+                                 (get "publicKey")
+                                 (get "publicKeyPem"))]
         (sig/verify signature computed-string refetched-key)))))
 
 ; TODO: currently only support the mastodon / pleroma way
