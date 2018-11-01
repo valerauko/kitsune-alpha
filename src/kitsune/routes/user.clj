@@ -13,16 +13,16 @@
   [["/inbox" ; maybe this should go to its own file?
     {:summary "ActivityPub shared inbox"
      :swagger {:tags ["ActivityPub"]}
-     :responses {200 {:body any?}
-                 400 {:body {:error string?}}
-                 403 {:body {:error string?}}
-                 404 {:body {:error string?}}}
-     :middleware [verify-signature]
-     :parameters {:body {:id any?
-                         :type any?
-                         :actor any?
-                         :object any?}}
-     :handler ap/inbox}]
+     :post {:responses {200 {:body any?}
+                        400 {:body {:error string?}}
+                        403 {:body {:error string?}}
+                        404 {:body {:error string?}}}
+            :middleware [verify-signature]
+            :parameters {:body {:id any?
+                                :object any?
+                                :type any?
+                                :actor any?}}
+            :handler ap/inbox}}]
    ["/people"
     {:summary "Kitsune-unique user endpoints"
      :swagger {:tags ["Users"]}
