@@ -62,7 +62,10 @@
                                   :type any?
                                   :actor any?
                                   :object any?}}
-              :handler ap/inbox}}]]]
+              :handler ap/inbox}}]
+      ["/outbox"
+       {:get {:summary "AP outbox of the user"
+              :handler (constantly {:status 200 :body {}})}}]]]
    ["/api/v1/accounts"
     {:summary "Mastodon compatible user endpoints"
      :swagger {:tags ["Users"]}
