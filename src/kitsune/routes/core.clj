@@ -56,4 +56,6 @@
     router
     (ring/routes
       (create-swagger-ui-handler {:path "/swagger" :jsonEditor true})
-      (fn [& req] {:status 404 :body {:error "Not found"} :headers {}}))))
+      (ring/redirect-trailing-slash-handler)
+      (ring/create-default-handler
+        {:not-found (constantly {:status 404 :body {:error "Not found"}})}))))
