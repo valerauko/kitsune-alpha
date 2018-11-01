@@ -21,8 +21,9 @@
     (-> muuntaja/default-options
         (assoc-in [:formats "application/json" :matches]
                   #"^application/(.+\+)?json$")
-        (assoc-in [:formats "application/xml"] (text-format/format))
-        (assoc-in [:formats "text/html"] (text-format/format "text/html")))))
+    ;    (assoc-in [:formats "application/xml"] (text-format/format))
+    ;    (assoc-in [:formats "text/html"] (text-format/format "text/html"))
+    )))
 
 (def router
   (ring/router
