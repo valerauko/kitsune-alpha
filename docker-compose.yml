@@ -4,7 +4,7 @@ services:
     image: clojure:lein-alpine
     container_name: server
     working_dir: /root
-    command: lein run
+    command: lein repl :headless :host 0.0.0.0 :port 38001
     ports:
       - 3000:3000
       - 38001:38001

@@ -5,6 +5,7 @@
             :url "https://www.gnu.org/licenses/agpl-3.0.en.html"}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/core.async "0.4.474"]
+                 [org.clojure/tools.namespace "0.2.11"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [commons-codec/commons-codec "1.11"]
                  [org.bouncycastle/bcprov-jdk15on "1.60"]
