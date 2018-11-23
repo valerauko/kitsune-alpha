@@ -8,13 +8,18 @@
             [kitsune.instance :refer [config]])
   (:import org.postgresql.jdbc.PgArray))
 
-(defstate conn
+(defstate datasource
   :start
-  {:datasource (make-datasource {:server-name   (get-in config [:db :host])
+  (make-datasource {:server-name   (get-in config [:db :host])
                                  :adapter       "postgresql"
                                  :database-name (get-in config [:db :db])
                                  :username      (get-in config [:db :user])
-                                 :password      (get-in config [:db :pass])})})
+                                 :password      (get-in config [:db :pass])})
+  :stop
+  (close-datasource datasource))
+
+(defstate conn
+  :start {:datasource datasource})
 
 (defn int!
   [input]

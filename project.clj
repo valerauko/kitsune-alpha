@@ -14,7 +14,6 @@
                  [mount "0.1.14"]
                  [aleph "0.4.6"]
                  [byte-streams "0.2.4"]
-                 [ring-logger "1.0.1"]
                  [camel-snake-kebab "0.4.0"]
                  [metosin/reitit "0.2.5"]
                  [metosin/spec-tools "0.8.0"]

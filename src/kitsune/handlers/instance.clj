@@ -11,7 +11,7 @@
 (defhandler node-schema
   [_]
   (ok {:links [{:rel "http://nodeinfo.diaspora.software/ns/schema/2.0"
-                :href (str (url "/nodeinfo/2.0"))}]}))
+                :href (str (url "/.well-known/nodeinfo/2.0"))}]}))
 
 (defhandler node-info
   [_]

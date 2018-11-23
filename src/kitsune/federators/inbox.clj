@@ -5,11 +5,11 @@
             [kitsune.db.statuses :as activity]
             [kitsune.federators.user :as fed]))
 
-(defmacro benchmark-inbox [type id body]
+(defmacro benchmark-inbox [type id ip body]
   `(let [start# (System/nanoTime)
          result# ~body]
-     (log/info (format "Processed %s %s in %.3fms"
-                       ~type ~id
+     (log/info (format "Processed %s %s for %s in %.3fms"
+                       ~type ~id ~ip
                        (/ (- (System/nanoTime) start#) 1000000.0)))
      result#))
 
@@ -30,8 +30,9 @@
 (defn record
   [{{{:keys [id type object actor]
       :as activity} :body} :parameters
+    :keys [remote-addr]
     :as request}]
-  (benchmark-inbox type id
+  (benchmark-inbox type id remote-addr
     (if (and (signed? request)
              (not (activity/known-activity? id)))
       (clojure.pprint/pprint activity))))

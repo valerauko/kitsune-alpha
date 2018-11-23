@@ -1,9 +1,9 @@
 (ns kitsune.core
-  (:require [aleph.http :as http]
+  (:require [clojure.tools.logging :as log]
+            [clojure.string :refer [upper-case]]
+            [aleph.http :as http]
             [mount.core :refer [defstate start stop]]
             [muuntaja.middleware :refer [wrap-format]]
-            [clojure.tools.logging :as log]
-            [ring.logger :refer [wrap-log-response]]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [kitsune.instance :refer [config]]
             [kitsune.env :as env]
@@ -13,10 +13,18 @@
             [clojure.tools.namespace.repl :refer [refresh]])
   (:gen-class))
 
-(defn log-transformer
-  [{{:keys [request-method uri status ring.logger/ms]} :message :as opt}]
-  (assoc opt :message
-    (str request-method " " status " in " (format "%3d" ms) "ms: " uri)))
+(defn wrap-logging
+  [handler]
+  (fn [{:keys [request-method uri remote-addr] :as request}]
+    (let [start (System/nanoTime)
+          response (handler request)]
+      (log/info (format "%d %s %s for %s in %.3fms"
+                        (:status response)
+                        (-> request-method name upper-case)
+                        uri
+                        remote-addr
+                        (/ (- (System/nanoTime) start) 1000000.0)))
+      response)))
 
 (defstate ^{:on-reload :noop} http-server
   :start
@@ -25,7 +33,7 @@
           env/wrap
           wrap-format
           (wrap-defaults api-defaults)
-          (wrap-log-response {:transform-fn log-transformer}))
+          wrap-logging)
       {:port (get-in config [:server :port])
        :compression true})
   :stop
