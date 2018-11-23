@@ -5,9 +5,9 @@
    :admin-email "admin@kitsune.social"
    :admin-account 1}
  :server
-  {:host "kitsune.devel"
+  {:host "kitsune.localtunnel.me"
    :port 3000
-   :scheme "http"}
+   :scheme "https"}
  :db
   {:host "docker_db"
    :db   "kitsune"

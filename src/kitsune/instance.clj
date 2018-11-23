@@ -10,6 +10,6 @@
 
 (defn url
   ([]
-    (uri (select-keys (config :server) [:scheme :host :port])))
+    (uri (select-keys (config :server) [:scheme :host])))
   ([& new-path]
     (path (url) (reduce str new-path))))
