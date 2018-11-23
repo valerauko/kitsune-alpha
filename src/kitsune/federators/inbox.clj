@@ -5,7 +5,9 @@
             [kitsune.db.statuses :as activity]
             [kitsune.federators.user :as fed]))
 
-(defmacro benchmark-inbox [type id ip body]
+(defmacro benchmark-inbox
+  "Logs the time it took to process an activity"
+  [type id ip body]
   `(let [start# (System/nanoTime)
          result# ~body]
      (log/info (format "Processed %s %s for %s in %.3fms"

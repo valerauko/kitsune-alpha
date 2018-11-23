@@ -5,6 +5,7 @@
             [jsonista.core :as json]))
 
 (defn refetch-profile
+  "Goes out to fetch a user's data based on their uri"
   [user-uri]
   (log/info (str "Fetching profile of " user-uri))
   (try
