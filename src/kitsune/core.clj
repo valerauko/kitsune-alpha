@@ -9,7 +9,8 @@
             [kitsune.env :as env]
             [kitsune.db.core :refer [conn]]
             [kitsune.routes.core :as routes]
-            [kitsune.db.migrations :as migrations])
+            [kitsune.db.migrations :as migrations]
+            [clojure.tools.namespace.repl :refer [refresh]])
   (:gen-class))
 
 (defn log-transformer
@@ -26,19 +27,26 @@
           (wrap-defaults api-defaults)
           (wrap-log-response {:transform-fn log-transformer}))
       {:port (get-in config [:server :port])
-       :compression true}))
+       :compression true})
+  :stop
+    (.close ^java.io.Closeable http-server))
 
 (defn stop-kitsune
   []
   (doseq [component (:stopped (stop))]
-    (log/info component "stopped"))
-  (shutdown-agents))
+    (log/info component "stopped")))
 
 (defn start-kitsune
   []
   (doseq [component (:started (start))]
     (log/info component "started"))
   (.addShutdownHook (Runtime/getRuntime) (Thread. ^Runnable stop-kitsune)))
+
+(defn reload
+  []
+  (stop-kitsune)
+  (refresh)
+  (start-kitsune))
 
 (defn -main [& args]
   (cond
