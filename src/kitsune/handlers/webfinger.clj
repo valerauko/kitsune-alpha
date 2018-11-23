@@ -38,7 +38,7 @@
         {:href (str "data:application/magic-public-key,"
                     (salmon-public-key
                       (or public-key
-                          (-> id db/make-user-keypair :public-key))))
+                          (-> id db/update-user-keypair :public-key))))
          :rel "magic-public-key"}]}))
 
 (defhandler resource

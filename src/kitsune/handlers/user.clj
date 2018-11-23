@@ -9,7 +9,7 @@
 
 (defhandler create
   [{{user :user} :body-params :as req}]
-  (let [result (db/create! conn (db/process-for-create user))]
+  (if-let [result (db/register user)]
     (ok result)))
 
 (defhandler show

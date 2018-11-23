@@ -33,7 +33,8 @@
      {:post {:summary "Create new user"
              :parameters (merge auth-header-opt ; TODO: should be the local UI
                                 {:body {:user ::spec/registration}})
-             :responses {200 {:body {:name ::spec/name}}}
+             :responses {200 {:body {:name string?
+                                     :uri string?}}}
              :handler user/create}}]
     ["/:name"
      {:parameters {:path {:name ::spec/name}}}

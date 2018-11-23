@@ -59,10 +59,12 @@
 (defn -main [& args]
   (cond
     (some #{"migrate"} args) (do (start #'kitsune.instance/config
+                                        #'kitsune.db.core/datasource
                                         #'kitsune.db.core/conn)
                                  (migrations/migrate conn)
                                  (System/exit 0))
     (some #{"rollback"} args) (do (start #'kitsune.instance/config
+                                         #'kitsune.db.core/datasource
                                          #'kitsune.db.core/conn)
                                   (migrations/rollback conn)
                                   (System/exit 0))

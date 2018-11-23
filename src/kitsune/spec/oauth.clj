@@ -46,17 +46,16 @@
       ; need to sort it for certain equality
       (sort scopes))))
 
-(s/def ::username ::user/name)
 (s/def ::password ::user/pass)
 (s/def ::grant-type #{"authorization_code" "password" "refresh_token"})
 
 (s/def ::state string?)
 (s/def ::authorize-params
-  (s/keys :req-un [::user/name ::password ::client-id]
+  (s/keys :req-un [::user/email ::password ::client-id]
           :opt-un [::redirect-uri ::scopes ::state]))
 
 (s/def ::exchange-by-auth
-  (s/keys :req-un [::username ::password]))
+  (s/keys :req-un [::user/email ::password]))
 
 (s/def ::code string?)
 

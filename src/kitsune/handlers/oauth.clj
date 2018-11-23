@@ -47,8 +47,9 @@
     str)) ; has to be string for redirect
 
 (defhandler authorize
-  [{{:keys [name password client-id scopes redirect-uri state] :as params} :body-params}]
-  (let [user (user-db/for-login name password)
+  [{{:keys [email password client-id scopes redirect-uri state]
+     :or {redirect-uri "urn:ietf:wg:oauth:2.0:oob"} :as params} :body-params}]
+  (let [user (user-db/for-login email password)
         app (db/find-for-auth conn {:client-id client-id
                                     :redirect-uri redirect-uri})
         scope-array (spec/valid-scope scopes)]

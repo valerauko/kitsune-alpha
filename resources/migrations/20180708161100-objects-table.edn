@@ -5,7 +5,7 @@
           uri                 varchar    not null unique,
           local               boolean    not null default false,
           type                varchar    not null,
-          user_id             integer    not null references users(id) on delete cascade,
+          account_id          integer    not null references accounts(id) on delete cascade,
           ap_to               varchar[],
           cc                  varchar[],
           in_reply_to_id      integer             references objects(id) on delete set null,

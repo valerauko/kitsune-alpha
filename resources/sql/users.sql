@@ -1,21 +1,32 @@
--- :name create! :<! :1
+-- :name create-user! :<! :1
 -- :doc Creates a new user record and returns its ID
 insert into users
-  (name, email, uri, acct, pass_hash)
-  values (:name, :email, :uri, :acct, :pass-hash)
-  returning name
+  (email, pass_hash, private_key)
+  values (:email, :pass-hash, :private-key)
+  returning id
+
+-- :name create-account! :<! :1
+-- :doc Creates a new account record. Used both for local and remote
+insert into accounts
+  (user_id, name, acct, uri, local, public_key, display_name)
+  values (:user-id, :name, :acct, :uri, :local, :public-key, :display-name)
+  returning id
 
 -- :name update! :<! :1
-update users
+update accounts
   set display_name = :display-name
-  where id = :id
+  where user_id = :id
   returning *
 
--- :name update-keys! :<! :1
+-- :name update-private-key! :<! :1
 update users
-  set public_key = :public-key, private_key = :private-key
+  set private_key = :private-key
   where id = :id
-  returning id, public_key, private_key
+
+-- :name update-public-key! :<! :1
+update accounts
+  set public_key = :public-key
+  where user_id = :user-id
 
 -- :name touch-last-login! :<! :1
 update users
@@ -59,10 +70,12 @@ select uri from users
   limit :limit
 
 -- :name find-for-auth :? :1
-select id from users where name = :name and pass_hash = :pass-hash
+select id from users where email = :email and pass_hash = :pass-hash
 
 -- :name find-by-name :? :1
-select * from users where name = :name and local = true limit 1
+select * from accounts
+join users on accounts.user_id = users.id
+where name = :name and local = true limit 1
 
 -- :name find-by-id :? :1
 select * from users where id = :id limit 1

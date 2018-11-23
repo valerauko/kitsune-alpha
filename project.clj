@@ -4,7 +4,7 @@
   :license {:name "GNU AFFERO GENERAL PUBLIC LICENSE"
             :url "https://www.gnu.org/licenses/agpl-3.0.en.html"}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/core.async "0.4.474"]
+                 [org.clojure/core.async "0.4.490"]
                  [org.clojure/tools.namespace "0.2.11"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [commons-codec/commons-codec "1.11"]
@@ -15,10 +15,10 @@
                  [aleph "0.4.6"]
                  [byte-streams "0.2.4"]
                  [camel-snake-kebab "0.4.0"]
-                 [metosin/reitit "0.2.5"]
-                 [metosin/spec-tools "0.8.0"]
+                 [metosin/reitit "0.2.9"]
+                 [metosin/spec-tools "0.8.2"]
                  [metosin/muuntaja "0.6.1"]
-                 [metosin/ring-http-response "0.9.0"]
+                 [metosin/ring-http-response "0.9.1"]
                  [metosin/jsonista "0.2.2"]
                  [ring/ring-defaults "0.3.2"]
                  [org.bovinegenius/exploding-fish "0.3.6"]

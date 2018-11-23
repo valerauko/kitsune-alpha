@@ -1,5 +1,6 @@
 (ns kitsune.db.user
   (:require [clojure.string :refer [trim]]
+            [clojure.java.jdbc :as jdbc]
             [csele.hash :refer [hash-hex]]
             [csele.keys :refer [generate-keypair]]
             [hugsql.core :refer [def-db-fns]]
@@ -9,10 +10,13 @@
 
 (def-db-fns "sql/users.sql")
 
-(defn make-user-keypair
+(defn update-user-keypair
   [user-id]
   (let [{:keys [public private]} (generate-keypair)]
-    (update-keys! conn {:id user-id :public-key public :private-key private})))
+    (jdbc/with-db-transaction [tx conn]
+      (update-public-key! tx {:user-id user-id :public-key public})
+      (update-private-key! tx {:user-id user-id :private-key private}))
+    {:public-key public :private-key private}))
 
 (defn public-key
   [uri]
@@ -20,10 +24,10 @@
     (:public-key result)))
 
 (defn for-login
-  [name pass]
+  [email pass]
   (find-for-auth
     conn
-    {:name name :pass-hash (hash-hex pass)}))
+    {:email email :pass-hash (hash-hex pass)}))
 
 ; TODO: move this all to webfinger federator
 (defn uri-to-acct
@@ -33,15 +37,27 @@
         name (last (re-find #"([^@/]+)$" (or path "")))]
     (str name "@" host)))
 
-(defn process-for-create
+(defn register
   [user]
-  (let [uri (-> user :name (#(str "/people/" %)) url str)
-        acct (uri-to-acct uri)]
-    (-> user
-      (assoc :pass-hash (-> user :pass hash-hex))
-      (assoc :uri uri)
-      (assoc :acct acct)
-      (dissoc :pass :pass-confirm))))
+  (jdbc/with-db-transaction [tx conn]
+    (let [{:keys [public private]} (generate-keypair)
+          name (:name user)
+          uri (->> name (str "/people/") url str)
+          acct (uri-to-acct uri)]
+      (if-let [user-rec (create-user! tx {:email (:email user)
+                                          :pass-hash (-> user :pass hash-hex)
+                                          :private-key private})]
+        (if-let [account-rec (create-account! tx {:user-id (:id user-rec)
+                                                  :name name
+                                                  :acct acct
+                                                  :uri uri
+                                                  :local true
+                                                  :public-key public
+                                                  :display-name name})]
+          {:name name
+           :user-id (:id user-rec)
+           :account-id (:id account-rec)
+           :uri uri})))))
 
 (defn search-by-uri
   [uri]

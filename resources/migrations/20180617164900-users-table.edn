@@ -2,21 +2,12 @@
 {
   :up ["create table if not exists users (
           id           serial    primary key,
-          name         varchar   not null,
-          acct         varchar   not null unique,
-          uri          varchar   not null unique,
           email        varchar   not null unique,
-          local        boolean   not null default false,
-          public_key   text,
-          private_key  text,
+          private_key  text      not null,
           pass_hash    varchar   not null,
-          display_name varchar,
           last_login   timestamp not null default now(),
           created_at   timestamp not null default now()
         );
-        create unique index on users (lower(name));
-        create unique index on users (lower(acct));
-        create unique index on users (lower(uri));
         create unique index on users (lower(email));"]
   :down ["drop table users;"]
 }
