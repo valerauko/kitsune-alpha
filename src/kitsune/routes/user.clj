@@ -4,7 +4,6 @@
             [kitsune.handlers.user :as user]
             [kitsune.handlers.statuses :refer [account-statuses]]
             [kitsune.wrappers.oauth :as oauth]
-            [kitsune.wrappers.http-sig :refer [verify-signature]]
             [kitsune.spec.oauth :refer [auth-header-opt auth-header-req]]
             [kitsune.spec.user :as spec]
             [kitsune.spec.mastodon.status :as status-spec]))
@@ -17,7 +16,6 @@
                         400 {:body {:error string?}}
                         403 {:body {:error string?}}
                         404 {:body {:error string?}}}
-            :middleware [verify-signature]
             :parameters {:body {:id any?
                                 :object any?
                                 :type any?
@@ -57,7 +55,6 @@
              :handler user/ap-following}}]
      ["/inbox"
       {:post {:summary "User-specific ActivityPub inbox"
-              :middleware [verify-signature]
               :parameters {:body {:id any?
                                   :type any?
                                   :actor any?
@@ -103,7 +100,7 @@
       :get {:summary "User profile"
             :handler user/show}}
      ["/statuses"
-      {:get {:summary "Statueses by user"
+      {:get {:summary "Statuses by user"
              :scopes #{"read"}
              :middleware [oauth/bearer-auth
                           oauth/enforce-scopes]

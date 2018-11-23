@@ -8,7 +8,7 @@
   [user-uri]
   (log/info (str "Fetching profile of " user-uri))
   (try
-    (let [result (-> @(http/get (str (uri/port user-uri 3000))
+    (let [result (-> @(http/get user-uri
                                 {:headers {:accept "application/activity+json"}})
                      :body
                      json/read-value)]

@@ -1,11 +1,14 @@
 (ns kitsune.handlers.activitypub
-  (:require [ring.util.http-response :refer [ok not-found]]
-            [kitsune.handlers.core :refer [defhandler]]))
+  (:require [clojure.core.async :as async]
+            [ring.util.http-response :as status]
+            [kitsune.handlers.core :refer [defhandler]]
+            [kitsune.federators.inbox :as federator]))
 
 (defhandler inbox
-  [{http-sig :http-sig
-    {body-params :body} :parameters
-    :as req}]
-  (println "signed?" http-sig)
-  (clojure.pprint/pprint body-params)
-  (ok))
+  [{{{:keys [id type object actor]
+      :as activity} :body} :parameters
+    :as request}]
+  (async/go (federator/record request))
+  (if-not type
+    (status/bad-request {:error "Activities must have a type"})
+    (status/ok)))
