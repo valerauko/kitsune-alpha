@@ -59,15 +59,15 @@ delete from users
   returning true as result
 
 -- :name count-followers :? :1
-select users.id as id, accounts.uri, count(follows.id) as followers
+select accounts.id as id, accounts.uri, count(follows.id) as followers
   from users join accounts on accounts.user_id = users.id
-  left join follows on users.id = follows.followed
+  left join follows on accounts.id = follows.followed
   where users.name = :name
-  group by users.id, accounts.uri
+  group by accounts.id, accounts.uri
   limit 1
 
 -- :name followers-of :? :*
-select uri from accounts
+select accounts.uri from accounts
   right join follows on accounts.id = follows.follower
   where follows.followed = :id
   order by follows.created_at desc
@@ -75,15 +75,15 @@ select uri from accounts
   limit :limit
 
 -- :name count-following :? :1
-select users.id as id, accounts.uri, count(follows.id) as following
+select accounts.id as id, accounts.uri, count(follows.id) as following
   from users join accounts on accounts.user_id = users.id
-  left join follows on users.id = follows.follower
+  left join follows on accounts.id = follows.follower
   where users.name = :name
-  group by users.id, accounts.uri
+  group by accounts.id, accounts.uri
   limit 1
 
 -- :name followed-by :? :*
-select uri from accounts
+select accounts.uri from accounts
   right join follows on accounts.id = follows.followed
   where follows.follower = :id
   order by follows.created_at desc
