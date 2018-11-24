@@ -1,4 +1,4 @@
-(defproject social.kitsune/kitsune "0.1.0"
+(defproject social.kitsune/kitsune "0.2.0"
   :description "Very fox microblogging service"
   :url "https://kitsune.social"
   :license {:name "GNU AFFERO GENERAL PUBLIC LICENSE"
