@@ -23,6 +23,14 @@
                                     :followed-uri (:uri followed)})))
      accept-uri)))
 
+; TODO: make some general pre-processing for activities
+; * normalize uri-or-object stuff to either
+; * check if accept/undo actor and object actor are the same
+(defn incoming-accept
+  [{accept-uri :id {follow-uri :id follower-uri :actor} :object}]
+  (if (uri/local? follower-uri)
+    (rel/accept-follow! conn {:uri follow-uri :accept-uri accept-uri})))
+
 (defn undo-follow
   [{:keys [uri followed follower]}]
   (if-not (:local followed)

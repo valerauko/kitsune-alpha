@@ -32,7 +32,8 @@
       (and refetched-key (headers/verify request refetched-key)))))
 
 (defn record
-  [{{{:keys [id type] :as activity} :body} :parameters
+  [{{{{object-type :type}:object
+      :keys [id type] :as activity} :body} :parameters
     {fwd :X-Forwarded-For} :headers :keys [remote-addr]
     :as request}]
   (benchmark-inbox type id (or fwd remote-addr)
@@ -40,7 +41,10 @@
              (not (activity/known-activity? id)))
       (case type
         "Follow" (follow/receive activity)
-        "Undo" (case (-> activity :object :type)
+        "Accept" (case object-type
+                   "Follow" (follow/incoming-accept activity)
+                   (clojure.pprint/pprint activity))
+        "Undo" (case object-type
                  "Follow" (follow/receive-undo activity)
                  (clojure.pprint/pprint activity))
         (clojure.pprint/pprint activity)))))

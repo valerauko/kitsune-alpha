@@ -41,27 +41,27 @@
         follow-uri (str (uri/url "/follow/" (UUID/randomUUID)))
         accept-uri (if (and (:local object) (not (:approves-follow object)))
                      (str (uri/url "/accept/" (UUID/randomUUID))))]
-    (when-let [record (db/follow! conn {:uri follow-uri
+    (if-let [record (db/follow! conn {:uri follow-uri
                                         :followed (:account-id object)
                                         :follower (:account-id current-user)
                                         :accept-uri accept-uri})]
       (if-not (:local object)
         (async/go (fed/follow-request {:uri follow-uri
                                        :followed object
-                                       :follower current-user})))
-      (ok (relationship :subject (:account-id current-user)
-                        :object (:account-id object))))))
+                                       :follower current-user}))))
+    (ok (relationship :subject (:account-id current-user)
+                      :object (:account-id object)))))
 
 (defhandler unfollow
   [{{followed :id} :path-params
     {follower :user-id} :auth}]
   (let [current-user (users/find-by-user-id conn {:id follower})
         object (users/find-by-id conn {:id followed})]
-    (when-let [record (db/unfollow! conn {:followed (:account-id object)
-                                          :follower (:account-id current-user)})]
+    (if-let [record (db/unfollow! conn {:followed (:account-id object)
+                                        :follower (:account-id current-user)})]
       (if-not (:local object)
         (async/go (fed/undo-follow {:uri (:uri record)
                                     :followed object
-                                    :follower current-user})))
-      (ok (relationship :subject (:account-id current-user)
-                        :object (:account-id object))))))
+                                    :follower current-user}))))
+    (ok (relationship :subject (:account-id current-user)
+                      :object (:account-id object)))))
