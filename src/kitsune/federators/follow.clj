@@ -22,7 +22,7 @@
                                     :followed-uri (:uri followed)})))
      accept-uri)))
 
-(defn request
+(defn follow-request
   [{:keys [id followed follower]}]
   ; don't "federate" if object is local
   (if-not (:local followed)

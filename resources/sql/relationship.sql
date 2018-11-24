@@ -14,5 +14,5 @@ insert into follows (uri, followed, follower, accept_uri)
 
 -- :name unfollow! :<! :1
 delete from follows
-  where follower = :subject::int and followed = :object::int
-  returning true as result
+  where follower = :follower::int and followed = :followed::int
+  returning *
