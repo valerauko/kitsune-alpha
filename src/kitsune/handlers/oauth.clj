@@ -2,6 +2,7 @@
   (:require [ring.util.http-response :refer :all]
             [org.bovinegenius [exploding-fish :as uri]]
             [clojure.string :refer [split join]]
+            [clojure.core.async :refer [go]]
             [kitsune.handlers.core :refer [defhandler url-decode]]
             [kitsune.db.oauth :as db]
             [kitsune.db.user :as user-db]
@@ -32,7 +33,7 @@
 (defhandler auth-result
   [auth]
   ; TODO: return an actual html page
-  ({:auth-code (:auth-code auth)}))
+  {:auth-code (:auth-code auth)})
 
 (defn uri-for-redirect
   [input {code :auth-code} state]
@@ -46,8 +47,9 @@
     str)) ; has to be string for redirect
 
 (defhandler authorize
-  [{{:keys [name password client-id scopes redirect-uri state] :as params} :body-params}]
-  (let [user (user-db/for-login name password)
+  [{{:keys [email password client-id scopes redirect-uri state]
+     :or {redirect-uri "urn:ietf:wg:oauth:2.0:oob"} :as params} :body-params}]
+  (let [user (user-db/for-login email password)
         app (db/find-for-auth conn {:client-id client-id
                                     :redirect-uri redirect-uri})
         scope-array (spec/valid-scope scopes)]
@@ -106,7 +108,7 @@
     (if-let [authz (db/use-authz! conn {:app-id (:id app)
                                         :auth-code auth-code})]
       (db/exchange-token! conn
-        (select-keys authz [:user-id :auth-id :scopes])))))
+        (select-keys authz [:user-id :app-id :scopes])))))
 
 (defn exc-refresh
   [app refresh-token]
@@ -125,11 +127,14 @@
                      "password" (exc-pass app (assoc params :username
                                                      (or username name)))
                      nil)]
-      ; if ok
-      (ok {:token-type "Bearer"
-           :access-token (:token token)
-           :refresh-token (:refresh token)
-           :expires-in 600
-           :scope (join " " (:scopes token))})
+      (do
+        ; update user's last seen timestamp async
+        ; this includes token refreshes too so it's accurate to 10 minutes
+        (go (user-db/touch-last-login! conn {:id (:user-id token)}))
+        (ok {:token-type "Bearer"
+             :access-token (:token token)
+             :refresh-token (:refresh token)
+             :expires-in 600
+             :scope (join " " (:scopes token))}))
       (forbidden {:error "Invalid credentials"}))
     (forbidden {:error "Invalid client credentials"})))

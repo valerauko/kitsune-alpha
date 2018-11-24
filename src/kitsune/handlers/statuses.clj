@@ -4,23 +4,31 @@
             [kitsune.db.core :refer [conn]]
             [kitsune.db.statuses :as db]
             [kitsune.db.user :as user-db]
-            [kitsune.presenters.mastodon :refer [status-hash]]))
-
-(defn process-status-text
-  [text]
-  text)
+            [kitsune.presenters.mastodon :as mastodon]
+            [markdown.core :as markdown]))
 
 (defhandler create
-  [{{:keys [text in-reply-to attachments to cc]
-     :or {to ["https://www.w3.org/ns/activitystreams#Public"]}} :body-params
-    :as req}]
-  (let [people {:user-id (-> req :auth :user-id) :to to :cc cc}
-        fields {:content (process-status-text text)}]
-    (if-let [new (db/create-status! people fields)]
-      (ok (status-hash {:object (:object new)
-                        :actor (user-db/find-by-id conn
-                                                   {:id (:user-id people)})}))
-      (bad-request {:error "Unable to save status"}))))
+  [{{:keys [status in-reply-to-id spoiler-text visibility]} :body-params
+    {actor-id :user-id} :auth}]
+  (let [max-length 420 ; TODO: move max-length to some config
+        {:keys [length text mentions]} (markdown/process status)
+        replied (db/status-exists? conn {:id in-reply-to-id})
+        to ["https://www.w3.org/ns/activitystreams#Public"]
+        cc mentions]
+    (if (> length max-length)
+      (request-entity-too-large
+        {:error (str "Your post is longer than the allowed "
+                     max-length " characters.")})
+      (if-let [new-status (db/create-status! :content text
+                                             :actor actor-id
+                                             :to to
+                                             :cc cc
+                                             :in-reply-to-id (:id replied)
+                                             :in-reply-to-user-id
+                                               (:user-id replied))]
+        (ok (mastodon/status :object (:object new-status)
+                             :actor (user-db/find-by-id conn {:id actor-id})))
+        (bad-request {:error "Unable to save status"})))))
 
 (defhandler delete
   [{{id :id} :path-params :as req}]
@@ -28,4 +36,28 @@
                                       :user-id (-> req :auth :user-id)})]
     (if (> rows 0)
       (ok {})
-      (not-found {:error "You don't seem to have a status like that"}))))
+      (not-found {:error "Status not found"}))))
+
+(defhandler load-status
+  ; The ID in the path is that of the Activity on the timeline.
+  ; Loads a single status with all its accessories.
+  [{{id :id} :path-params}]
+  (if-let [result (db/activity-with-object conn {:id id})]
+    ; TODO: load attachments, tags, mentions
+    ; TODO: handle boosts (different user)
+    ; TODO: calculate visibility
+    ; TODO: do urls correctly
+    (let [user (user-db/find-by-id conn {:id (:user-id result)})]
+      (ok (mastodon/status :object result :actor user)))
+    (not-found {:error "Status not found"})))
+
+; TODO: this needs authentication but i don't have visibility yet
+(defhandler account-statuses
+  [{{id :id} :path-params}]
+  (if-let [result (db/user-activities conn {:user-id id})]
+    (let [preloaded (db/preload-stuff result)
+          formatted (map #(mastodon/status :object (dissoc % :actor)
+                                           :actor (:actor %))
+                         preloaded)]
+      (ok formatted))
+    (not-found {:error "User not found"})))

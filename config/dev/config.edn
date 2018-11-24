@@ -1,0 +1,15 @@
+{:env "dev"
+ :instance
+  {:name "Kitsune"
+   :description "Very fox microblogging"
+   :admin-email "admin@kitsune.social"
+   :admin-account 1}
+ :server
+  {:host "kitsune.localtunnel.me"
+   :port 3000
+   :scheme "https"}
+ :db
+  {:host "docker_db"
+   :db   "kitsune"
+   :user "kitsune"
+   :pass "whatever"}}

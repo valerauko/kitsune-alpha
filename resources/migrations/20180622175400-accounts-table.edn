@@ -1,0 +1,20 @@
+;;
+{
+  :up ["create table if not exists accounts (
+          id           serial    primary key,
+          user_id      int       references users(id) on delete cascade,
+          acct         varchar   not null unique,
+          uri          varchar   not null unique,
+          local        boolean   not null default false,
+          inbox        varchar   not null,
+          shared_inbox varchar   not null,
+          public_key   text,
+          display_name varchar,
+          updated_at   timestamp not null default now(),
+          created_at   timestamp not null default now()
+        );
+        create unique index on accounts (user_id);
+        create unique index on accounts (lower(acct));
+        create unique index on accounts (lower(uri));"]
+  :down ["drop table accounts;"]
+}

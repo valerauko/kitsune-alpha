@@ -12,10 +12,12 @@
     ["/host-meta"
       {:get {:summary "Host metadata"
              :swagger {:produces #{"application/xrd+xml" "application/xml"}}
+             :responses {200 {:body any?}}
              :handler host-meta}}]
     ["/webfinger"
       {:get {:summary "WebFinger endpoint for users"
              :swagger {:produces #{"application/xrd+xml" "application/xml"
                                    "application/jrd+json" "application/json"}}
              :parameters {:query {:resource ::spec/resource}}
+             :responses {200 {:body any?}}
              :handler resource}}]])

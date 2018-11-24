@@ -1,14 +1,13 @@
 (ns kitsune.db.migrations
   (:require [ragtime.jdbc :as jdbc]
-            [ragtime.repl :as repl]
-            [kitsune.db.core :as db]))
+            [ragtime.repl :as repl]))
 
-(def config
-  { :datastore  (jdbc/sql-database db/conn)
-    :migrations (jdbc/load-resources "migrations") })
+(defn config [conn]
+  {:datastore  (jdbc/sql-database conn)
+   :migrations (jdbc/load-resources "migrations")})
 
-(defn migrate[]
-  (repl/migrate config))
+(defn migrate [conn]
+  (repl/migrate (config conn)))
 
-(defn rollback []
-  (repl/rollback config))
+(defn rollback [conn]
+  (repl/rollback (config conn)))

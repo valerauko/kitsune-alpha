@@ -1,0 +1,115 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/clojure:lein
+        environment:
+          DB__HOST: 127.0.0.1
+      - image: postgres:alpine
+        environment:
+          POSTGRES_USER: kitsune
+          POSTGRES_PASSWORD: whatever
+    working_directory: ~/kitsune
+    environment:
+      LEIN_ROOT: true
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - lein-dependencies-{{ checksum "project.clj" }}
+          - lein-dependencies-
+      - run: lein deps
+      - save_cache:
+          paths:
+            - .m2
+          key: lein-dependencies-{{ checksum "project.clj" }}
+      - run:
+          name: Install Postgres client
+          command: sudo apt update && sudo apt install postgresql
+      - run:
+          name: Install required Postgres extensions
+          command: echo "create extension hstore; create extension pgcrypto" | psql -U kitsune -h 127.0.0.1
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Migrate DB
+          command: lein run migrate
+      - run: lein test
+  lint:
+    docker:
+      - image: clojure:alpine
+    working_directory: ~/kitsune
+    environment:
+      LEIN_ROOT: true
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - dependencies-{{ checksum "project.clj" }}
+          - dependencies-
+      - run: lein deps
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: dependencies-{{ checksum "project.clj" }}
+      - run: lein eastwood
+  deploy:
+    docker:
+      - image: clojure:alpine
+    environment:
+      DEPLOY_HOST: kitsune.social
+      PROD_CONFIG: config.edn
+    working_directory: ~/kitsune
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - dependencies-{{ checksum "project.clj" }}
+          - dependencies-
+      - run: lein deps
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: dependencies-{{ checksum "project.clj" }}
+      - run:
+          name: "Compile jar"
+          command: lein ring uberjar
+      - run:
+          name: Fix host authenticity for Linode
+          command: |
+            ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
+      - run:
+          name: "Copy jar to server"
+          command: scp target/kitsune.jar circleci@$DEPLOY_HOST:.
+      - run:
+          name: "Finally start the server"
+          command: ssh circleci@$DEPLOY_HOST "pkill java; java -Dconf=$PROD_CONFIG -jar kitsune.jar"
+          background: true
+      - run:
+          name: "Keep connection open long enough to start the server"
+          command: sleep 30
+
+workflows:
+  version: 2
+  core_flow:
+    jobs:
+      - test
+      # - lint
+      - hold:
+          type: approval
+          requires:
+            - test
+          #  - lint
+          filters:
+            branches:
+              only: master
+      - deploy:
+          requires:
+            - hold
+          filters:
+            branches:
+              only: master

@@ -3,7 +3,7 @@
 
 (s/def ::name
   (s/and string?
-         #(re-matches #"(?i)[a-z0-9][a-z0-9-_]{2,25}" %)))
+         #(re-matches #"(?i)[a-z0-9][a-z0-9_]{2,25}" %)))
 
 (s/def ::display-name
   (s/or :empty nil?
@@ -36,9 +36,9 @@
     (s/keys :req-un [::name ::email ::pass ::pass-confirm])
     ::pass-match))
 
-(s/def ::profile-update
-  (s/and
-    (s/keys :opt-un [::name ::display-name ::pass ::pass-confirm])
-    #(if (and (nil? (::pass %)) (nil? (::pass-confirm %)))
-      true
-      ::pass-match)))
+(s/def ::note string?)
+(s/def ::locked boolean?)
+
+; TODO: avatar and header
+(s/def ::mastodon-update
+  (s/keys :opt-un [::display-name ::note ::locked]))

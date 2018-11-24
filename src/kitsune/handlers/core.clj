@@ -1,5 +1,7 @@
 (ns kitsune.handlers.core
-  (:require [ring.util.http-response :refer [internal-server-error]])
+  (:require [ring.util.http-response :refer [internal-server-error]]
+            [kitsune.instance :refer [config]]
+            [clojure.tools.logging :as log])
   (:import java.net.URLDecoder))
 
 (defmacro defhandler
@@ -9,6 +11,10 @@
      (try
        ~@body
        (catch Throwable e#
-         (internal-server-error {:error (str e#)})))))
+         (log/error e#)
+         (internal-server-error {:error ; don't respond with error details unless in dev
+                                        (if (= (config :env) "dev")
+                                          (str (.getMessage e#))
+                                          "Unexpected error. Sorry.")})))))
 
 (defn url-decode [str] (URLDecoder/decode str "UTF-8"))

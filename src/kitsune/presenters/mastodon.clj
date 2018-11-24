@@ -1,34 +1,50 @@
-(ns kitsune.presenters.mastodon)
+(ns kitsune.presenters.mastodon
+  (:require [kitsune.uri :refer [url]]
+            [org.bovinegenius [exploding-fish :refer [host]]]))
 
 (defn account
   [record]
   {:id (:id record)
    :username (:name record)
-   :acct ""
-   :display-name (:display-name record)
+   :acct (:acct record)
+   :display-name (or (:display-name record) (:name record))
    :locked false
-   :created-at (:create-at record)
+   :created-at (:created-at record)
    :followers-count 0
    :following-count 0
    :statuses-count 0
    :note ""
    :url (:uri record)
-   :avatar ""
-   :avatar-static ""
-   :header ""
-   :header-static ""})
+   :avatar "http://kitsune.social/dummy"
+   :avatar-static "http://kitsune.social/dummy"
+   :header "http://kitsune.social/dummy"
+   :header-static "http://kitsune.social/dummy"})
 
-(defn status-hash
-  [{:keys [object actor]}]
+(defn self-account
+  [record]
+  (merge
+    (account record)
+    {:source
+     {:privacy "public"
+      :sensitive false
+      :note ""
+      :fields {}}}))
+
+(defn status
+  [& {:keys [object actor]}]
   {:id (:id object)
    :uri (:uri object)
    :account (account actor)
    :content (:content object)
    :created-at (:created-at object)
    :emojis []
+   :in-reply-to-id (:in-reply-to-id object)
+   :in-reply-to-account-id (:in-reply-to-user-id object)
    :reblogs-count 0
    :favourites-count 0
+   :spoiler-text (str (:summary object))
+   :sensitive false
    :visibility "public"
-   :media-attachments (:attachments object)
-   :mentions (:mentions object)
-   :tags (:tags object)})
+   :media-attachments []
+   :mentions []
+   :tags []})

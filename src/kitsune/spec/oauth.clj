@@ -31,10 +31,13 @@
 
 (s/def ::authorization
   (s/and string?
-         #(re-matches #"(?:Bearer|Basic) \S+")))
+         #(re-matches #"(?:Bearer|Basic) \S+" %)))
 
-(def header-params
+(def auth-header-opt
   {:header (s/keys :opt-un [::authorization])})
+
+(def auth-header-req
+  {:header (s/keys :req-un [::authorization])})
 
 (defn valid-scope
   [input]
@@ -43,17 +46,16 @@
       ; need to sort it for certain equality
       (sort scopes))))
 
-(s/def ::username ::user/name)
 (s/def ::password ::user/pass)
 (s/def ::grant-type #{"authorization_code" "password" "refresh_token"})
 
 (s/def ::state string?)
 (s/def ::authorize-params
-  (s/keys :req-un [::user/name ::password ::client-id]
+  (s/keys :req-un [::user/email ::password ::client-id]
           :opt-un [::redirect-uri ::scopes ::state]))
 
 (s/def ::exchange-by-auth
-  (s/keys :req-un [::username ::password]))
+  (s/keys :req-un [::user/email ::password]))
 
 (s/def ::code string?)
 

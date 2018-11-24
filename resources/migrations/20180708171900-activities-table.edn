@@ -3,14 +3,13 @@
   :up ["create table if not exists activities (
           id         serial     primary key,
           uri        varchar    not null    unique,
+          local      boolean    not null    default false,
           object_id  integer    not null    references objects(id) on delete cascade,
           type       varchar    not null,
-          user_id    integer    not null    references users(id) on delete cascade,
+          account_id integer    not null    references accounts(id) on delete cascade,
           ap_to      varchar[],
           cc         varchar[],
-          bcc        varchar[],
-          created_at timestamp  not null    default now(),
-          updated_at timestamp  not null    default now()
+          created_at timestamp  not null    default now()
         );"]
   :down ["drop table activities;"]
 }

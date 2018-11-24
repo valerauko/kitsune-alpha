@@ -1,20 +1,34 @@
 (ns kitsune.db.core
-  (:require [hikari-cp.core :refer [make-datasource]]
+  (:require [hikari-cp.core :refer [make-datasource close-datasource]]
             [hugsql.core]
+            [mount.core :refer [defstate]]
             [clojure.java.jdbc :as jdbc]
             [camel-snake-kebab.extras :refer [transform-keys]]
-            [camel-snake-kebab.core :refer [->kebab-case-keyword]])
+            [camel-snake-kebab.core :refer [->kebab-case-keyword]]
+            [kitsune.instance :refer [config]])
   (:import org.postgresql.jdbc.PgArray))
 
-(def options
-  {:server-name   "kitsune_db"
-   :adapter       "postgresql"
-   :database-name "kitsune"
-   :username      "kitsune"
-   :password      "whatever"})
+(defstate datasource
+  :start
+  (make-datasource {:server-name   (get-in config [:db :host])
+                    :adapter       "postgresql"
+                    :database-name (get-in config [:db :db])
+                    :username      (get-in config [:db :user])
+                    :password      (get-in config [:db :pass])})
+  :stop
+  (close-datasource datasource))
 
-(def conn
-  {:datasource (make-datasource options)})
+(defstate conn
+  :start {:datasource datasource})
+
+(defn int!
+  [input]
+  (if (number? input)
+    input
+    (try
+      (Integer/parseInt input)
+      (catch Exception _
+        0))))
 
 (extend-protocol jdbc/IResultSetReadColumn
   org.postgresql.jdbc.PgArray

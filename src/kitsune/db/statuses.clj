@@ -1,27 +1,82 @@
 (ns kitsune.db.statuses
   (:require [kitsune.db.core :refer [conn]]
+            [kitsune.uri :refer [url]]
             [hugsql.core :refer [def-db-fns]]
-            [clojure.java.jdbc :as jdbc]))
+            [kitsune.db.user :as user-db]
+            [clojure.java.jdbc :as jdbc])
+  (:import java.util.UUID))
 
 (def-db-fns "sql/activitypub.sql")
 
+(defn uuid
+  []
+  (.toString (UUID/randomUUID)))
+
 (defn new-status-uri
   []
-  (str "http://" "localhost:3000" "/objects/" "uuid"))
+  (str (url (str "/objects/" (uuid)))))
 
 (defn new-activity-uri
   []
-  (str "http://" "localhost:3000" "/activities/" "uuid"))
+  (str (url (str "/activities/" (uuid)))))
+
+(defn known-activity?
+  [uri]
+  (activity-exists? conn {:uri uri}))
+
+; TODO: split into AP library
+(def public-id "https://www.w3.org/ns/activitystreams#Public")
+
+(defn visibility
+  [status]
+  (cond
+    (some #{public-id} (:to status)) :public
+    (some #{public-id} (:cc status)) :unlisted
+    (some #{(-> status :actor :followers)} (:to status)) :private
+    :else :direct))
 
 (defn create-status!
-  [people data]
+  [& {:keys [content actor to cc in-reply-to-id in-reply-to-user-id]}]
   (jdbc/with-db-transaction [tx conn]
-    (if-let [object (create-object! tx (merge {:type "Note"
-                                               :uri (new-status-uri)}
-                                              people
-                                              data))]
-      (if-let [activity (create-activity! tx (merge {:type "Create"
-                                                     :uri (new-activity-uri)}
-                                                    people
-                                                    {:object-id (:id object)}))]
+    (if-let [object (create-object! tx {:type "Note"
+                                        :uri (-> "/objects/" url str)
+                                        :user-id actor
+                                        :to to
+                                        :cc cc
+                                        :content content
+                                        :in-reply-to-id in-reply-to-id
+                                        :in-reply-to-user-id in-reply-to-user-id})]
+      (if-let [activity (create-activity! tx {:type "Create"
+                                              :uri (-> "/activities/" url str)
+                                              :object-id (:id object)
+                                              :user-id actor
+                                              :to to
+                                              :cc cc})]
         {:object object :activity activity}))))
+
+(defn preload-stuff
+  "Preload:
+   * users (actor and object user)"
+  [activities]
+  (let [ids-list (reduce
+                   (fn [store activity]
+                     {:users (into
+                               (:users store)
+                               [(:user-id activity)
+                                (:object-user-id activity)])})
+                   {:users #{}}
+                   activities)
+        raw-vec (user-db/load-by-id conn {:ids (:users ids-list)})
+        preloaded {:users (reduce
+                            (fn [aggr row]
+                              (assoc aggr (:id row) row))
+                            {}
+                            raw-vec)}]
+    (println preloaded)
+    (reduce
+      (fn [aggr activity]
+        (conj aggr
+          (assoc activity :actor
+            (get-in preloaded [:users (:user-id activity)]))))
+      []
+      activities)))
