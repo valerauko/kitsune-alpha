@@ -22,6 +22,16 @@
                                     :followed-uri (:uri followed)})))
      accept-uri)))
 
+(defn request
+  [{:keys [id followed follower]}]
+  ; don't "federate" if object is local
+  (if-not (:local followed)
+    (send-activity  (:inbox followed)
+                    follower
+                    (json/follow {:id id
+                                  :followed-uri (:uri followed)
+                                  :follower-uri (:uri follower)}))))
+
 (defn receive
   [{:keys [id type object actor] :as activity}]
   (let [object-uri (or (:id object) object)

@@ -99,7 +99,14 @@ join users on accounts.user_id = users.id
 where name = :name and local = true limit 1
 
 -- :name find-by-id :? :1
-select * from users where id = :id limit 1
+select *, accounts.id as account_id from accounts
+left join users on users.id = accounts.user_id
+where accounts.id = :id::int limit 1
+
+-- :name find-by-user-id :? :1
+select *, accounts.id as account_id from users
+left join accounts on users.id = accounts.user_id
+where users.id = :id::int limit 1
 
 -- :name find-by-uri :? :1
 select * from accounts

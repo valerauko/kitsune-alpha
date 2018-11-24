@@ -40,5 +40,4 @@
              (not (activity/known-activity? id)))
       (case type
         "Follow" (follow/receive activity)
-        "Accept" nil
         (clojure.pprint/pprint activity)))))

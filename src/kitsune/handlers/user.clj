@@ -71,7 +71,7 @@
 
 (defhandler self
   [{{:keys [user-id]} :auth :as req}]
-  (if-let [result (db/find-by-id conn {:id user-id})]
+  (if-let [result (db/find-by-user-id conn {:id user-id})]
     (ok (mastodon/self-account result))
     (bad-request {:error "Couldn't fetch your profile. Sorry."})))
 

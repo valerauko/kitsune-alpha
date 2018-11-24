@@ -42,6 +42,7 @@
     (str name "@" host)))
 
 (defn register
+  "Creates an user and an account record within a transaction."
   [user]
   (jdbc/with-db-transaction [tx conn]
     (let [{:keys [public private]} (generate-keypair)
