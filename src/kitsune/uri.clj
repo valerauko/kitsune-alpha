@@ -7,3 +7,9 @@
   [input]
   (= (get-in config [:server :host])
      (uri/host input)))
+
+(defn url
+  ([]
+    (uri/uri (select-keys (config :server) [:scheme :host])))
+  ([& new-path]
+    (uri/path (url) (reduce str new-path))))

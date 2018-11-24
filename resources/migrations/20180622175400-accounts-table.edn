@@ -6,6 +6,8 @@
           acct         varchar   not null unique,
           uri          varchar   not null unique,
           local        boolean   not null default false,
+          inbox        varchar   not null,
+          shared_inbox varchar   not null,
           public_key   text,
           display_name varchar,
           updated_at   timestamp not null default now(),

@@ -5,7 +5,7 @@
             [csele.keys :refer [generate-keypair]]
             [hugsql.core :refer [def-db-fns]]
             [kitsune.db.core :refer [conn]]
-            [kitsune.instance :refer [url]]
+            [kitsune.uri :refer [url]]
             [org.bovinegenius [exploding-fish :as uri]]))
 
 (def-db-fns "sql/users.sql")
@@ -57,7 +57,10 @@
                                                   :uri uri
                                                   :local true
                                                   :public-key public
-                                                  :display-name name})]
+                                                  :display-name name
+                                                  :inbox (str uri "/inbox")
+                                                  :shared-inbox (-> "/inbox"
+                                                                    url str)})]
           {:name name
            :user-id (:id user-rec)
            :account-id (:id account-rec)

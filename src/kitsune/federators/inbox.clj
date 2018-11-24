@@ -1,9 +1,10 @@
 (ns kitsune.federators.inbox
   (:require [clojure.tools.logging :as log]
             [csele.headers :as headers]
-            [kitsune.db.user :as user]
+            [kitsune.db.user :as user-db]
             [kitsune.db.statuses :as activity]
-            [kitsune.federators.user :as fed]))
+            [kitsune.federators.user :as user]
+            [kitsune.federators.follow :as follow]))
 
 (defmacro benchmark-inbox
   "Logs the time it took to process an activity"
@@ -24,19 +25,20 @@
     :as request}]
   (or
     ; first see if the key in the db (if any) can validate the sig
-    (let [key (user/public-key actor)]
+    (let [key (user-db/public-key actor)]
       (and key (headers/verify request key)))
     ; if not then refetch the actor's key and use that to validate
-    (let [refetched-key (-> actor fed/refetch-profile :public-key)]
+    (let [refetched-key (-> actor user/refetch-profile :public-key)]
       (and refetched-key (headers/verify request refetched-key)))))
 
 (defn record
-  [{{{:keys [id type object actor]
-      :as activity} :body} :parameters
-    {fwd :X-Forwarded-For} :headers
-    :keys [remote-addr]
+  [{{{:keys [id type] :as activity} :body} :parameters
+    {fwd :X-Forwarded-For} :headers :keys [remote-addr]
     :as request}]
   (benchmark-inbox type id (or fwd remote-addr)
     (if (and (signed? request)
              (not (activity/known-activity? id)))
-      (clojure.pprint/pprint activity))))
+      (case type
+        "Follow" (follow/receive activity)
+        "Accept" nil
+        (clojure.pprint/pprint activity)))))

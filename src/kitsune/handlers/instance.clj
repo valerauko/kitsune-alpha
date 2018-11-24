@@ -6,7 +6,8 @@
             [kitsune.db.instance :as db]
             [kitsune.db.user :as user-db]
             [kitsune.presenters.mastodon :as present]
-            [kitsune.instance :refer [url version config]]))
+            [kitsune.uri :refer [url]]
+            [kitsune.instance :refer [version config]]))
 
 (defhandler node-schema
   [_]

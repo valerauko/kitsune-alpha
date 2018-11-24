@@ -1,9 +1,10 @@
 (ns csele.keys
-  (:import [java.security KeyFactory KeyPairGenerator KeyPair]
-           [java.security.spec X509EncodedKeySpec]
+  (:import [java.security KeyFactory KeyPair KeyPairGenerator]
+           [java.security.spec X509EncodedKeySpec PKCS8EncodedKeySpec]
            [java.io StringReader StringWriter]
-           [org.bouncycastle.openssl PEMParser PEMWriter]
+           [org.bouncycastle.openssl PEMParser PEMWriter PEMKeyPair]
            [org.bouncycastle.asn1.x509 SubjectPublicKeyInfo]
+           [org.bouncycastle.crypto.util PrivateKeyFactory]
            [java.util Base64]))
 
 (defn raw-keys
@@ -16,22 +17,24 @@
 
 (defn string-to-key
   [input]
-  (let [key (-> input StringReader. PEMParser. .readObject)]
+  (let [input-key (-> input StringReader. PEMParser. .readObject)]
     ; private key: PEMKeyPair
     ; public key: SubjectPublicKeyInfo
-    (if (instance? KeyPair key)
-      (.getPrivate ^KeyPair key)
-      (let [bytes (.getEncoded ^SubjectPublicKeyInfo key)
-            key-spec (X509EncodedKeySpec. bytes)
-            key-factory (KeyFactory/getInstance "RSA")]
-        (.generatePublic key-factory key-spec)))))
+    (let [key-factory (KeyFactory/getInstance "RSA")]
+      (if (instance? PEMKeyPair input-key)
+        (let [bytes (-> ^PEMKeyPair input-key .getPrivateKeyInfo .getEncoded)
+              key-spec (PKCS8EncodedKeySpec. bytes)]
+          (.generatePrivate key-factory key-spec))
+        (let [bytes (.getEncoded ^SubjectPublicKeyInfo input-key)
+              key-spec (X509EncodedKeySpec. bytes)]
+          (.generatePublic key-factory key-spec))))))
 
 (defn key-to-string
   "Turns a key (private or public) into a string."
-  [key]
+  [input-key]
   (let [string-writer (StringWriter.)
         pem-writer (PEMWriter. string-writer)]
-    (.writeObject pem-writer key)
+    (.writeObject pem-writer input-key)
     (.flush pem-writer)
     (.toString string-writer)))
 
@@ -46,9 +49,9 @@
 
 (defn salmon-public-key
   [^String input]
-  (let [^sun.security.rsa.RSAPublicKeyImpl key (string-to-key input)
-        modulus (-> key .getModulus .toByteArray)
-        exponent (-> key .getPublicExponent .toByteArray)
+  (let [^sun.security.rsa.RSAPublicKeyImpl input-key (string-to-key input)
+        modulus (-> input-key .getModulus .toByteArray)
+        exponent (-> input-key .getPublicExponent .toByteArray)
         encoder (Base64/getUrlEncoder)]
     (str "RSA."
          (.encodeToString encoder modulus)

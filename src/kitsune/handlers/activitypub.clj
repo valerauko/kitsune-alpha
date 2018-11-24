@@ -8,7 +8,8 @@
   [{{{:keys [id type object actor]
       :as activity} :body} :parameters
     :as request}]
-  (async/go (federator/record request))
   (if-not type
     (status/bad-request {:error "Activities must have a type"})
-    (status/ok)))
+    (do
+      (async/go (federator/record request))
+      (status/accepted))))

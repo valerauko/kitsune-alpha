@@ -30,7 +30,7 @@
   [{{sig-header :signature} :headers
     {{actor :actor} :body} :parameters
     :as request}
-   key]
+   input-key]
   (let [target-headers (split (->> sig-header
                                    (re-find #"headers=\"([^\"]+)\"")
                                    second)
@@ -39,4 +39,12 @@
                        (re-find #"signature=\"([^\"]+)\"")
                        second)
         computed-string (sig-string request target-headers)]
-    (sig/verify signature computed-string key)))
+    (sig/verify signature computed-string input-key)))
+
+(defn sign-request
+  "Signs a request map with the given private key"
+  [request targets {:keys [key-id pem]}]
+  (let [new-string (sig-string request targets)
+        signature (sig/sign new-string pem)]
+    (format "keyId=\"%s\",algorithm=\"%s\",headers=\"%s\",signature=\"%s\""
+            key-id "rsa-sha256" (join " " targets) signature)))

@@ -2,7 +2,7 @@
   (:require [kitsune.handlers.core :refer [defhandler]]
             [kitsune.db.user :as db]
             [kitsune.db.core :refer [conn]]
-            [kitsune.instance :refer [url]]
+            [kitsune.uri :refer [url]]
             [ring.util.http-response :refer :all]
             [vuk.core :as vuk]
             [csele.keys :refer [salmon-public-key]]))

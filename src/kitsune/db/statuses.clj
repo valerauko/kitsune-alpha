@@ -1,6 +1,6 @@
 (ns kitsune.db.statuses
   (:require [kitsune.db.core :refer [conn]]
-            [kitsune.instance :refer [url]]
+            [kitsune.uri :refer [url]]
             [hugsql.core :refer [def-db-fns]]
             [kitsune.db.user :as user-db]
             [clojure.java.jdbc :as jdbc])

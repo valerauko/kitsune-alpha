@@ -1,5 +1,5 @@
 (ns kitsune.presenters.activitypub
-  (:require [kitsune.instance :refer [url]]))
+  (:require [kitsune.uri :refer [url]]))
 
 (def common-context
   {(keyword "@context") ["https://www.w3.org/ns/activitystreams",

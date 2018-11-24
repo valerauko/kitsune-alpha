@@ -8,13 +8,14 @@ insert into users
 -- :name create-account! :<! :1
 -- :doc Creates a new account record. Used both for local and remote
 insert into accounts
-  (user_id, acct, uri, local, public_key, display_name)
+  (user_id, acct, uri, local, public_key, display_name, inbox, shared_inbox)
   values (
     --~ (if (:user-id params) ":user-id" "NULL")
     , :acct, :uri,
     --~ (if (:local params) "true" "false")
     , :public-key,
     --~ (if (:display-name params) ":display-name" "NULL")
+    , :inbox, :shared-inbox
   )
   returning id
 
@@ -58,32 +59,32 @@ delete from users
   returning true as result
 
 -- :name count-followers :? :1
-select users.id as id, uri, count(follows.id) as followers
+select users.id as id, accounts.uri, count(follows.id) as followers
   from users join accounts on accounts.user_id = users.id
   left join follows on users.id = follows.followed
   where users.name = :name
-  group by users.id, uri
+  group by users.id, accounts.uri
   limit 1
 
 -- :name followers-of :? :*
-select uri from users
-  right join follows on users.id = follows.follower
+select uri from accounts
+  right join follows on accounts.id = follows.follower
   where follows.followed = :id
   order by follows.created_at desc
   offset :offset
   limit :limit
 
 -- :name count-following :? :1
-select users.id as id, uri, count(follows.id) as following
+select users.id as id, accounts.uri, count(follows.id) as following
   from users join accounts on accounts.user_id = users.id
   left join follows on users.id = follows.follower
   where users.name = :name
-  group by users.id, uri
+  group by users.id, accounts.uri
   limit 1
 
 -- :name followed-by :? :*
-select uri from users
-  right join follows on users.id = follows.followed
+select uri from accounts
+  right join follows on accounts.id = follows.followed
   where follows.follower = :id
   order by follows.created_at desc
   offset :offset

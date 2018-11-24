@@ -1,6 +1,8 @@
 (ns csele.signatures
-  (:require [csele.keys :as keys])
+  (:require [csele.keys :as keys]
+            [byte-streams :as bs])
   (:import [java.security Security Signature]
+           [java.io ByteArrayInputStream]
            [java.util Base64]))
 
 (Security/addProvider (org.bouncycastle.jce.provider.BouncyCastleProvider.))
@@ -19,9 +21,9 @@
 
 (defn sign
   "Produces a base64 encoded signature"
-  [^String data private-key]
+  [^ByteArrayInputStream data private-key]
   (let [sig (doto (Signature/getInstance algo)
                   (.initSign (keys/string-to-key private-key))
-                  (.update (.getBytes data)))]
+                  (.update (bs/to-byte-array data)))]
     (.encodeToString (Base64/getEncoder)
       (.sign sig))))
