@@ -46,7 +46,7 @@
                                         :follower (:account-id current-user)
                                         :accept-uri accept-uri})]
       (if-not (:local object)
-        (async/go (fed/follow-request {:id follow-uri
+        (async/go (fed/follow-request {:uri follow-uri
                                        :followed object
                                        :follower current-user})))
       (ok (relationship :subject (:account-id current-user)
@@ -59,9 +59,9 @@
         object (users/find-by-id conn {:id followed})]
     (when-let [record (db/unfollow! conn {:followed (:account-id object)
                                           :follower (:account-id current-user)})]
-;      (if-not (:local object)
-;        (async/go (fed/request {:id follow-uri
-;                                :followed object
-;                                :follower current-user})))
+      (if-not (:local object)
+        (async/go (fed/undo-follow {:uri (:uri record)
+                                    :followed object
+                                    :follower current-user})))
       (ok (relationship :subject (:account-id current-user)
                         :object (:account-id object))))))

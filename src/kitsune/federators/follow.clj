@@ -4,7 +4,8 @@
             [kitsune.db.relationship :as rel]
             [kitsune.uri :as uri]
             [kitsune.federators.outbox :refer [send-activity]]
-            [kitsune.presenters.activitypub.follow :as json]))
+            [kitsune.presenters.activitypub.follow :as json]
+            [kitsune.presenters.activitypub.undo :as undo]))
 
 (defn accept
   ([args] (accept args :existing))
@@ -22,13 +23,24 @@
                                     :followed-uri (:uri followed)})))
      accept-uri)))
 
+(defn undo-follow
+  [{:keys [uri followed follower]}]
+  (if-not (:local followed)
+    (send-activity (:inbox followed)
+                   follower
+                   (-> {:uri uri
+                        :followed-uri (:uri followed)
+                        :follower-uri (:uri follower)}
+                       json/follow
+                       undo/undo))))
+
 (defn follow-request
-  [{:keys [id followed follower]}]
+  [{:keys [uri followed follower]}]
   ; don't "federate" if object is local
   (if-not (:local followed)
     (send-activity  (:inbox followed)
                     follower
-                    (json/follow {:id id
+                    (json/follow {:uri uri
                                   :followed-uri (:uri followed)
                                   :follower-uri (:uri follower)}))))
 
