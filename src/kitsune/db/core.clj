@@ -11,10 +11,10 @@
 (defstate datasource
   :start
   (make-datasource {:server-name   (get-in config [:db :host])
-                                 :adapter       "postgresql"
-                                 :database-name (get-in config [:db :db])
-                                 :username      (get-in config [:db :user])
-                                 :password      (get-in config [:db :pass])})
+                    :adapter       "postgresql"
+                    :database-name (get-in config [:db :db])
+                    :username      (get-in config [:db :user])
+                    :password      (get-in config [:db :pass])})
   :stop
   (close-datasource datasource))
 

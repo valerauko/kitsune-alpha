@@ -22,12 +22,13 @@
   [{{sig-header :signature} :headers
     {{actor :actor} :body} :parameters
     :as request}]
-  (if-let [key (user/public-key actor)]
-    (headers/verify request key)
-    (if-let [refetched-key (-> (fed/refetch-profile actor)
-                               (get "publicKey")
-                               (get "publicKeyPem"))]
-      (headers/verify request refetched-key))))
+  (or
+    ; first see if the key in the db (if any) can validate the sig
+    (let [key (user/public-key actor)]
+      (and key (headers/verify request key)))
+    ; if not then refetch the actor's key and use that to validate
+    (let [refetched-key (-> actor fed/refetch-profile :public-key)]
+      (and refetched-key (headers/verify request refetched-key)))))
 
 (defn record
   [{{{:keys [id type object actor]

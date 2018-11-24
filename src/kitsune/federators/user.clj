@@ -1,18 +1,29 @@
 (ns kitsune.federators.user
-  (:require [aleph.http :as http]
-            [org.bovinegenius [exploding-fish :as uri]]
+  (:require [kitsune.federators.core :as fed]
+            [kitsune.db.core :refer [conn]]
+            [kitsune.db.user :as db]
             [clojure.tools.logging :as log]
             [jsonista.core :as json]))
 
 (defn refetch-profile
-  "Goes out to fetch a user's data based on their uri"
+  "Goes out to fetch a remote user's data based on their uri"
   [user-uri]
-  (log/info (str "Fetching profile of " user-uri))
-  (try
-    (let [result (-> @(http/get user-uri
-                                {:headers {:accept "application/activity+json"}})
-                     :body
-                     json/read-value)]
-      result)
-    (catch Throwable ex
-      (log/error ex (str "Error while fetching profile " user-uri)))))
+  (let [known-user (db/find-by-uri conn {:uri user-uri})]
+    ; if the user is local don't update
+    (if (:local known-user)
+      known-user
+      (do
+        (log/info (str "Fetching profile of " user-uri))
+        (if-let [result (fed/fetch-resource user-uri)]
+          (let [data {:name (or (:name result)
+                                (:preferredUsername result))
+                      :acct (db/uri-to-acct (:id result))
+                      :uri (:id result)
+                      :public-key (-> result :publicKey :publicKeyPem)
+                      :display-name (or (:preferredUsername result)
+                                        (:name result))}]
+            (if known-user
+              (db/update-account! conn data)
+              (db/create-account! conn data)))
+          ; if refetching failed return the current known data
+          known-user)))))

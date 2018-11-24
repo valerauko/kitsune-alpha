@@ -1,9 +1,9 @@
 -- :name create-object! :<! :1
 insert into objects
-  (uri, type, user_id, ap_to, cc, content, in_reply_to_id, in_reply_to_user_id)
+  (uri, type, account_id, ap_to, cc, content, in_reply_to_id, in_reply_to_user_id)
 values
   (concat(:uri, currval(pg_get_serial_sequence('objects', 'id'))),
-   :type, :user-id,
+   :type, :account-id,
    array[:v*:to]::varchar[],
    array[:v*:cc]::varchar[],
    :content,
@@ -13,19 +13,19 @@ returning *
 
 -- :name create-activity! :<! :1
 insert into activities
-  (uri, object_id, type, user_id, ap_to, cc)
+  (uri, object_id, type, account_id, ap_to, cc)
 values
   (concat(:uri, currval(pg_get_serial_sequence('activities', 'id'))),
-   :object-id, :type, :user-id,
+   :object-id, :type, :account-id,
    array[:v*:to]::varchar[],
    array[:v*:cc]::varchar[])
 returning *
 
 -- :name status-exists? :? :1
-select id, user_id from objects where id = :id
+select id, account_id from objects where id = :id
 
 -- :name activity-exists? :? :1
-select id, user_id from activities where uri = :uri
+select id, account_id from activities where uri = :uri
 
 -- :name activity-with-object :? :1
 select

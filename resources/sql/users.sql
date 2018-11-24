@@ -1,15 +1,21 @@
 -- :name create-user! :<! :1
 -- :doc Creates a new user record and returns its ID
 insert into users
-  (email, pass_hash, private_key)
-  values (:email, :pass-hash, :private-key)
+  (email, name, pass_hash, private_key)
+  values (:email, :name, :pass-hash, :private-key)
   returning id
 
 -- :name create-account! :<! :1
 -- :doc Creates a new account record. Used both for local and remote
 insert into accounts
-  (user_id, name, acct, uri, local, public_key, display_name)
-  values (:user-id, :name, :acct, :uri, :local, :public-key, :display-name)
+  (user_id, acct, uri, local, public_key, display_name)
+  values (
+    --~ (if (:user-id params) ":user-id" "NULL")
+    , :acct, :uri,
+    --~ (if (:local params) "true" "false")
+    , :public-key,
+    --~ (if (:display-name params) ":display-name" "NULL")
+  )
   returning id
 
 -- :name update! :<! :1
@@ -17,6 +23,18 @@ update accounts
   set display_name = :display-name
   where user_id = :id
   returning *
+
+-- :name update-account! :<! :1
+update accounts set
+/*~
+(->> (dissoc params :uri)
+     (camel-snake-kebab.extras/transform-keys
+       camel-snake-kebab.core/->snake_case_string)
+     (map #(clojure.string/join "=" %))
+     (clojure.string/join ", ")))
+~*/
+where uri = :uri
+returning *
 
 -- :name update-private-key! :<! :1
 update users
@@ -41,9 +59,10 @@ delete from users
 
 -- :name count-followers :? :1
 select users.id as id, uri, count(follows.id) as followers
-  from users left join follows on users.id = follows.followed
-  where users.name = :name and users.local = true
-  group by users.id
+  from users join accounts on accounts.user_id = users.id
+  left join follows on users.id = follows.followed
+  where users.name = :name
+  group by users.id, uri
   limit 1
 
 -- :name followers-of :? :*
@@ -56,9 +75,10 @@ select uri from users
 
 -- :name count-following :? :1
 select users.id as id, uri, count(follows.id) as following
-  from users left join follows on users.id = follows.follower
-  where users.name = :name and users.local = true
-  group by users.id
+  from users join accounts on accounts.user_id = users.id
+  left join follows on users.id = follows.follower
+  where users.name = :name
+  group by users.id, uri
   limit 1
 
 -- :name followed-by :? :*
@@ -81,10 +101,14 @@ where name = :name and local = true limit 1
 select * from users where id = :id limit 1
 
 -- :name find-by-uri :? :1
-select * from users where uri = :uri limit 1
+select * from accounts
+left join users on accounts.user_id = users.id
+where uri = :uri limit 1
 
 -- :name find-by-acct :? :1
-select * from users where acct = :acct limit 1
+select * from accounts
+join users on accounts.user_id = users.id
+where acct = :acct limit 1
 
 -- :name load-by-id :? :*
 select * from users where id in (:v*:ids)

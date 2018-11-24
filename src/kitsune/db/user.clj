@@ -29,6 +29,10 @@
     conn
     {:email email :pass-hash (hash-hex pass)}))
 
+(defn known-remote?
+  [uri]
+  (->> uri (find-by-uri conn) :local not))
+
 ; TODO: move this all to webfinger federator
 (defn uri-to-acct
   [uri]
@@ -45,10 +49,10 @@
           uri (->> name (str "/people/") url str)
           acct (uri-to-acct uri)]
       (if-let [user-rec (create-user! tx {:email (:email user)
+                                          :name name
                                           :pass-hash (-> user :pass hash-hex)
                                           :private-key private})]
         (if-let [account-rec (create-account! tx {:user-id (:id user-rec)
-                                                  :name name
                                                   :acct acct
                                                   :uri uri
                                                   :local true
