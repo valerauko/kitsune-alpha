@@ -1,7 +1,7 @@
 (ns kitsune.routes.relationships
   (:require [kitsune.spec.mastodon.relationship :as models]
             [kitsune.wrappers.oauth :as oauth]
-            [kitsune.spec.oauth :refer [auth-header-opt]]
+            [kitsune.spec.oauth :refer [auth-header-req]]
             [kitsune.handlers.relationships :refer [follow unfollow]]))
 
 (def routes
@@ -9,7 +9,7 @@
    ["/accounts"
     ["/:id"
      {:parameters (merge {:path {:id int?}}
-                         auth-header-opt)
+                         auth-header-req)
       :scopes #{"follow"}
       :middleware [oauth/bearer-auth
                    oauth/enforce-scopes]}

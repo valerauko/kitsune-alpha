@@ -1,6 +1,6 @@
 (ns kitsune.db.statuses
   (:require [kitsune.db.core :refer [conn]]
-            [kitsune.instance :refer [url]]
+            [kitsune.uri :refer [url]]
             [hugsql.core :refer [def-db-fns]]
             [kitsune.db.user :as user-db]
             [clojure.java.jdbc :as jdbc])
@@ -19,6 +19,10 @@
 (defn new-activity-uri
   []
   (str (url (str "/activities/" (uuid)))))
+
+(defn known-activity?
+  [uri]
+  (activity-exists? conn {:uri uri}))
 
 ; TODO: split into AP library
 (def public-id "https://www.w3.org/ns/activitystreams#Public")

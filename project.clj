@@ -1,21 +1,24 @@
-(defproject social.kitsune/kitsune "0.1.0"
+(defproject social.kitsune/kitsune "0.2.0"
   :description "Very fox microblogging service"
-  :url "http://example.com/FIXME"
+  :url "https://kitsune.social"
   :license {:name "GNU AFFERO GENERAL PUBLIC LICENSE"
             :url "https://www.gnu.org/licenses/agpl-3.0.en.html"}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/core.async "0.4.474"]
+                 [org.clojure/core.async "0.4.490"]
+                 [org.clojure/tools.namespace "0.2.11"]
                  [ch.qos.logback/logback-classic "1.2.3"]
+                 [commons-codec/commons-codec "1.11"]
+                 [org.bouncycastle/bcprov-jdk15on "1.60"]
+                 [org.bouncycastle/bcpkix-jdk15on "1.60"]
                  [cprop "0.1.13"]
                  [mount "0.1.14"]
                  [aleph "0.4.6"]
-                 [ring-logger "1.0.1"]
+                 [byte-streams "0.2.4"]
                  [camel-snake-kebab "0.4.0"]
-                 [buddy/buddy-core "1.5.0"]
-                 [metosin/reitit "0.2.4"]
-                 [metosin/spec-tools "0.8.0"]
+                 [metosin/reitit "0.2.9"]
+                 [metosin/spec-tools "0.8.2"]
                  [metosin/muuntaja "0.6.1"]
-                 [metosin/ring-http-response "0.9.0"]
+                 [metosin/ring-http-response "0.9.1"]
                  [metosin/jsonista "0.2.2"]
                  [ring/ring-defaults "0.3.2"]
                  [org.bovinegenius/exploding-fish "0.3.6"]
@@ -26,6 +29,7 @@
                  [social.kitsune/vuk "0.1.0"]]
   :main ^:skip-aot kitsune.core
   :target-path "target/%s"
+  :jvm-opts ["-Xmx600m" "-server"]
   :profiles {:uberjar {:aot :all
                        :source-paths ["config/prod"]
                        :uberjar-name "kitsune.jar"}

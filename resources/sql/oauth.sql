@@ -1,6 +1,10 @@
 -- :name create-app! :<! :1
-insert into apps (name, redirect_uris, scopes, website)
-  values (:name, array[:v*:redirect-uris], array[:v*:scopes], :website)
+insert into apps (name,
+  --~ (if (not-empty (:redirect-uris params)) "redirect_uris,")
+  scopes, website)
+  values (:name,
+  --~ (if (not-empty (:redirect-uris params)) "array[:v*:redirect-uris],")
+  array[:v*:scopes], :website)
   returning id, client_id, secret
 
 -- :name find-for-auth :? :1

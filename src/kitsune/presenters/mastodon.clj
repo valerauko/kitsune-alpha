@@ -1,5 +1,5 @@
 (ns kitsune.presenters.mastodon
-  (:require [kitsune.instance :refer [url]]
+  (:require [kitsune.uri :refer [url]]
             [org.bovinegenius [exploding-fish :refer [host]]]))
 
 (defn account

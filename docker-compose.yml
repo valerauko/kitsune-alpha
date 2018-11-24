@@ -4,7 +4,7 @@ services:
     image: clojure:lein-alpine
     container_name: server
     working_dir: /root
-    command: lein run
+    command: lein repl :headless :host 0.0.0.0 :port 38001
     ports:
       - 3000:3000
       - 38001:38001
@@ -24,7 +24,12 @@ services:
       - ./psql:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: kitsune
-      POSTGRES_db: kitsune
+      POSTGRES_DB: kitsune
       POSTGRES_PASSWORD: whatever
     ports:
       - 5432
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
