@@ -40,4 +40,7 @@
              (not (activity/known-activity? id)))
       (case type
         "Follow" (follow/receive activity)
+        "Undo" (case (-> activity :object :type)
+                 "Follow" (follow/receive-undo activity)
+                 (clojure.pprint/pprint activity))
         (clojure.pprint/pprint activity)))))

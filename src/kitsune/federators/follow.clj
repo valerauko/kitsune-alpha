@@ -33,7 +33,7 @@
                                   :follower-uri (:uri follower)}))))
 
 (defn receive
-  [{:keys [id type object actor] :as activity}]
+  [{:keys [id object actor] :as activity}]
   (let [object-uri (or (:id object) object)
         actor-uri (or (:id actor) actor)]
     ; since we're past signature checking, we can assume we have the actor in db
@@ -49,3 +49,14 @@
                              :followed (:id followed)
                              :follower (:id follower)
                              :accept-uri accept-uri}))))))
+
+(defn receive-undo
+  [{activity-actor :actor
+    {object-actor :actor :keys [id object]} :object}]
+  ; TODO: move the actor identity check to a general Undo handler
+  (if (= activity-actor object-actor)
+    (let [followed (users/find-by-uri conn {:uri object})
+          follower (users/find-by-uri conn {:uri object-actor})]
+      (if (and followed follower)
+        (rel/unfollow! conn {:follower (:id follower)
+                             :followed (:id followed)})))))
