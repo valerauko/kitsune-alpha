@@ -1,5 +1,14 @@
 -- :name follows? :? :1
-select * from follows where follower = :subject::int and followed = :object::int limit 1
+select * from follows
+where
+follower = :subject::int and
+followed = :object::int and
+accept_uri is not null limit 1
+
+-- :name requested-follow? :? :1
+select * from follows
+where follower = :follower::int and followed = :followed::int
+limit 1
 
 -- :name accept-follow! :<! :1
 update follows set accept_uri = :accept-uri

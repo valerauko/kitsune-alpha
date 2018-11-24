@@ -14,7 +14,7 @@
          (log/error e#)
          (internal-server-error {:error ; don't respond with error details unless in dev
                                         (if (= (config :env) "dev")
-                                          (str e#)
+                                          (str (.getMessage e#))
                                           "Unexpected error. Sorry.")})))))
 
 (defn url-decode [str] (URLDecoder/decode str "UTF-8"))

@@ -23,7 +23,7 @@
    :blocking false
    :muting false
    :muting-notifications false
-   :requested false
+   :requested (present? (db/requested-follow? conn {:followed object :follower subject}))
    :domain-blocking false
    :showing-reblogs true})
 
@@ -42,9 +42,9 @@
         accept-uri (if (and (:local object) (not (:approves-follow object)))
                      (str (uri/url "/accept/" (UUID/randomUUID))))]
     (if-let [record (db/follow! conn {:uri follow-uri
-                                        :followed (:account-id object)
-                                        :follower (:account-id current-user)
-                                        :accept-uri accept-uri})]
+                                      :followed (:account-id object)
+                                      :follower (:account-id current-user)
+                                      :accept-uri accept-uri})]
       (if-not (:local object)
         (async/go (fed/follow-request {:uri follow-uri
                                        :followed object
