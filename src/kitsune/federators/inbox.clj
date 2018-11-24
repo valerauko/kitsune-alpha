@@ -32,9 +32,10 @@
 (defn record
   [{{{:keys [id type object actor]
       :as activity} :body} :parameters
+    {fwd :X-Forwarded-For} :headers
     :keys [remote-addr]
     :as request}]
-  (benchmark-inbox type id remote-addr
+  (benchmark-inbox type id (or fwd remote-addr)
     (if (and (signed? request)
              (not (activity/known-activity? id)))
       (clojure.pprint/pprint activity))))

@@ -15,14 +15,16 @@
 
 (defn wrap-logging
   [handler]
-  (fn [{:keys [request-method uri remote-addr] :as request}]
+  (fn [{:keys [request-method uri remote-addr]
+        {fwd-for :X-Forwarded-For} :headers
+        :as request}]
     (let [start (System/nanoTime)
           response (handler request)]
       (log/info (format "%d %s %s for %s in %.3fms"
                         (:status response)
                         (-> request-method name upper-case)
                         uri
-                        remote-addr
+                        (or fwd-for remote-addr)
                         (/ (- (System/nanoTime) start) 1000000.0)))
       response)))
 
