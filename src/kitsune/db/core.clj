@@ -1,6 +1,7 @@
 (ns kitsune.db.core
   (:require [hikari-cp.core :refer [make-datasource close-datasource]]
             [hugsql.core]
+            [hugsql.adapter :refer [result-one result-many]]
             [mount.core :refer [defstate]]
             [clojure.java.jdbc :as jdbc]
             [camel-snake-kebab.extras :refer [transform-keys]]
@@ -38,12 +39,12 @@
 ; these are from luminus too
 (defn result-one-snake->kebab
   [this result options]
-  (->> (hugsql.adapter/result-one this result options)
+  (->> (result-one this result options)
        (transform-keys ->kebab-case-keyword)))
 
 (defn result-many-snake->kebab
   [this result options]
-  (->> (hugsql.adapter/result-many this result options)
+  (->> (result-many this result options)
        (map #(transform-keys ->kebab-case-keyword %))))
 
 (defmethod hugsql.core/hugsql-result-fn :1 [sym]
