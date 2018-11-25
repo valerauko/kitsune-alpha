@@ -7,9 +7,6 @@
                  [org.clojure/core.async "0.4.490"]
                  [org.clojure/tools.namespace "0.2.11"]
                  [ch.qos.logback/logback-classic "1.2.3"]
-                 [commons-codec/commons-codec "1.11"]
-                 [org.bouncycastle/bcprov-jdk15on "1.60"]
-                 [org.bouncycastle/bcpkix-jdk15on "1.60"]
                  [cprop "0.1.13"]
                  [mount "0.1.14"]
                  [aleph "0.4.6"]
@@ -26,7 +23,7 @@
                  [com.layerware/hugsql "0.4.9"]
                  [hikari-cp "2.6.0"]
                  [ragtime "0.7.2"]
-                 [social.kitsune/vuk "0.1.0"]
+                 [social.kitsune/vuk "0.2.0"]
                  [social.kitsune/csele "0.4.3"]
                  [social.kitsune/karak "0.1.0"]]
   :main ^:skip-aot kitsune.core
