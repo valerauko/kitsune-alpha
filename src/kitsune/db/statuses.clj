@@ -40,7 +40,7 @@
   (jdbc/with-db-transaction [tx conn]
     (if-let [object (create-object! tx {:type "Note"
                                         :uri (-> "/objects/" url str)
-                                        :user-id actor
+                                        :account-id actor
                                         :to to
                                         :cc cc
                                         :content content
@@ -49,7 +49,7 @@
       (if-let [activity (create-activity! tx {:type "Create"
                                               :uri (-> "/activities/" url str)
                                               :object-id (:id object)
-                                              :user-id actor
+                                              :account-id actor
                                               :to to
                                               :cc cc})]
         {:object object :activity activity}))))

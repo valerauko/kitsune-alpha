@@ -27,7 +27,8 @@
                  [hikari-cp "2.6.0"]
                  [ragtime "0.7.2"]
                  [social.kitsune/vuk "0.1.0"]
-                 [social.kitsune/csele "0.4.3"]]
+                 [social.kitsune/csele "0.4.3"]
+                 [social.kitsune/karak "0.1.0"]]
   :main ^:skip-aot kitsune.core
   :target-path "target/%s"
   :jvm-opts ["-Xmx600m" "-server"]
