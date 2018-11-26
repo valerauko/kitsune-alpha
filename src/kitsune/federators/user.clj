@@ -21,7 +21,9 @@
                       :uri (:id result)
                       :public-key (-> result :publicKey :publicKeyPem)
                       :display-name (or (:preferredUsername result)
-                                        (:name result))}]
+                                        (:name result))
+                      :inbox (or (:inbox result) (:sharedInbox result))
+                      :shared-inbox (or (:sharedInbox result) (:inbox result))}]
             (if known-user
               (db/update-account! conn data)
               (db/create-account! conn data)))

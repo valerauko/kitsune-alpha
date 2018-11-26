@@ -47,4 +47,5 @@
         "Undo" (case object-type
                  "Follow" (follow/receive-undo activity)
                  (clojure.pprint/pprint activity))
-        (clojure.pprint/pprint activity)))))
+        (clojure.pprint/pprint activity))
+      (clojure.pprint/pprint activity))))
