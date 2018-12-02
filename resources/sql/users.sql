@@ -29,10 +29,10 @@ update accounts
 update accounts set
 /*~
 (->> (dissoc params :uri)
-     (camel-snake-kebab.extras/transform-keys
-       camel-snake-kebab.core/->snake_case_string)
-     (map #(clojure.string/join "=" %))
-     (clojure.string/join ", ")))
+     (map (fn [[key _]]
+            (str (camel-snake-kebab.core/->snake_case_string key)
+                 "=" key)))
+     (clojure.string/join ", "))
 ~*/
 where uri = :uri
 returning *
