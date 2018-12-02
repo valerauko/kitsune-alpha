@@ -36,7 +36,7 @@
                                   [org.clojure/test.check "0.9.0"]
                                   [proto-repl "0.3.1"]]
                    :source-paths ["config/dev"]
-                   :plugins [[jonase/eastwood "0.3.3"
+                   :plugins [[jonase/eastwood "0.3.4"
                               :exclusions [org.clojure/clojure]]
                              [lein-cloverage "1.0.13"
                               :exclusions [org.clojure/clojure]]
