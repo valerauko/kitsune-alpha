@@ -32,10 +32,10 @@
   :start
     (http/start-server
       (-> routes/handler
+          wrap-logging
           env/wrap
           wrap-format
-          (wrap-defaults api-defaults)
-          wrap-logging)
+          (wrap-defaults api-defaults))
       {:port (get-in config [:server :port])
        :compression true})
   :stop

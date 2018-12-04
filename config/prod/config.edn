@@ -1,15 +1,15 @@
 {:env "prod"
  :instance
-  {:name nil
-   :description nil
+  {:name "Kitsune"
+   :description "Very fox microblogging"
    :admin-email nil
    :admin-account nil}
  :server
   {:host nil
-   :port 80
-   :scheme "http"}
+   :port 3000
+   :scheme "https"}
  :db
   {:host "127.0.0.1"
    :db   "kitsune"
    :user "kitsune"
-   :pass "whatever"}}
+   :pass nil}}
