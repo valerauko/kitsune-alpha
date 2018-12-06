@@ -6,19 +6,31 @@
             [jsonista.core :as json])
   (:import [java.util Date]))
 
+; {:status "failure" ; #{"success" "failure"}
+;  :type "send" ; #{"send" "fetch" "process"}
+;  :activity
+;   {:type "Create"
+;    :id "https://example.com/activity"}
+;  :object
+;   {:type "Note"
+;    :id "https://example.com/object"}
+;  :remote-addr "htts://example.com/inbox"
+;  :duration 837.21
+;  :error "stacktrace"
+;  :attempt 2}
+
 (defn make-logger
   [{:keys [type activity object remote-addr] :as static-fields}]
   (fn logger
-    [{:keys [exception attempt retry-in time]
-      :or {attempt 1}}]
-    (log/info ; exception
+    [{:keys [exception attempt retry-in time]}]
+    (log/info exception
               (json/write-value-as-string
                 (merge static-fields
                        {:status (if exception "failure" "success")
-                        :attempt attempt
-                        :next-at (if (and exception retry-in)
-                                   (Date. ^long (+ (System/currentTimeMillis)
-                                                   retry-in)))})))))
+                        :attempt (or attempt 1)}
+                       (if (and exception retry-in)
+                         {:next-at (Date. ^long (+ (System/currentTimeMillis)
+                                                   retry-in))}))))))
 
 (defn millisec-diff
   [start]
