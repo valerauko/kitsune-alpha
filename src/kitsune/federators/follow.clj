@@ -3,7 +3,7 @@
             [kitsune.db.user :as users]
             [kitsune.db.relationship :as rel]
             [kitsune.uri :as uri]
-            [kitsune.federators.outbox :refer [send-activity]]
+            [bark.send :refer [send-activity]]
             [kitsune.presenters.activitypub.follow :as json]
             [kitsune.presenters.activitypub.undo :as undo]))
 
@@ -15,12 +15,13 @@
        (rel/accept-follow! conn {:uri id :accept-uri accept-uri}))
        ; TODO: handle case if Follow record doesn't exist
      (if-not (:local follower)
-       (send-activity (:inbox follower)
-                      followed
-                      (json/accept {:accept-uri accept-uri
-                                    :uri id
-                                    :follower-uri (:uri follower)
-                                    :followed-uri (:uri followed)})))
+       (send-activity {:inbox (:inbox follower)
+                       :key-map (users/key-map followed)
+                       :activity
+                         (json/accept {:accept-uri accept-uri
+                                       :uri id
+                                       :follower-uri (:uri follower)
+                                       :followed-uri (:uri followed)})}))
      accept-uri)))
 
 ; TODO: make some general pre-processing for activities
@@ -34,23 +35,23 @@
 (defn undo-follow
   [{:keys [uri followed follower]}]
   (if-not (:local followed)
-    (send-activity (:inbox followed)
-                   follower
-                   (-> {:uri uri
-                        :followed-uri (:uri followed)
-                        :follower-uri (:uri follower)}
-                       json/follow
-                       undo/undo))))
+    (send-activity {:inbox (:inbox followed)
+                    :key-map (users/key-map follower)
+                    :activity (-> {:uri uri
+                                   :followed-uri (:uri followed)
+                                   :follower-uri (:uri follower)}
+                                  json/follow
+                                  undo/undo)})))
 
 (defn follow-request
   [{:keys [uri followed follower]}]
   ; don't "federate" if object is local
   (if-not (:local followed)
-    (send-activity  (:inbox followed)
-                    follower
-                    (json/follow {:uri uri
-                                  :followed-uri (:uri followed)
-                                  :follower-uri (:uri follower)}))))
+    (send-activity {:inbox (:inbox followed)
+                    :key-map (users/key-map follower)
+                    :activity (json/follow {:uri uri
+                                            :followed-uri (:uri followed)
+                                            :follower-uri (:uri follower)})})))
 
 (defn receive
   [{:keys [id object actor] :as activity}]
