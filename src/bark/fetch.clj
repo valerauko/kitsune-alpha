@@ -1,5 +1,6 @@
 (ns bark.fetch
   (:require [clojure.tools.logging :as log]
+            [manifold.deferred :as md]
             [aleph.http :as http]
             [jsonista.core :as json]))
 
@@ -11,13 +12,9 @@
 
 (defn fetch-resource
   [uri]
-  (try
-    (-> @(http/get uri {:headers {:accept "application/activity+json"}
-                        :connect-timeout 1000
-                        :read-timeout 2000})
-        :body
-        parse-json)
-    (catch Throwable ex
-      (log/warn
-        ; ex
-        (str "Error while fetching resource " uri)))))
+  (md/chain
+    (http/get uri {:headers {:accept "application/activity+json"}
+                   :connect-timeout 1000
+                   :read-timeout 2000})
+    :body
+    parse-json))

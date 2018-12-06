@@ -1,72 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- encoders are assigned the type
-             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>%date{ISO8601} [%thread] %-5level %logger{36} - %msg %n</pattern>
-        </encoder>
-    </appender>
-    <appender name="OUTBOX" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>log/outbox.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>log/outbox.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>25MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <!-- keep 30 days of history -->
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>%date{ISO8601} [%thread] %-5level %logger{36} - %msg %n</pattern>
-        </encoder>
-    </appender>
-    <appender name="INBOX" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>log/inbox.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>log/inbox.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>25MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <!-- keep 30 days of history -->
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>%date{ISO8601} [%thread] %-5level %logger{36} - %msg %n</pattern>
-        </encoder>
-    </appender>
-    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>log/kitsune.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>log/kitsune.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>25MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <!-- keep 30 days of history -->
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>%date{ISO8601} [%thread] %-5level %logger{36} - %msg %n</pattern>
-        </encoder>
-    </appender>
-    <logger name="io.netty" level="warn" />
-    <logger name="i.n.buffer" level="warn" />
-    <logger name="com.zaxxer.hikari" level="warn" />
-    <logger name="kitsune.federators.outbox" additivity="false">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="OUTBOX" />
-    </logger>
-    <logger name="kitsune.federators.inbox" additivity="false">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="INBOX" />
-    </logger>
-    <root level="DEBUG">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="ROLLING" />
-    </root>
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are assigned the type
+    ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <encoder>
+      <charset>UTF-8</charset>
+      <pattern>%date{ISO8601} [%thread] %-5level %logger{36} - %msg %n</pattern>
+    </encoder>
+  </appender>
+  <appender name="federation" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>log/federation.log</file>
+    <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+      <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter" />
+      <timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSSZ</timestampFormat>
+    </layout>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>log/federation.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>25MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <!-- keep 30 days of history -->
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+  </appender>
+  <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>log/kitsune.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>log/kitsune.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>25MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <!-- keep 30 days of history -->
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <charset>UTF-8</charset>
+      <pattern>%date{ISO8601} [%thread] %-5level %logger{36} - %msg %n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="io.netty" level="warn" />
+  <logger name="i.n.buffer" level="warn" />
+  <logger name="com.zaxxer.hikari" level="warn" />
+
+  <logger name="kitsune.federators.outbox" additivity="false">
+    <appender-ref ref="stdout" />
+    <appender-ref ref="federation" />
+  </logger>
+  <logger name="kitsune.federators.inbox" additivity="false">
+    <appender-ref ref="stdout" />
+    <appender-ref ref="federation" />
+  </logger>
+
+  <root level="DEBUG">
+    <appender-ref ref="stdout" />
+    <appender-ref ref="ROLLING" />
+  </root>
 </configuration>

@@ -8,6 +8,8 @@
                  [org.clojure/tools.namespace "0.2.11"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [ch.qos.logback/logback-classic "1.2.3"]
+                 [ch.qos.logback.contrib/logback-json-classic "0.1.5"]
+                 [ch.qos.logback.contrib/logback-jackson "0.1.5"]
                  [cprop "0.1.13"]
                  [mount "0.1.14"]
                  [aleph "0.4.6"]
