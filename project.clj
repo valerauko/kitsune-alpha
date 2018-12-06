@@ -6,6 +6,7 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/core.async "0.4.490"]
                  [org.clojure/tools.namespace "0.2.11"]
+                 [org.clojure/math.numeric-tower "0.0.4"]
                  [ch.qos.logback/logback-classic "1.2.3"]
                  [cprop "0.1.13"]
                  [mount "0.1.14"]
