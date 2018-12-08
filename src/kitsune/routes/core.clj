@@ -33,6 +33,7 @@
   [handler]
   (fn [{:keys [request-method uri remote-addr]
         {fwd-for :X-Forwarded-For} :headers
+        {route :template} :reitit.core/match
         :as request}]
     (let [start (System/nanoTime)
           response (handler request)]
@@ -40,6 +41,7 @@
                   {:status (:status response)
                    :method request-method
                    :path uri
+                   :route route
                    :remote-addr (or fwd-for remote-addr)
                    :response-time (/ (- (System/nanoTime) start) 1000000.0)}))
       response)))
@@ -68,7 +70,8 @@
      :data {:muuntaja negotiator
             :coercion spec/coercion
             :swagger {:id ::api}
-            :middleware [swagger-feature
+            :middleware [wrap-logging
+                         swagger-feature
                          m-middleware/format-middleware
                          coerce/coerce-exceptions-middleware
                          coerce/coerce-request-middleware
@@ -82,6 +85,5 @@
           (ring/redirect-trailing-slash-handler)
           (ring/create-default-handler
             {:not-found (constantly {:status 404 :body {:error "Not found"}})})))
-      wrap-logging
       wrap-format
       default-middleware))
