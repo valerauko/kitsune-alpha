@@ -11,7 +11,7 @@
                  [ch.qos.logback.contrib/logback-json-classic "0.1.5"]
                  [ch.qos.logback.contrib/logback-jackson "0.1.5"]
                  [cprop "0.1.13"]
-                 [mount "0.1.14"]
+                 [mount "0.1.15"]
                  [aleph "0.4.6"]
                  [byte-streams "0.2.4"]
                  [camel-snake-kebab "0.4.0"]
@@ -28,7 +28,7 @@
                  [ragtime "0.7.2"]
                  [social.kitsune/vuk "0.2.0"]
                  [social.kitsune/csele "0.4.3"]
-                 [social.kitsune/karak "0.1.0"]]
+                 [social.kitsune/karak "0.1.1"]]
   :main ^:skip-aot kitsune.core
   :target-path "target/%s"
   :jvm-opts ["-Xmx600m" "-server"]
