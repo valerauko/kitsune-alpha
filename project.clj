@@ -6,12 +6,12 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/core.async "0.4.490"]
                  [org.clojure/tools.namespace "0.2.11"]
+                 [org.clojure/math.numeric-tower "0.0.4"]
                  [ch.qos.logback/logback-classic "1.2.3"]
-                 [commons-codec/commons-codec "1.11"]
-                 [org.bouncycastle/bcprov-jdk15on "1.60"]
-                 [org.bouncycastle/bcpkix-jdk15on "1.60"]
+                 [ch.qos.logback.contrib/logback-json-classic "0.1.5"]
+                 [ch.qos.logback.contrib/logback-jackson "0.1.5"]
                  [cprop "0.1.13"]
-                 [mount "0.1.14"]
+                 [mount "0.1.15"]
                  [aleph "0.4.6"]
                  [byte-streams "0.2.4"]
                  [camel-snake-kebab "0.4.0"]
@@ -26,7 +26,9 @@
                  [com.layerware/hugsql "0.4.9"]
                  [hikari-cp "2.6.0"]
                  [ragtime "0.7.2"]
-                 [social.kitsune/vuk "0.1.0"]]
+                 [social.kitsune/vuk "0.2.0"]
+                 [social.kitsune/csele "0.4.3"]
+                 [social.kitsune/karak "0.1.1"]]
   :main ^:skip-aot kitsune.core
   :target-path "target/%s"
   :jvm-opts ["-Xmx600m" "-server"]
@@ -37,5 +39,8 @@
                                   [org.clojure/test.check "0.9.0"]
                                   [proto-repl "0.3.1"]]
                    :source-paths ["config/dev"]
-                   :plugins [[jonase/eastwood "0.2.9"]
+                   :plugins [[jonase/eastwood "0.3.4"
+                              :exclusions [org.clojure/clojure]]
+                             [lein-cloverage "1.0.13"
+                              :exclusions [org.clojure/clojure]]
                              [lein-ancient "0.6.15"]]}})

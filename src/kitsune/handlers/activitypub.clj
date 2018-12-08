@@ -1,15 +1,20 @@
 (ns kitsune.handlers.activitypub
   (:require [clojure.core.async :as async]
             [ring.util.http-response :as status]
+            [kitsune.db.user :as db]
             [kitsune.handlers.core :refer [defhandler]]
-            [kitsune.federators.inbox :as federator]))
+            [bark.inbox :as federator]
+            [kitsune.federators.follow :as follow]))
+
+(def handler
+  (federator/inbox-handler
+    {:find-object db/public-key
+     :handlers
+      {"Follow" follow/follow-handler
+       "Accept" {"Follow" follow/accept-handler}
+       "Undo" {"Follow" follow/undo-handler}}}))
 
 (defhandler inbox
-  [{{{:keys [id type object actor]
-      :as activity} :body} :parameters
-    :as request}]
-  (if-not type
-    (status/bad-request {:error "Activities must have a type"})
-    (do
-      (async/go (federator/record request))
-      (status/accepted))))
+  [request]
+  (handler request)
+  (status/accepted))

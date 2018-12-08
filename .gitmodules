@@ -1,0 +1,3 @@
+[submodule "src/bark"]
+	path = src/bark
+	url = https://github.com/valerauko/bark.git

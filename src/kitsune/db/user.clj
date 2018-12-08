@@ -23,6 +23,11 @@
   (if-let [result (find-by-uri conn {:uri uri})]
     (:public-key result)))
 
+(defn key-map
+  [user-record]
+  {:key-id (str (:uri user-record) "#main-key")
+   :pem (:private-key user-record)})
+
 (defn for-login
   [email pass]
   (find-for-auth

@@ -1,9 +1,12 @@
 (ns kitsune.status-test
   (:require [clojure.test :refer :all]
+            [mount.core :refer [start]]
             [kitsune.db.statuses :refer :all]
             [kitsune.handlers.statuses :refer :all]
             [kitsune.fixtures.user :as user-fixt]
             [kitsune.fixtures.status :as status-fixt]))
+
+(start #'kitsune.instance/config)
 
 (deftest visibility-test
   (testing "Visibility"
@@ -37,7 +40,7 @@
 (deftest replies-test
   (testing "Replies"
     (with-redefs [kitsune.db.statuses/status-exists?
-                    (fn [_ {:keys [id]}] (if (= id 42) {:id 42 :user-id 13}))
+                    (fn [_ {:keys [id]}] (if (= id 42) {:id 42 :account-id 13}))
                   kitsune.db.statuses/create-status!
                     (fn [& {:keys [in-reply-to-id in-reply-to-user-id]}]
                       (if (= in-reply-to-id 42)
@@ -47,21 +50,17 @@
                          :activity (status-fixt/dummy-activity)}
                         {:object (status-fixt/dummy-object)
                          :activity (status-fixt/dummy-activity)}))
-                  kitsune.db.user/find-by-id
+                  kitsune.db.user/find-by-user-id
                     (fn [& _] (user-fixt/dummy-user))]
-      (is (let [request {:body-params {:status "foo"}}
+      (let [request {:body-params {:status "foo"}}
+            result (:body (create request))]
+        (is (empty? (:in-reply-to-id result)))
+        (is (empty? (:in-reply-to-account-id result))))
+      (let [request {:body-params {:status "foo" :in-reply-to-id 13}}
                 result (:body (create request))]
-            (and (empty? (:in-reply-to-id result))
-                 (empty? (:in-reply-to-account-id result))))
-        "Empty if no in-reply-to-id param is given")
-      (is (let [request {:body-params {:status "foo" :in-reply-to-id 13}}
-                result (:body (create request))]
-            (and (empty? (:in-reply-to-id result))
-                 (empty? (:in-reply-to-account-id result))))
-        "Empty if the status of the given ID doesn't exist")
-      (is (let [request {:body-params {:status "foo" :in-reply-to-id 42}}
-                result (:body (create request))]
-            ;(println request, result)
-            (and (= (:in-reply-to-id result) 42)
-                 (= (:in-reply-to-account-id result) 13)))
-        "Has the given ID and its owner's ID"))))
+        (is (empty? (:in-reply-to-id result)))
+        (is (empty? (:in-reply-to-account-id result))))
+      (let [request {:body-params {:status "foo" :in-reply-to-id 42}}
+            result (:body (create request))]
+        (is (= (:in-reply-to-id result) 42))
+        (is (= (:in-reply-to-account-id result) 13))))))
