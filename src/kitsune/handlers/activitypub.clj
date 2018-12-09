@@ -1,6 +1,5 @@
 (ns kitsune.handlers.activitypub
-  (:require [clojure.core.async :as async]
-            [ring.util.http-response :as status]
+  (:require [ring.util.http-response :as status]
             [kitsune.db.user :as db]
             [kitsune.handlers.core :refer [defhandler]]
             [bark.inbox :as federator]
