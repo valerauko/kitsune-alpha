@@ -51,7 +51,7 @@
 
 (s/def ::state string?)
 (def authorize-params
-  {:body (s/keys :req-un [::user/email ::password ::client-id]
+  {:form (s/keys :req-un [::user/email ::password ::client-id]
                  :opt-un [::redirect-uri ::scopes ::state])})
 
 (s/def ::exchange-by-auth

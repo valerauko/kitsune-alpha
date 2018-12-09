@@ -3,7 +3,6 @@
             [kitsune.spec.common :as common]))
 
 (s/def ::name string?)
-(s/def ::client-name string?)
 (s/def ::website ::common/url)
 
 (s/def ::object-vector
