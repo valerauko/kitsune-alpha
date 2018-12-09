@@ -9,9 +9,13 @@
             [reitit.swagger-ui :refer [create-swagger-ui-handler]]
             [muuntaja.middleware :refer [wrap-format]]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
+            [ring.middleware.cors :refer [wrap-cors]]
             [muuntaja.core :as muuntaja]
             [muuntaja.format.plain-text :as text-format]
             [reitit.ring.middleware.muuntaja :as m-middleware]
+            [camel-snake-kebab.extras :refer [transform-keys]]
+            [camel-snake-kebab.core :refer [->kebab-case-keyword
+                                            ->snake_case_string]]
             [kitsune.instance :refer [version]]
             [kitsune.routes.user :as user]
             [kitsune.routes.oauth :as oauth]
@@ -50,6 +54,29 @@
   [handler]
   (wrap-defaults handler api-defaults))
 
+(defn transform-map
+  ([hashmap] (transform-map hashmap ->kebab-case-keyword))
+  ([hashmap func]
+   (transform-keys
+     #(if-not (number? %) (func %) %)
+     hashmap)))
+
+(defn case-wrapper
+  [handler]
+  (fn param-case [request] 
+    (let [response (-> request
+                       (update :body-params transform-map)
+                       (update :form-params transform-map)
+                       (update :query-params transform-map)
+                       handler
+                       (update :body #(transform-map % ->snake_case_string)))]
+      response)))
+
+(defn cors-wrapper
+  [handler]
+  (wrap-cors handler :access-control-allow-origin [#"https://pinafore.social"]
+                     :access-control-allow-methods [:get :put :post :delete]))
+
 (def router
   (ring/router
     [user/routes
@@ -71,8 +98,10 @@
             :coercion spec/coercion
             :swagger {:id ::api}
             :middleware [wrap-logging
+                         cors-wrapper
                          swagger-feature
                          m-middleware/format-middleware
+                         case-wrapper
                          coerce/coerce-exceptions-middleware
                          coerce/coerce-request-middleware
                          coerce/coerce-response-middleware]}}))

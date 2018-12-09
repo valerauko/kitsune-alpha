@@ -14,7 +14,8 @@ select id from apps
 
 -- :name find-for-session :? :1
 select id from apps
-  where client_id = :client-id and secret = :client-secret
+  where client_id = :client-id and
+    secret = :client-secret and :redirect-uri = any(redirect_uris)
   limit 1
 
 -- :name create-auth! :<! :1

@@ -119,4 +119,4 @@ join users on accounts.user_id = users.id
 where acct = :acct limit 1
 
 -- :name load-by-id :? :*
-select * from users where id in (:v*:ids)
+select * from accounts where id in (:v*:ids)

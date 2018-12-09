@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <form method="post">
+      <input type="hidden" name="client_id" value="{{client-id}}" />
+      <input type="hidden" name="response_type" value="{{response-type}}" />
+      <input type="hidden" name="redirect_uri" value="{{redirect-uri}}" />
+      <p>
+        <input type="hidden" name="scope" value="{{scope}}" readonly />
+        Scopes requested by this application:
+        <ul>
+          {{#scopes}}<li>{{.}}</li>{{/scopes}}
+        </ul>
+      </p>
+      <p><label for="email">Email address</label> <input type="email" name="email" value="{{email}}" required /></p>
+      <p><label for="password">Password</label> <input type="password" name="password" required /></p>
+      <p><input type="submit" value="Approve" /></p>
+    </form>
+  </body>
+</html>

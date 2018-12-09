@@ -62,21 +62,20 @@
                    (fn [store activity]
                      {:users (into
                                (:users store)
-                               [(:user-id activity)
-                                (:object-user-id activity)])})
+                               [(:account-id activity)
+                                (:object-account-id activity)])})
                    {:users #{}}
                    activities)
-        raw-vec (user-db/load-by-id conn {:ids (:users ids-list)})
+        raw-vec (do (println ids-list) (user-db/load-by-id conn {:ids (:users ids-list)}))
         preloaded {:users (reduce
                             (fn [aggr row]
                               (assoc aggr (:id row) row))
                             {}
                             raw-vec)}]
-    (println preloaded)
     (reduce
       (fn [aggr activity]
         (conj aggr
           (assoc activity :actor
-            (get-in preloaded [:users (:user-id activity)]))))
+            (get-in preloaded [:users (:account-id activity)]))))
       []
       activities)))
