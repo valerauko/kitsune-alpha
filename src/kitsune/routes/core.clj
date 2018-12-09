@@ -77,7 +77,7 @@
                          coerce/coerce-request-middleware
                          coerce/coerce-response-middleware]}}))
 
-(def handler
+(def wrapped-handler
   (-> (ring/ring-handler
         router
         (ring/routes

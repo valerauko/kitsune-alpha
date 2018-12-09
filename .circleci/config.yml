@@ -42,13 +42,15 @@ jobs:
       - run: lein test
   lint:
     docker:
-      - image: clojure:alpine
+      - image: clojure:lein
     working_directory: ~/kitsune
     environment:
       LEIN_ROOT: true
       JVM_OPTS: -Xmx3200m
     steps:
       - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
       - restore_cache:
           keys:
           - dependencies-{{ checksum "project.clj" }}
@@ -61,13 +63,16 @@ jobs:
       - run: lein eastwood
   deploy:
     docker:
-      - image: clojure:alpine
+      - image: clojure:lein
     environment:
-      DEPLOY_HOST: kitsune.social
+      DEPLOY_HOST: 68.183.233.111
       PROD_CONFIG: config.edn
+      KITSUNE_FOLDER: /usr/local/kitsune/
     working_directory: ~/kitsune
     steps:
       - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
       - restore_cache:
           keys:
           - dependencies-{{ checksum "project.clj" }}
@@ -79,17 +84,19 @@ jobs:
           key: dependencies-{{ checksum "project.clj" }}
       - run:
           name: "Compile jar"
-          command: lein ring uberjar
+          command: lein uberjar
       - run:
-          name: Fix host authenticity for Linode
+          name: Fix host authenticity
           command: |
             ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
+      - add_ssh_keys:
+          fingerprints: ["65:66:d8:7e:1e:69:ed:f9:62:5a:c1:f3:60:0a:0e:7c"]
       - run:
           name: "Copy jar to server"
-          command: scp target/kitsune.jar circleci@$DEPLOY_HOST:.
+          command: scp target/uberjar/kitsune.jar circleci@$DEPLOY_HOST:$KITSUNE_FOLDER
       - run:
           name: "Finally start the server"
-          command: ssh circleci@$DEPLOY_HOST "pkill java; java -Dconf=$PROD_CONFIG -jar kitsune.jar"
+          command: ssh circleci@$DEPLOY_HOST "cd $KITSUNE_FOLDER; pkill -2 java; java -Dconf=$PROD_CONFIG -jar kitsune.jar"
           background: true
       - run:
           name: "Keep connection open long enough to start the server"
@@ -97,21 +104,14 @@ jobs:
 
 workflows:
   version: 2
-  core_flow:
+  test_and_deploy:
     jobs:
       - test
-      # - lint
-      - hold:
-          type: approval
-          requires:
-            - test
-          #  - lint
-          filters:
-            branches:
-              only: master
+      - lint
       - deploy:
           requires:
-            - hold
+            - test
+            - lint
           filters:
             branches:
-              only: master
+              only: develop
