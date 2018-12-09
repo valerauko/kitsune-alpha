@@ -2,7 +2,6 @@
   (:require [ring.util.http-response :refer :all]
             [org.bovinegenius [exploding-fish :as uri]]
             [clojure.string :refer [split join]]
-            [clojure.core.async :refer [go]]
             [kitsune.handlers.core :refer [defhandler url-decode]]
             [kitsune.db.oauth :as db]
             [kitsune.db.user :as user-db]
@@ -130,7 +129,7 @@
       (do
         ; update user's last seen timestamp async
         ; this includes token refreshes too so it's accurate to 10 minutes
-        (go (user-db/touch-last-login! conn {:id (:user-id token)}))
+        (future (user-db/touch-last-login! conn {:id (:user-id token)}))
         (ok {:token-type "Bearer"
              :access-token (:token token)
              :refresh-token (:refresh token)
