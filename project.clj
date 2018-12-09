@@ -34,8 +34,7 @@
   :profiles {:uberjar {:aot :all
                        :source-paths ["config/prod"]
                        :uberjar-name "kitsune.jar"}
-             :dev {:dependencies [[ring/ring-devel "1.7.1"]
-                                  [org.clojure/test.check "0.9.0"]
+             :dev {:dependencies [[org.clojure/test.check "0.9.0"]
                                   [proto-repl "0.3.1"]]
                    :source-paths ["config/dev"]
                    :plugins [[jonase/eastwood "0.3.4"
