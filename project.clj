@@ -4,7 +4,6 @@
   :license {:name "GNU AFFERO GENERAL PUBLIC LICENSE"
             :url "https://www.gnu.org/licenses/agpl-3.0.en.html"}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/core.async "0.4.490"]
                  [org.clojure/tools.namespace "0.2.11"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [ch.qos.logback/logback-classic "1.2.3"]
@@ -35,9 +34,7 @@
   :profiles {:uberjar {:aot :all
                        :source-paths ["config/prod"]
                        :uberjar-name "kitsune.jar"}
-             :dev {:dependencies [[ring/ring-devel "1.7.1"]
-                                  [org.clojure/test.check "0.9.0"]
-                                  [proto-repl "0.3.1"]]
+             :dev {:dependencies [[org.clojure/test.check "0.9.0"]]
                    :source-paths ["config/dev"]
                    :plugins [[jonase/eastwood "0.3.4"
                               :exclusions [org.clojure/clojure]]

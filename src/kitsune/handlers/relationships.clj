@@ -1,6 +1,5 @@
 (ns kitsune.handlers.relationships
-  (:require [clojure.core.async :as async]
-            [kitsune.db.relationship :as db]
+  (:require [kitsune.db.relationship :as db]
             [kitsune.db.user :as users]
             [kitsune.db.core :refer [conn]]
             [kitsune.uri :as uri]
@@ -46,9 +45,9 @@
                                       :follower (:account-id current-user)
                                       :accept-uri accept-uri})]
       (if-not (:local object)
-        (async/go (fed/send-follow {:uri follow-uri
-                                    :followed object
-                                    :follower current-user}))))
+        (fed/send-follow {:uri follow-uri
+                          :followed object
+                          :follower current-user})))
     (ok (relationship :subject (:account-id current-user)
                       :object (:account-id object)))))
 
@@ -60,8 +59,8 @@
     (if-let [record (db/unfollow! conn {:followed (:account-id object)
                                         :follower (:account-id current-user)})]
       (if-not (:local object)
-        (async/go (fed/send-undo {:uri (:uri record)
-                                  :followed object
-                                  :follower current-user}))))
+        (fed/send-undo {:uri (:uri record)
+                        :followed object
+                        :follower current-user})))
     (ok (relationship :subject (:account-id current-user)
                       :object (:account-id object)))))
