@@ -10,5 +10,5 @@
   (s/coll-of map?))
 
 (s/def ::application
-  (s/keys :req-un [::client-name]
+  (s/keys :req-un [::name]
           :opt-un [::website]))

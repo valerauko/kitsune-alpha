@@ -4,9 +4,10 @@
             [kitsune.spec.user :as user]))
 
 (s/def ::name string?)
+(s/def ::client-name string?)
 (s/def ::scopes string?)
 (s/def ::scope-array
-  (s/coll-of #{"read" "write" "follow"} :distinct true
+  (s/coll-of #{"read" "write" "follow" "push"} :distinct true
              :min-count 1 :max-count 3))
 ; TODO: proper url validation
 (s/def ::website string?)
@@ -14,7 +15,7 @@
 (s/def ::redirect-uris string?)
 
 (s/def ::create-app
-  (s/keys :req-un [::name ::scopes]
+  (s/keys :req-un [::client-name ::scopes]
           :opt-un [::website ::redirect-uris]))
 
 (s/def ::random-hash
