@@ -8,6 +8,7 @@
 (def handler
   (federator/inbox-handler
     {:find-object db/public-key
+     :upsert-object (constantly nil)
      :handlers
       {"Follow" follow/follow-handler
        "Accept" {"Follow" follow/accept-handler}

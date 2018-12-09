@@ -42,7 +42,7 @@
          :rel "magic-public-key"}]}))
 
 (defhandler resource
-  [{{resource "resource" :or {resource ""}} :query-params
+  [{{:keys [resource] :or {resource ""}} :query-params
     {content-type :accept :or {content-type "application/json"}} :headers}]
   (let [[user host] (->> resource (re-seq #"(?i)(?:acct:)?@?([^@]+)@([^:\pZ]+)") first rest)]
     (if (= (:host (url)) host)
