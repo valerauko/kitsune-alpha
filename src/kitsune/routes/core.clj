@@ -63,7 +63,7 @@
 
 (defn case-wrapper
   [handler]
-  (fn param-case [request] 
+  (fn param-case [request]
     (let [response (-> request
                        (update :body-params transform-map)
                        (update :form-params transform-map)
@@ -87,6 +87,7 @@
      relationships/routes
      ["/swagger.json"
       {:get {:no-doc true
+             :middleware ^:replace [] ; the case-wrapper breaks the output
              :swagger {:info {:title "Kitsune API"
                               :description "Very fox microblogging"
                               :version version}
