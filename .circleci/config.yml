@@ -42,7 +42,7 @@ jobs:
       - run: lein test
   lint:
     docker:
-      - image: clojure:alpine
+      - image: clojure:lein-alpine
     working_directory: ~/kitsune
     environment:
       LEIN_ROOT: true
@@ -61,9 +61,9 @@ jobs:
       - run: lein eastwood
   deploy:
     docker:
-      - image: clojure:alpine
+      - image: clojure:lein-alpine
     environment:
-      DEPLOY_HOST: kitsune.social
+      DEPLOY_HOST: 68.183.233.111
       PROD_CONFIG: config.edn
     working_directory: ~/kitsune
     steps:
@@ -84,12 +84,14 @@ jobs:
           name: Fix host authenticity for Linode
           command: |
             ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
+      - add_ssh_keys:
+          fingerprints: ["65:66:d8:7e:1e:69:ed:f9:62:5a:c1:f3:60:0a:0e:7c"]
       - run:
           name: "Copy jar to server"
-          command: scp target/kitsune.jar circleci@$DEPLOY_HOST:.
+          command: scp target/kitsune.jar circleci@$DEPLOY_HOST:/usr/local/kitsune/
       - run:
           name: "Finally start the server"
-          command: ssh circleci@$DEPLOY_HOST "pkill java; java -Dconf=$PROD_CONFIG -jar kitsune.jar"
+          command: ssh circleci@$DEPLOY_HOST "pkill -2 java; java -Dconf=$PROD_CONFIG -jar kitsune.jar"
           background: true
       - run:
           name: "Keep connection open long enough to start the server"
@@ -97,21 +99,16 @@ jobs:
 
 workflows:
   version: 2
-  core_flow:
+  just_testing:
     jobs:
       - test
-      # - lint
-      - hold:
-          type: approval
-          requires:
-            - test
-          #  - lint
-          filters:
-            branches:
-              only: master
+      - lint
+  deploy_too:
+    jobs:
       - deploy:
           requires:
-            - hold
+            - test
+            - lint
           filters:
             branches:
-              only: master
+              only: develop
