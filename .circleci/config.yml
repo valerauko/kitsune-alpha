@@ -104,10 +104,10 @@ jobs:
 
 workflows:
   version: 2
-  #just_testing:
-  #  jobs:
-  #    - test
-  #    - lint
+  just_testing:
+    jobs:
+      - test
+      - lint
   deploy_too:
     jobs:
       - test
@@ -116,6 +116,6 @@ workflows:
           requires:
             - test
             - lint
-        #  filters:
-        #    branches:
-        #      only: develop
+          filters:
+            branches:
+              only: develop
