@@ -104,12 +104,14 @@ jobs:
 
 workflows:
   version: 2
-  just_testing:
+  #just_testing:
+  #  jobs:
+  #    - test
+  #    - lint
+  deploy_too:
     jobs:
       - test
       - lint
-  deploy_too:
-    jobs:
       - deploy:
           requires:
             - test
