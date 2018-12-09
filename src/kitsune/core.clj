@@ -13,7 +13,7 @@
 (defstate ^{:on-reload :noop} http-server
   :start
     (http/start-server
-      (env/wrap routes/handler)
+      (env/wrap routes/wrapped-handler)
       {:port (get-in config [:server :port])
        :compression true})
   :stop
