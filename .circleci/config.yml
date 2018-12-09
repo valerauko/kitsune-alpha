@@ -96,7 +96,7 @@ jobs:
           command: scp target/uberjar/kitsune.jar circleci@$DEPLOY_HOST:$KITSUNE_FOLDER
       - run:
           name: "Finally start the server"
-          command: ssh circleci@$DEPLOY_HOST "cd $KITSUNE_FOLDER; pkill -2 java; java -Dconf=$PROD_CONFIG -jar kitsune.jar"
+          command: ssh circleci@$DEPLOY_HOST "cd $KITSUNE_FOLDER; pkill -2 java; sleep 2; java -Dconf=$PROD_CONFIG -jar kitsune.jar"
           background: true
       - run:
           name: "Keep connection open long enough to start the server"
