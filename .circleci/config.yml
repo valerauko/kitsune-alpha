@@ -93,7 +93,7 @@ jobs:
           fingerprints: ["65:66:d8:7e:1e:69:ed:f9:62:5a:c1:f3:60:0a:0e:7c"]
       - run:
           name: "Copy jar to server"
-          command: scp target/kitsune.jar circleci@$DEPLOY_HOST:$KITSUNE_FOLDER
+          command: scp target/uberjar/kitsune.jar circleci@$DEPLOY_HOST:$KITSUNE_FOLDER
       - run:
           name: "Finally start the server"
           command: ssh circleci@$DEPLOY_HOST "cd $KITSUNE_FOLDER; pkill -2 java; java -Dconf=$PROD_CONFIG -jar kitsune.jar"
