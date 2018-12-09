@@ -28,7 +28,8 @@
                  [ragtime "0.7.2"]
                  [social.kitsune/vuk "0.2.0"]
                  [social.kitsune/csele "0.4.3"]
-                 [social.kitsune/karak "0.1.1"]]
+                 [social.kitsune/karak "0.1.1"]
+                 [cljstache "2.0.1"]]
   :main ^:skip-aot kitsune.core
   :target-path "target/%s"
   :jvm-opts ["-Xmx600m" "-server"]
