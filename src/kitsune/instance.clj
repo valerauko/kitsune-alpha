@@ -8,7 +8,8 @@
   :start (load-config :merge [(from-env)
                               (from-system-props)]))
 
-(def version
+(defstate version
+  :start
   (:kitsune-version config))
 
 (defn url

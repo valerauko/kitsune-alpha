@@ -105,5 +105,5 @@
              :scopes #{"read"}
              :middleware [oauth/bearer-auth
                           oauth/enforce-scopes]
-             :responses {200 {:body ::status-spec/statuses}}
+             :responses {200 {:body any?}};::status-spec/statuses}}
              :handler account-statuses}}]]]])

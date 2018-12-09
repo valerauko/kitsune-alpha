@@ -54,17 +54,17 @@
     ; TODO: handle boosts (different user)
     ; TODO: calculate visibility
     ; TODO: do urls correctly
-    (let [user (user-db/find-by-id conn {:id (:user-id result)})]
+    (let [user (user-db/find-by-id conn {:id (:account-id result)})]
       (ok (mastodon/status :object result :actor user)))
     (not-found {:error "Status not found"})))
 
 ; TODO: this needs authentication but i don't have visibility yet
 (defhandler account-statuses
   [{{id :id} :path-params}]
-  (if-let [result (db/user-activities conn {:user-id id})]
-    (let [preloaded (db/preload-stuff result)
+  (if-let [result (db/user-activities conn {:account-id id})]
+    (let [;preloaded (db/preload-stuff result)
           formatted (map #(mastodon/status :object (dissoc % :actor)
                                            :actor (:actor %))
-                         preloaded)]
+                         result)]
       (ok formatted))
     (not-found {:error "User not found"})))
