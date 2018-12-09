@@ -112,6 +112,6 @@ workflows:
           requires:
             - test
             - lint
-        #  filters:
-        #    branches:
-        #      only: develop
+          filters:
+            branches:
+              only: develop
