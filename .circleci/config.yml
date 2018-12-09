@@ -42,7 +42,7 @@ jobs:
       - run: lein test
   lint:
     docker:
-      - image: clojure:alpine
+      - image: clojure:lein
     working_directory: ~/kitsune
     environment:
       LEIN_ROOT: true
@@ -63,7 +63,7 @@ jobs:
       - run: lein eastwood
   deploy:
     docker:
-      - image: clojure:alpine
+      - image: clojure:lein
     environment:
       DEPLOY_HOST: 68.183.233.111
       PROD_CONFIG: config.edn
