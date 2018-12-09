@@ -67,6 +67,7 @@ jobs:
     environment:
       DEPLOY_HOST: 68.183.233.111
       PROD_CONFIG: config.edn
+      KITSUNE_FOLDER: /usr/local/kitsune/
     working_directory: ~/kitsune
     steps:
       - checkout
@@ -92,10 +93,10 @@ jobs:
           fingerprints: ["65:66:d8:7e:1e:69:ed:f9:62:5a:c1:f3:60:0a:0e:7c"]
       - run:
           name: "Copy jar to server"
-          command: scp target/kitsune.jar circleci@$DEPLOY_HOST:/usr/local/kitsune/
+          command: scp target/kitsune.jar circleci@$DEPLOY_HOST:$KITSUNE_FOLDER
       - run:
           name: "Finally start the server"
-          command: ssh circleci@$DEPLOY_HOST "pkill -2 java; java -Dconf=$PROD_CONFIG -jar kitsune.jar"
+          command: ssh circleci@$DEPLOY_HOST "cd $KITSUNE_FOLDER; pkill -2 java; java -Dconf=$PROD_CONFIG -jar kitsune.jar"
           background: true
       - run:
           name: "Keep connection open long enough to start the server"
@@ -113,6 +114,6 @@ workflows:
           requires:
             - test
             - lint
-          filters:
-            branches:
-              only: develop
+        #  filters:
+        #    branches:
+        #      only: develop
