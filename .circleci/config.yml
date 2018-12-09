@@ -85,7 +85,7 @@ jobs:
           name: "Compile jar"
           command: lein ring uberjar
       - run:
-          name: Fix host authenticity for Linode
+          name: Fix host authenticity
           command: |
             ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
       - add_ssh_keys:
@@ -113,6 +113,6 @@ workflows:
           requires:
             - test
             - lint
-          filters:
-            branches:
-              only: develop
+        #  filters:
+        #    branches:
+        #      only: develop
