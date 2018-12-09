@@ -20,6 +20,7 @@
                  [metosin/ring-http-response "0.9.1"]
                  [metosin/jsonista "0.2.2"]
                  [ring/ring-defaults "0.3.2"]
+                 [ring-cors "0.1.12"]
                  [org.bovinegenius/exploding-fish "0.3.6"]
                  [org.postgresql/postgresql "42.2.5"]
                  [com.layerware/hugsql "0.4.9"]

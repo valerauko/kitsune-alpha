@@ -9,6 +9,7 @@
             [reitit.swagger-ui :refer [create-swagger-ui-handler]]
             [muuntaja.middleware :refer [wrap-format]]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
+            [ring.middleware.cors :refer [wrap-cors]]
             [muuntaja.core :as muuntaja]
             [muuntaja.format.plain-text :as text-format]
             [reitit.ring.middleware.muuntaja :as m-middleware]
@@ -50,6 +51,12 @@
   [handler]
   (wrap-defaults handler api-defaults))
 
+
+(defn cors-wrapper
+  [handler]
+  (wrap-cors handler :access-control-allow-origin [#"https://pinafore.social"]
+                     :access-control-allow-methods [:get :put :post :delete]))
+
 (def router
   (ring/router
     [user/routes
@@ -71,6 +78,7 @@
             :coercion spec/coercion
             :swagger {:id ::api}
             :middleware [wrap-logging
+                         cors-wrapper
                          swagger-feature
                          m-middleware/format-middleware
                          coerce/coerce-exceptions-middleware
