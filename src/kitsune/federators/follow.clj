@@ -10,7 +10,6 @@
 (defn send-accept
   ([args] (send-accept args :existing))
   ([{:keys [id follower followed]} should-exist]
-   (clojure.pprint/pprint [id followed follower])
    (let [accept-uri (str (uri/url "/accept/" (java.util.UUID/randomUUID)))]
      (if (= should-exist :existing)
        (rel/accept-follow! conn {:uri id :accept-uri accept-uri}))
@@ -58,7 +57,6 @@
   [{{:keys [id object actor] :as activity} :body-params}]
   (let [object-uri (or (:id object) object)
         actor-uri (or (:id actor) actor)]
-    (clojure.pprint/pprint [object-uri actor-uri])
     ; since we're past signature checking, we can assume we have the actor in db
     (if (uri/local? object-uri) ; ignore if the object isn't local
       (if-let [followed (users/find-by-uri conn {:uri object-uri})]
@@ -77,7 +75,6 @@
   [{{activity-actor :actor
     {object-actor :actor :keys [id object]} :object} :body-params}]
   ; TODO: move the actor identity check to a general Undo handler
-  (clojure.pprint/pprint [activity-actor object-actor id object])
   (if (= activity-actor object-actor)
     (let [followed (users/find-by-uri conn {:uri object})
           follower (users/find-by-uri conn {:uri object-actor})]
