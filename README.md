@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/valerauko/kitsune.svg?style=svg)](https://circleci.com/gh/valerauko/kitsune)
+
 # Kitsune
 
 Very fox microblogging.
