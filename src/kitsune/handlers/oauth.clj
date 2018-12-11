@@ -53,8 +53,8 @@
     uri/uri
     (uri/param "code" code) ; add the code
     (#(if state (uri/param % "state" state) %)) ; echo state if present
-    (#(if (or (= (uri/scheme %) "http") ; if it's http or empty make it https
-              (= nil (uri/scheme %)))
+    (#(if (or (nil? (uri/scheme %)) ; if it's http or empty make it https
+              (= (uri/scheme %) "http"))
       (uri/scheme % "https") %)) ; TODO: don't change in development
     str)) ; has to be string for redirect
 
