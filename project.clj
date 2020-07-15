@@ -3,7 +3,7 @@
   :url "https://kitsune.social"
   :license {:name "GNU AFFERO GENERAL PUBLIC LICENSE"
             :url "https://www.gnu.org/licenses/agpl-3.0.en.html"}
-  :dependencies [[org.clojure/clojure "1.9.0"]
+  :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/core.async "1.2.603"]
                  [org.clojure/tools.namespace "1.0.0"]
                  [ch.qos.logback/logback-classic "1.2.3"]
