@@ -4,27 +4,6 @@
 
 Very fox microblogging.
 
-## Configuration
-
-### config.edn
-
-You should pass in a config file using system props. For example if it's called `config.edn`, then the Kitsune launch command would be
-
-```
-java -jar kitsune.jar -Dconf=config.edn
-```
-
-Refer to [the sample in the repo](https://github.com/valerauko/kitsune/blob/master/config/prod/config.edn) on what its format is.
-
-### Environment variables
-
-If you don't want to store your database credentials in an unencrypted file, you can use environment variables too (note the double underscores):
-
-* `DB__HOST` (default `localhost`)
-* `DB__DB` (default `kitsune`)
-* `DB__USER` (default `kitsune`)
-* `DB__PASS`
-
 ## License
 
 Copyright (C) 2018 @[valerauko](https://github.com/valerauko)
