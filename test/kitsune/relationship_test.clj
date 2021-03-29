@@ -1,10 +1,11 @@
 (ns kitsune.relationship-test
   (:require [clojure.test :refer :all]
             [clojure.spec.alpha :as s]
+            [mount.core :refer [start]]
             [kitsune.spec.mastodon.relationship :as spec]
             [kitsune.handlers.relationships :refer :all]))
 
-(mount.core/start #'kitsune.instance/config)
+(start #'kitsune.instance/config)
 
 (deftest follow-test
   ; TODO: test error handling properly when done

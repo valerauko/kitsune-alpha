@@ -15,13 +15,15 @@
       (do
         (log/info (str "Fetching profile of " user-uri))
         (if-let [result (fed/fetch-resource user-uri)]
-          (let [data {:name (or (:name result)
-                                (:preferredUsername result))
-                      :acct (db/uri-to-acct (:id result))
+          (let [data {:acct (db/uri-to-acct (:id result))
                       :uri (:id result)
                       :public-key (-> result :publicKey :publicKeyPem)
                       :display-name (or (:preferredUsername result)
-                                        (:name result))}]
+                                        (:name result))
+                      :inbox (or (:inbox result)
+                                 (get-in result [:endpoints :sharedInbox]))
+                      :shared-inbox (or (get-in result [:endpoints :sharedInbox])
+                                        (:inbox result))}]
             (if known-user
               (db/update-account! conn data)
               (db/create-account! conn data)))

@@ -10,9 +10,10 @@
   "Inserts :auth into request with client info from Bearer token."
   [handler]
   (fn [req]
-    (let [raw (some-> req :headers :authorization
-                          (#(second (re-matches #"^Bearer (.+)" %)))
-                          url-decode)
+    (let [raw (some->> req :headers :authorization
+                           (re-matches #"^Bearer (.+)")
+                           second
+                           url-decode)
           token (db/find-bearer conn {:token raw})]
       (handler (assoc req :auth token)))))
 

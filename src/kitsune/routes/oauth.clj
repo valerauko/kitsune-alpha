@@ -24,7 +24,7 @@
                              :body any?}}
             :handler auth-form}
       :post {:swagger {:produces #{"text/html"}}
-             :parameters {:body ::oauth-spec/authorize-params}
+             :parameters oauth-spec/authorize-params
              :responses
                {200 {:description "When no redirect URI is specified for the app
                                    in question, a HTML page is rendered with the

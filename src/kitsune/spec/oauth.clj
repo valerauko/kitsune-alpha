@@ -4,17 +4,17 @@
             [kitsune.spec.user :as user]))
 
 (s/def ::name string?)
+(s/def ::client-name string?)
 (s/def ::scopes string?)
 (s/def ::scope-array
-  (s/coll-of #{"read" "write" "follow"} :distinct true
-             :min-count 1 :max-count 3))
+  (s/coll-of #{"read" "write" "follow" "push"} :distinct true :min-count 1))
 ; TODO: proper url validation
 (s/def ::website string?)
 (s/def ::redirect-uri string?)
 (s/def ::redirect-uris string?)
 
 (s/def ::create-app
-  (s/keys :req-un [::name ::scopes]
+  (s/keys :req-un [::client-name ::scopes]
           :opt-un [::website ::redirect-uris]))
 
 (s/def ::random-hash
@@ -42,17 +42,17 @@
 (defn valid-scope
   [input]
   (let [scopes (split input #"\s+")]
-    (if (s/valid? ::scope-array scopes)
+    (when (s/valid? ::scope-array scopes)
       ; need to sort it for certain equality
       (sort scopes))))
 
 (s/def ::password ::user/pass)
-(s/def ::grant-type #{"authorization_code" "password" "refresh_token"})
+(s/def ::grant-type #{"authorization-code" "password" "refresh-token"})
 
 (s/def ::state string?)
-(s/def ::authorize-params
-  (s/keys :req-un [::user/email ::password ::client-id]
-          :opt-un [::redirect-uri ::scopes ::state]))
+(def authorize-params
+  {:form (s/keys :req-un [::user/email ::password ::client-id]
+                 :opt-un [::redirect-uri ::scopes ::state])})
 
 (s/def ::exchange-by-auth
   (s/keys :req-un [::user/email ::password]))

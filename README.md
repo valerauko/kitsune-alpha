@@ -1,12 +1,8 @@
+[![CircleCI](https://circleci.com/gh/valerauko/kitsune.svg?style=svg)](https://circleci.com/gh/valerauko/kitsune)
+
 # Kitsune
 
 Very fox microblogging.
-
-## Status
-
-Wildly in development. Check the [develop branch](https://github.com/valerauko/kitsune/tree/develop) and the [kanban](https://github.com/valerauko/kitsune/projects/1) to see progress.
-
-Don't expect a release in master until core functionality's mostly in place.
 
 ## License
 

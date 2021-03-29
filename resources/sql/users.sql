@@ -29,12 +29,12 @@ update accounts
 update accounts set
 /*~
 (->> (dissoc params :uri)
-     (camel-snake-kebab.extras/transform-keys
-       camel-snake-kebab.core/->snake_case_string)
-     (map #(clojure.string/join "=" %))
-     (clojure.string/join ", ")))
+     (map (fn [[key _]]
+            (str (camel-snake-kebab.core/->snake_case_string key)
+                 "=" key)))
+     (clojure.string/join ", "))
 ~*/
-where uri = :uri
+where lower(uri) = :uri
 returning *
 
 -- :name update-private-key! :<! :1
@@ -119,4 +119,4 @@ join users on accounts.user_id = users.id
 where acct = :acct limit 1
 
 -- :name load-by-id :? :*
-select * from users where id in (:v*:ids)
+select * from accounts where id in (:v*:ids)

@@ -1,4 +1,3 @@
-(ns kitsune.env
-  (:require [ring.middleware.reload :refer [wrap-reload]]))
+(ns kitsune.env)
 
-(def wrap wrap-reload)
+(def wrap identity)
